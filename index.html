@@ -230,6 +230,20 @@
             h3 {
                 page-break-after: avoid;
             }
+
+            /* Fixes: Evita que los márgenes del A4 corten (mutile) los diagramas SVG */
+            .diagram-zones,
+            .branch-diagram-container,
+            .fork-diagram-container {
+                overflow: visible !important;  /* Elimina el efecto scroll cortado */
+                max-width: 100% !important;
+                zoom: 0.85; /* Reduce la escala para que encajen perfectos a lo ancho */
+            }
+
+            svg {
+                max-width: 100% !important;
+                height: auto !important;
+            }
         }
         /* Custom embedded diagrams */
         .diagram-zones {
