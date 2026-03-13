@@ -1103,6 +1103,45 @@ color = "azul" <span class="term-comment">(El código entrante)</span>
         </ol>
     </div>
 
+    <div class="page-break"></div>
+
+    <h2 id="sec-14">14. Errores Comunes de Configuración</h2>
+    <p>Al conectar GitLab o GitHub con tu ordenador local por primera vez (el primer <code>git push</code>), pueden aparecer barreras de seguridad. Estos son los dos bloqueos que le ocurren al 90% de los estudiantes y cómo resolverlos al instante:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Error en la terminal</th>
+                <th>¿Por qué pasa?</th>
+                <th>Solución rápida</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="color: #ff5555; font-family: monospace;">error: GH007: Your push would publish a private email address</td>
+                <td>Tienes activada una protección de privacidad en GitHub ("Keep my email addresses private"), pero Git en tu terminal intentó adjuntar tu correo real a los commits. GitHub lo bloquea.</td>
+                <td>
+                    Ve a <a href="https://github.com/settings/emails" target="_blank">github.com/settings/emails</a> y desmarca la casilla <strong>"Keep my email addresses private"</strong>.<br><br>
+                    *(Si deseas mantenerlo privado, copia tu correo anónimo de GitHub y configúralo en tu terminal con <code>git config user.email "TU_CORREO_ANONIMO"</code>)*.
+                </td>
+            </tr>
+            <tr>
+                <td style="color: #ff5555; font-family: monospace;">git@github.com: Permission denied (publickey).</td>
+                <td>Intentaste conectar usando el enlace seguro tipo SSH (<code>git@github...</code>), pero no tienes llaves encriptadas generadas en tu ordenador, o no se las has dado a GitHub.</td>
+                <td>
+                    La solución más sencilla para principiantes es usar el túnel HTTPS normal en lugar de SSH. Ejecuta:<br>
+                    <code>git remote set-url origin https://github.com/TU_USUARIO/TU_REPO.git</code><br>
+                    Y vuelve a intentar el <code>git push</code>.
+                </td>
+            </tr>
+            <tr>
+                <td style="color: #f1fa8c; font-family: monospace;">dquote&gt;</td>
+                <td>Este no es un error de nube, sino un despiste al teclear. Se te ha olvidado poner las comillas de cierre (") en el último mensaje de <code>git commit</code>.</td>
+                <td>Escribe unas comillas dobles (<code>"</code>) en la terminal y presiona <strong>Enter</strong> para destrabarlo, o pulsa <code>Ctrl + C</code> para cancelar el comando.</td>
+            </tr>
+        </tbody>
+    </table>
+
 </body>
 
 </html>
