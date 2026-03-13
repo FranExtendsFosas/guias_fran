@@ -21,6 +21,6 @@ Una guía completa, visual y didáctica sobre el ciclo de vida de un archivo, c�
 
 > **¿Cómo ver las guías visualmente?**  
 > GitHub es un almacén de código, por lo que al hacer clic en un archivo `.html` aquí verás su código fuente. Para ver y leer las guías con su diseño original y colores (Dracula theme), debes acceder a través del visor web animado por GitHub Pages haciendo clic en el enlace de arriba o visitando:
-> <a href="https://FranExtendsFosas.github.io/guias_fran/Guia_Git_GitHub_Fran_Fosas.html" target="_blank" rel="noopener noreferrer">Abrir la Guía de Git en nueva pestaña</a>
+> <a href="https://FranExtendsFosas.github.io/guias_fran/Guia_Git_GitHub_Fran_Fosas.html" target="_blank" rel="noopener noreferrer">Abrir la Guía</a>
 
 *(Repositorio creado para fines educativos. Siéntete libre de compartir el conocimiento).*
