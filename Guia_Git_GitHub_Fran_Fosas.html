@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Git & GitHub</title>
+    <style>
+        :root {
+            --primary-color: #ff79c6;
+            /* Dracula Acid Pink */
+            --secondary-color: #8be9fd;
+            /* Dracula Acid Cyan */
+            --bg-color: #282a36;
+            /* Dracula Dark */
+            --text-color: #f8f8f2;
+            /* Dracula Light */
+            --code-bg: #1e1f29;
+            --code-text: #50fa7b;
+            /* Dracula Acid Green */
+            --alert-info-bg: #303340;
+            --alert-info-border: #8be9fd;
+            --alert-warn-bg: #303340;
+            --alert-warn-border: #ffb86c;
+            /* Dracula Acid Orange */
+            --alert-error-bg: #303340;
+            --alert-error-border: #ff5555;
+            /* Dracula Acid Red */
+            --table-border: #6272a4;
+            --table-header-bg: #44475a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--secondary-color);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            border-bottom: 4px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(255, 121, 198, 0.3);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--table-border);
+            padding-bottom: 0.3rem;
+            text-shadow: 0 0 8px rgba(139, 233, 253, 0.2);
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: #bd93f9;
+            /* Dracula Acid Purple */
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        ul,
+        ol {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: var(--secondary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--table-border);
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--table-header-bg);
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: "Courier New", Courier, monospace;
+            border: 1px solid var(--table-border);
+            box-shadow: 0 0 15px rgba(80, 250, 123, 0.1);
+        }
+
+        code {
+            font-family: "Courier New", Courier, monospace;
+            background-color: var(--table-header-bg);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 0.9em;
+            color: #50fa7b;
+        }
+
+        .cmd-action {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .cmd-arg {
+            color: #f1fa8c;
+            /* Dracula Acid Yellow */
+            font-weight: normal;
+        }
+
+        .cmd-desc {
+            color: var(--text-color);
+        }
+
+        .term-prompt {
+            color: #bd93f9;
+            /* Dracula Acid Purple */
+            user-select: none;
+        }
+
+        .term-comment {
+            color: #6272a4;
+            /* Dracula Comment */
+            font-style: italic;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-left: 5px solid;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+            color: var(--text-color);
+        }
+
+        .alert-info {
+            background-color: var(--alert-info-bg);
+            border-color: var(--alert-info-border);
+        }
+
+        .alert-warning {
+            background-color: var(--alert-warn-bg);
+            border-color: var(--alert-warn-border);
+        }
+
+        .alert-error {
+            background-color: var(--alert-error-bg);
+            border-color: var(--alert-error-border);
+        }
+
+        .cover-page {
+            text-align: center;
+            margin-top: 5rem;
+            margin-bottom: 5rem;
+        }
+
+        .cover-page p {
+            font-size: 1.2rem;
+            color: #bfbfbf;
+        }
+
+        /* Print Specific Styles */
+        @media print {
+            body {
+                padding: 0;
+                max-width: 100%;
+                font-size: 12pt;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                background-color: var(--bg-color);
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+
+            pre,
+            table,
+            .alert {
+                page-break-inside: avoid;
+            }
+
+            h2,
+            h3 {
+                page-break-after: avoid;
+            }
+        }
+        /* Custom embedded diagrams */
+        .diagram-zones {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1e1f29;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border: 1px solid var(--table-border);
+            overflow-x: auto;
+        }
+
+        .git-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 130px;
+            height: 130px;
+            border-radius: 8px;
+            text-align: center;
+            background: #282a36;
+            flex-shrink: 0;
+        }
+
+        .git-zone.wdir { border: 2px solid #ff5555; box-shadow: 0 0 10px rgba(255,85,85,0.2); }
+        .git-zone.staging { border: 2px solid #f1fa8c; box-shadow: 0 0 10px rgba(241,250,140,0.2); }
+        .git-zone.lrepo { border: 2px solid #bd93f9; box-shadow: 0 0 10px rgba(189,147,249,0.2); }
+        .git-zone.remote { border: 2px solid #8be9fd; box-shadow: 0 0 10px rgba(139,233,253,0.2); }
+
+        .zone-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .zone-title { font-weight: bold; font-size: 0.9rem; color: #f8f8f2; margin-bottom: 0.2rem; }
+        .zone-desc { font-size: 0.75rem; color: #6272a4; }
+
+        .arrow-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            padding: 0 10px;
+            min-width: 60px;
+        }
+
+        .arrow-text {
+            font-family: monospace;
+            color: #50fa7b;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+
+        .arrow-line {
+            width: 100%;
+            height: 2px;
+            background: #6272a4;
+            position: relative;
+        }
+
+        .arrow-line::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 8px solid #6272a4;
+        }
+
+        .branch-diagram-container, .fork-diagram-container {
+            background: #1e1f29;
+            padding: 2rem 1rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border: 1px solid var(--table-border);
+            text-align: center;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cover-page">
+        <h1>Guía Git & GitHub</h1>
+        <p><strong>Guía didáctica del ciclo de vida de un programa</strong></p>
+        <p>Desde el IDE hasta GitHub: comandos esenciales, flujo de trabajo y buenas prácticas.</p>
+        <br>
+        <p><strong>Autor:</strong> Francesc Fosas (con asistencia de IA)</p>
+        <p><strong>Edición:</strong> Guía Git + GitHub | 2026</p>
+        <p><small>Licencia libre: puedes usar, copiar y distribuir este documento libremente citando al autor.</small>
+        </p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2>Contenido de esta guía</h2>
+    <ol>
+        <li><a href="#sec-1">Instalación y primeros pasos en la Terminal</a></li>
+        <li><a href="#sec-2">¿Qué es Git y para qué sirve?</a></li>
+        <li><a href="#sec-3">El ciclo de vida de un archivo</a></li>
+        <li><a href="#sec-4">Configuración inicial</a></li>
+        <li><a href="#sec-5">Del IDE a Git: crear un repositorio local</a></li>
+        <li><a href="#sec-6">Comandos del día a día</a></li>
+        <li><a href="#sec-7">Ramas (branches): trabajar en paralelo</a></li>
+        <li><a href="#sec-8">De Git a GitHub: el repositorio remoto</a></li>
+        <li><a href="#sec-9">Flujo de trabajo completo</a></li>
+        <li><a href="#sec-10">Conflictos de merge: cuando dos ramas chocan</a></li>
+        <li><a href="#sec-11">Deshacer cosas y Diagnóstico: cuando algo sale mal</a></li>
+        <li><a href="#sec-12">Buenas prácticas y Seguridad</a></li>
+        <li><a href="#sec-13">Chuleta rápida de comandos</a></li>
+    </ol>
+
+    <div class="page-break"></div>
+
+    <h2 id="sec-1">1. Instalación y primeros pasos en la Terminal</h2>
+
+    <h3>Paso previo: Instalar Git</h3>
+    <p>Tu ordenador no reconocerá los comandos de Git si no instalas el software base primero.</p>
+    <ul>
+        <li><strong>Windows:</strong> Descarga el instalador desde git-scm.com y ejecútalo (puedes dar a "Siguiente" en
+            todo). <strong>¡Importante!</strong> Una vez instalado, busca en tu ordenador el programa llamado
+            <strong>Git Bash</strong> y ábrelo. No utilices el CMD normal ni PowerShell, ya que Git Bash simula un
+            entorno Linux mucho más amigable para Git.</li>
+        <li><strong>macOS:</strong> Abre la terminal y escribe <code>git --version</code>. Si no está instalado, el
+            sistema te preguntará automáticamente si deseas instalar las herramientas de línea de comandos. Acéptalo.
+        </li>
+        <li><strong>Linux (Ubuntu/Debian):</strong> Abre tu terminal y ejecuta el comando
+            <code>sudo apt install git</code>.</li>
+        <li><strong>Linux (openSUSE):</strong> Abre tu terminal y ejecuta el comando
+            <code>sudo zypper install git</code>.</li>
+        <li><strong>Linux (Fedora/RHEL):</strong> Abre tu terminal y ejecuta el comando
+            <code>sudo dnf install git</code>.</li>
+    </ul>
+
+    <h3>La Terminal (Tu entorno de trabajo)</h3>
+    <p>Antes de escribir comandos de Git, debes asegurarte de que tu terminal está apuntando a la carpeta correcta de tu
+        proyecto. El error número uno de los estudiantes es ejecutar Git en la carpeta equivocada (como el Escritorio).
+        Usa estos comandos (válidos para Mac, Linux y Git Bash en Windows):</p>
+    <ul>
+        <li><strong>Saber dónde estás:</strong> Escribe <code>pwd</code> (Print Working Directory) y presiona Enter.
+        </li>
+        <li><strong>Ver qué hay en la carpeta:</strong> Escribe <code>ls</code>.</li>
+        <li><strong>Ver TODO (incluido lo oculto):</strong> Escribe <code>ls -a</code>.</li>
+        <li><strong>Entrar a tu proyecto:</strong> Escribe <code>cd nombre-de-tu-carpeta</code> (Ej:
+            <code>cd mi_proyecto_web</code>).</li>
+    </ul>
+
+    <h2 id="sec-2">2. ¿Qué es Git y para qué sirve?</h2>
+
+    <p><strong>Git</strong> es un sistema de control de versiones distribuido que funciona en tu ordenador local.
+        Imagínalo como un sistema de puntos de guardado para tu código. Registra cada cambio en tus archivos como un
+        historial permanente. Si algo se rompe, puedes volver a cualquier punto anterior.</p>
+    <p><strong>GitHub</strong> es la plataforma web que aloja repositorios Git en la nube. Es el equivalente a un disco
+        virtual, pero diseñado específicamente para código, permitiendo colaborar, revisar el trabajo de otros y
+        mantener copias de seguridad.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Situación</th>
+                <th>Sin Git</th>
+                <th>Con Git</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Guardar cambios</strong></td>
+                <td><code>Ctrl+S</code> (sobrescribe y pierdes lo anterior)</td>
+                <td><code>git commit</code>: punto de guardado inmutable</td>
+            </tr>
+            <tr>
+                <td><strong>Historial</strong></td>
+                <td>Carpetas: "final_v2", "final_BUENO"...</td>
+                <td><code>git log</code>: historial automático y ordenado</td>
+            </tr>
+            <tr>
+                <td><strong>Colaborar</strong></td>
+                <td>Enviar código por email o ZIP</td>
+                <td><code>git push</code>/<code>pull</code> en GitHub</td>
+            </tr>
+            <tr>
+                <td><strong>Revertir un error</strong></td>
+                <td>Empezar de cero o buscar un backup</td>
+                <td><code>git revert</code>: vuelve atrás en segundos</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="sec-3">3. El ciclo de vida de un archivo</h2>
+
+    <div class="diagram-zones">
+        <div class="git-zone wdir">
+            <div class="zone-icon">💻</div>
+            <div class="zone-title">Working Dir.</div>
+            <div class="zone-desc">Tu mesa de trabajo</div>
+        </div>
+        <div class="arrow-container">
+            <div class="arrow-text">git add</div>
+            <div class="arrow-line"></div>
+        </div>
+        <div class="git-zone staging">
+            <div class="zone-icon">📦</div>
+            <div class="zone-title">Staging Area</div>
+            <div class="zone-desc">Caja abierta</div>
+        </div>
+        <div class="arrow-container">
+            <div class="arrow-text">git commit</div>
+            <div class="arrow-line"></div>
+        </div>
+        <div class="git-zone lrepo">
+            <div class="zone-icon">🏷️</div>
+            <div class="zone-title">Local Repo.</div>
+            <div class="zone-desc">Caja sellada</div>
+        </div>
+        <div class="arrow-container">
+            <div class="arrow-text">git push</div>
+            <div class="arrow-line"></div>
+        </div>
+        <div class="git-zone remote">
+            <div class="zone-icon">☁️</div>
+            <div class="zone-title">Remoto</div>
+            <div class="zone-desc">Almacén nube</div>
+        </div>
+    </div>
+
+    <p>Es común preguntarse por qué son necesarios dos pasos (<code>add</code> y luego <code>commit</code>) para guardar
+        un archivo. Para entenderlo de forma sencilla, podemos pensar en el proceso de preparar una caja de envío.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Zona oficial</th>
+                <th>Funcionamiento práctico</th>
+                <th>Qué significa técnicamente</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Working Directory</strong></td>
+                <td><strong>Tu mesa de trabajo.</strong></td>
+                <td>Tu disco duro. Editas código libremente. Git sabe que cambiaste cosas, pero no está haciendo nada
+                    con ellas aún.</td>
+            </tr>
+            <tr>
+                <td><strong>Staging Area</strong></td>
+                <td><strong>Meter cosas en una caja abierta.</strong></td>
+                <td>(<code>git add</code>). Preparas exactamente qué archivos van a guardarse. Puedes incluir algunos
+                    archivos y dejar otros fuera.</td>
+            </tr>
+            <tr>
+                <td><strong>Local Repository</strong></td>
+                <td><strong>Sellar la caja y ponerle etiqueta.</strong></td>
+                <td>(<code>git commit</code>). Cierras la caja definitivamente, le pones fecha, autor y un mensaje
+                    describiendo el contenido. Queda guardada.</td>
+            </tr>
+            <tr>
+                <td><strong>Remoto (GitHub)</strong></td>
+                <td><strong>Enviar la caja al almacén.</strong></td>
+                <td>(<code>git push</code>). La caja viaja a los servidores de GitHub para que otros puedan verla o
+                    descargarla.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-info">
+        <strong>Estados posibles de un archivo:</strong> <code>untracked</code> (sin seguimiento), <code>modified</code>
+        (modificado en la mesa), <code>staged</code> (dentro de la caja) o <code>committed</code> (caja sellada).
+    </div>
+
+    <h2 id="sec-4">4. Configuración inicial</h2>
+
+    <p>Antes de hacer tu primer guardado, Git necesita saber quién eres para firmar tus aportaciones. Esto se hace una
+        sola vez en tu ordenador:</p>
+
+    <pre><code><span class="term-prompt">$</span> <span class="cmd-action">git config --global user.name</span> <span class="cmd-arg">"Tu Nombre"</span>
+<span class="term-prompt">$</span> <span class="cmd-action">git config --global user.email</span> <span class="cmd-arg">"tu@email.com"</span>
+
+<span class="term-comment"># Nombrar la rama principal 'main' por defecto (recomendado)</span>
+<span class="term-prompt">$</span> <span class="cmd-action">git config --global init.defaultBranch</span> <span class="cmd-arg">main</span>
+
+<span class="term-comment"># Configurar el editor por defecto (evita bloqueos con Vim)</span>
+<span class="term-prompt">$</span> <span class="cmd-action">git config --global core.editor</span> <span class="cmd-arg">"code --wait"</span>
+
+<span class="term-comment"># Verificar toda la configuración</span>
+<span class="term-prompt">$</span> <span class="cmd-action">git config --list</span></code></pre>
+
+    <div class="alert alert-error">
+        <strong>Escape de emergencia (La trampa de Vim):</strong> Si alguna vez tu terminal cambia de aspecto
+        repentinamente, aparecen símbolos <code>~</code> a la izquierda y no puedes escribir con normalidad, has entrado
+        accidentalmente en Vim (un editor clásico muy hostil para principiantes). Para salir de ahí y volver a la
+        normalidad, escribe exactamente <code>:q!</code> y presiona Enter.
+    </div>
+
+    <h2 id="sec-5">5. Del IDE a Git: crear un repositorio local</h2>
+
+    <h3>5.1 Inicializar un repositorio</h3>
+    <p>Abre la terminal de tu editor (IDE), asegúrate de estar dentro de la carpeta correcta y ejecuta:</p>
+
+    <pre><code><span class="term-comment"># Inicializa Git (crea una base de datos oculta)</span>
+<span class="term-prompt">$</span> <span class="cmd-action">git init</span>
+
+<span class="term-comment"># Comprueba el estado. Los archivos nuevos aparecerán en rojo (Untracked)</span>
+<span class="term-prompt">$</span> <span class="cmd-action">git status</span></code></pre>
+
+    <p>Se crea una carpeta oculta llamada <code>.git</code>. <strong>Esta carpeta es tu repositorio.</strong> Contiene
+        todo tu historial. Nunca la modifiques ni la borres manualmente. Si quieres verificar que se ha creado
+        correctamente, escribe <code>ls -a</code> en tu terminal para ver los archivos ocultos.</p>
+
+    <h3>5.2 El archivo .gitignore</h3>
+    <p>No todo el contenido de tu proyecto debe guardarse (ej. contraseñas, archivos autogenerados). Crea un archivo
+        llamado literalmente <code>.gitignore</code> en la raíz de tu proyecto para excluir elementos.</p>
+
+    <pre><code><span class="term-comment"># Ejemplo de .gitignore</span>
+node_modules/      <span class="term-comment"># Dependencias pesadas</span>
+__pycache__/       <span class="term-comment"># Archivos generados automáticamente</span>
+.env               <span class="term-comment"># Contraseñas y claves API</span></code></pre>
+
+    <div class="alert alert-warning">
+        <strong>Si te equivocas:</strong> Si haces <code>git add</code> de un archivo sensible por error y *luego* lo
+        añades al <code>.gitignore</code>, Git lo seguirá rastreando. Usa:
+        <br><br><code><span class="term-prompt">$</span> <span class="cmd-action">git rm --cached</span> <span class="cmd-arg">nombre_del_archivo</span></code>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2 id="sec-6">6. Comandos del día a día</h2>
+
+    <p>El flujo básico que repetirás constantemente al programar es el siguiente:</p>
+    <ol>
+        <li><code>git status</code> (Revisar qué has cambiado)</li>
+        <li><code>git add</code> (Preparar los archivos)</li>
+        <li><code>git commit</code> (Guardar en el historial)</li>
+    </ol>
+
+    <h3>6.1 git status - ¿qué ha cambiado?</h3>
+    <p>Es tu comando de diagnóstico. Úsalo siempre antes de realizar una acción. Te indicará qué archivos están
+        modificados (rojo) y cuáles están listos para guardarse (verde).</p>
+
+    <h3>6.2 git add - preparar cambios</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Comando</th>
+                <th>Qué hace</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code><span class="cmd-action">git add</span> <span class="cmd-arg">archivo.py</span></code></td>
+                <td class="cmd-desc">Añade solo el archivo especificado.</td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git add</span> <span class="cmd-arg">.</span></code></td>
+                <td class="cmd-desc">Añade TODOS los cambios de la carpeta actual.</td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git add</span> <span class="cmd-arg">-p</span></code></td>
+                <td class="cmd-desc"><em>(Avanzado)</em> Te pregunta bloque por bloque si quieres incluir un cambio.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>6.3 git commit - guardar en el historial</h3>
+    <p>El mensaje del commit debe ser claro y descriptivo. Sirve para que tus compañeros y tu "yo" del futuro entiendan
+        qué cambios se aplicaron.</p>
+
+    <pre><code><span class="term-prompt">$</span> <span class="cmd-action">git commit -m</span> <span class="cmd-arg">"Añade botón de login en el menú principal"</span>
+
+<span class="term-comment"># Ver el historial de cambios</span>
+<span class="term-prompt">$</span> <span class="cmd-action">git log</span> <span class="cmd-arg">--oneline</span>
+a3f8c12 Añade botón de login en el menú principal
+2c9a831 Primer commit: estructura inicial</code></pre>
+
+    <h3>6.4 git stash - guardar temporalmente</h3>
+    <p>Si estás trabajando en un archivo pero surge una urgencia, puedes pausar tu trabajo sin hacer commit para
+        mantener el historial limpio:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Comando</th>
+                <th>Qué hace</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code><span class="cmd-action">git stash</span></code></td>
+                <td class="cmd-desc">Guarda tus modificaciones a medias en un área temporal y deja los archivos limpios.
+                </td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git stash pop</span></code></td>
+                <td class="cmd-desc">Recupera las modificaciones guardadas a tu editor y las elimina del stash.</td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git stash list</span></code></td>
+                <td class="cmd-desc">Muestra una lista de todos los trabajos que tienes guardados en estado de pausa.
+                </td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git stash drop</span></code></td>
+                <td class="cmd-desc">Elimina el último trabajo pausado sin aplicarlo (útil para limpiar memoria
+                    residual).</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="sec-7">7. Ramas (branches): trabajar en paralelo</h2>
+
+    <p>Una rama te permite tener una línea de desarrollo paralela. Por defecto, siempre trabajas en la rama principal
+        llamada <code>main</code> (que contiene el código estable y funcional). Si deseas experimentar con nuevas características, puedes abrir una rama paralela (por ejemplo, <code>feature/nueva-opcion</code>). Allí podrás realizar múltiples *commits* sin afectar de ninguna manera a la versión principal.</p>
+
+    <div class="alert alert-info">
+        <strong>💡 Comprendiendo el sistema de archivos al cambiar de rama</strong>
+        <p>Un concepto técnico fundamental para comprender Git es saber que la herramienta modifica dinámicamente tu sistema de archivos en el disco duro local. Por ejemplo: si partiendo de la rama <code>main</code> creas una nueva rama <code>feature</code>, y añades un archivo nuevo dentro de ella... <strong>dicho archivo desaparecerá de tu explorador de archivos al ejecutar de vuelta un <code>checkout</code> hacia <code>main</code></strong>.</p>
+        <p>A pesar de aparentar un error o una pérdida accidental, el archivo simplemente permanece documentado de manera exclusiva en el historial de la rama <code>feature</code>. En el momento de efectuar nuevamente un <code>checkout</code> hacia esa rama, Git se encargará de restaurar la información en su ubicación de origen automáticamente.</p>
+    </div>
+
+    <div class="branch-diagram-container">
+        <svg width="600" height="200" viewBox="0 0 600 200" style="max-width: 100%; height: auto; display: inline-block;">
+            <!-- Labels Y axis -->
+            <text x="70" y="85" fill="#8be9fd" font-family="monospace" font-size="14" text-anchor="end">main</text>
+            <text x="70" y="155" fill="#ff79c6" font-family="monospace" font-size="14" text-anchor="end">feature</text>
+            
+            <!-- Lines -->
+            <path d="M 90 80 L 550 80" stroke="#8be9fd" stroke-width="6" fill="none" />
+            <path d="M 220 80 L 280 150 L 400 150 L 460 80" stroke="#ff79c6" stroke-width="6" fill="none" stroke-linejoin="round" />
+            
+            <!-- Nodes main -->
+            <circle cx="120" cy="80" r="10" fill="#f8f8f2" />
+            <circle cx="220" cy="80" r="10" fill="#f8f8f2" />
+            <circle cx="460" cy="80" r="10" fill="#8be9fd" />
+            <circle cx="530" cy="80" r="10" fill="#8be9fd" />
+
+            <!-- Nodes feature -->
+            <circle cx="280" cy="150" r="10" fill="#ff79c6" />
+            <circle cx="400" cy="150" r="10" fill="#ff79c6" />
+
+            <!-- Command labels -->
+            <text x="220" y="45" fill="#f8f8f2" font-family="monospace" font-size="12" text-anchor="middle">git checkout -b</text>
+            <text x="220" y="60" fill="#f8f8f2" font-family="monospace" font-size="12" text-anchor="middle">feature/nueva</text>
+            
+            <text x="460" y="45" fill="#f8f8f2" font-family="monospace" font-size="12" text-anchor="middle">git merge</text>
+            <text x="460" y="60" fill="#f8f8f2" font-family="monospace" font-size="12" text-anchor="middle">feature/nueva</text>
+
+            <!-- Node labels -->
+            <text x="120" y="110" fill="#6272a4" font-family="monospace" font-size="12" text-anchor="middle">C1</text>
+            <text x="220" y="110" fill="#6272a4" font-family="monospace" font-size="12" text-anchor="middle">C2</text>
+            <text x="280" y="180" fill="#6272a4" font-family="monospace" font-size="12" text-anchor="middle">C3</text>
+            <text x="400" y="180" fill="#6272a4" font-family="monospace" font-size="12" text-anchor="middle">C4</text>
+            <text x="460" y="110" fill="#6272a4" font-family="monospace" font-size="12" text-anchor="middle">C5</text>
+            <text x="530" y="110" fill="#6272a4" font-family="monospace" font-size="12" text-anchor="middle">C6</text>
+        </svg>
+        <div style="text-align: left; margin-top: 1.5rem; font-size: 0.95rem; background: var(--bg-color); padding: 1.5rem; border-radius: 6px; border-left: 4px solid var(--primary-color);">
+            <strong>Leyenda del diagrama (Cada "C" es un Commit o punto de guardado):</strong>
+            <ul style="margin-bottom: 0; margin-top: 0.8rem; line-height: 1.8;">
+                <li><strong>C1 y C2:</strong> Tu proyecto base avanza de forma estable en la rama <code>main</code>.</li>
+                <li><strong>C3 y C4:</strong> Al hacer <em>checkout</em>, abres la rama paralela <code>feature</code>. Aquí trabajas en la nueva funcionalidad. Estos <em>commits</em> (C3 y C4) son invisibles para la rama <code>main</code>, logrando un entorno seguro y aislado.</li>
+                <li><strong>C5:</strong> Ejecutas <code>git merge</code>. Las líneas convergen para unificar el historial, fusionando por fin todo el trabajo finalizado de <code>feature</code> de vuelta a <code>main</code>.</li>
+                <li><strong>C6:</strong> El proyecto, ahora actualizado con la nueva funcionalidad, continúa su ciclo natural en la rama <code>main</code>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Comando</th>
+                <th>Qué hace</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code><span class="cmd-action">git branch</span></code></td>
+                <td class="cmd-desc">Muestra tus ramas locales (la activa tiene un <code>*</code>).</td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git branch</span> <span class="cmd-arg">-a</span></code></td>
+                <td class="cmd-desc">Muestra absolutamente todas las ramas, tanto las de tu PC como las subidas a
+                    GitHub.</td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git checkout -b</span> <span class="cmd-arg">mi-rama</span></code><br><code><span class="cmd-action">git switch -c</span> <span class="cmd-arg">mi-rama</span></code>
+                </td>
+                <td class="cmd-desc">Crea una rama nueva y te mueve a ella de inmediato (<code>switch</code> es la
+                    alternativa más moderna).</td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git checkout</span> <span class="cmd-arg">main</span></code></td>
+                <td class="cmd-desc">Te devuelve a la rama principal.</td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git merge</span> <span class="cmd-arg">mi-rama</span></code></td>
+                <td class="cmd-desc">Estando en <code>main</code>, fusiona los cambios de <code>mi-rama</code> hacia
+                    <code>main</code>.</td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git branch -d</span> <span class="cmd-arg">mi-rama</span></code></td>
+                <td class="cmd-desc">Elimina una rama localmente. Se utiliza para limpiar el repositorio tras haber
+                    realizado el <code>merge</code>.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="sec-8">8. De Git a GitHub: el repositorio remoto</h2>
+
+    <h3>8.1 Conectar tu proyecto local con GitHub</h3>
+    <pre><code><span class="term-prompt">$</span> <span class="cmd-action">git remote add origin</span> <span class="cmd-arg">https://github.com/tu-usuario/mi-proyecto.git</span></code></pre>
+    <p>El término <code>origin</code> es una convención estándar. Simplemente funciona como un atajo (un alias) para
+        evitar tener que escribir la URL completa del repositorio cada vez que vayas a subir código.</p>
+
+    <div class="alert alert-info">
+        <strong>🔗 HTTPS vs SSH (¿cuál elegir?)</strong>
+        <p>A la hora de copiar la URL de tu repositorio en GitHub verás dos opciones:</p>
+        <ul>
+            <li><strong>HTTPS</strong> (recomendado para empezar): Empieza por <code>https://</code>. Es la opción más
+                sencilla. La primera vez que hagas <code>git push</code>, GitHub te pedirá tu nombre de usuario y un
+                <strong>token de acceso personal</strong> (no tu contraseña normal). Puedes generarlo en
+                <em>GitHub → Settings → Developer Settings → Personal Access Tokens</em>.</li>
+            <li><strong>SSH</strong> (más avanzado): Empieza por <code>git@github.com:</code>. Una vez configurado,
+                nunca más te pedirá contraseña. Es el método preferido por profesionales, pero requiere generar
+                un par de claves en tu ordenador. Cuando domines lo básico, es el siguiente paso natural.</li>
+        </ul>
+        <strong>Conclusión para principiantes: usa HTTPS ahora y pasa a SSH cuando te sientas cómodo.</strong>
+    </div>
+
+    <h3>8.2 Subir y bajar cambios</h3>
+    <ul>
+        <li><code>git push origin main</code>: Envía tus commits locales hacia GitHub.</li>
+        <li><code>git pull</code>: Descarga los cambios recientes de GitHub y los integra localmente.</li>
+        <li><code>git fetch</code>: Descarga la información de GitHub sin modificar tus archivos locales.</li>
+    </ul>
+
+    <div class="alert alert-error">
+        <strong>El error más común: "Push rejected" (Non-fast-forward)</strong>. Si intentas hacer <code>git push</code>
+        y la terminal te devuelve un error indicando que tu actualización fue rechazada ("Updates were rejected because
+        the remote contains work that you do not have locally"), significa que la nube tiene código más reciente que tú.
+        <strong>La regla de oro:</strong> Ejecuta siempre <code>git pull</code> primero, resuelve los conflictos si los
+        hay, y luego vuelve a intentar hacer <code>git push</code>.
+    </div>
+
+    <h3>8.3 Colaboración Open Source (El ciclo del Fork)</h3>
+    <p>Para colaborar en proyectos donde <strong>no tienes permisos de escritura</strong>, el flujo de trabajo forma un triángulo entre tres puntos: el proyecto original, tu cuenta de GitHub y tu ordenador local.</p>
+
+    <div class="fork-diagram-container">
+        <svg width="600" height="300" viewBox="0 0 600 300" style="max-width: 100%; height: auto; display: inline-block;">
+            <!-- Box: Original Repo -->
+            <rect x="220" y="20" width="160" height="60" rx="8" fill="#282a36" stroke="#bd93f9" stroke-width="2" />
+            <text x="300" y="45" fill="#f8f8f2" font-family="monospace" font-size="14" font-weight="bold" text-anchor="middle">Proyecto Autor</text>
+            <text x="300" y="65" fill="#6272a4" font-family="monospace" font-size="10" text-anchor="middle">(GitHub)</text>
+
+            <!-- Box: Your Repo -->
+            <rect x="420" y="180" width="160" height="60" rx="8" fill="#282a36" stroke="#8be9fd" stroke-width="2" />
+            <text x="500" y="205" fill="#f8f8f2" font-family="monospace" font-size="14" font-weight="bold" text-anchor="middle">Tu /Proyecto</text>
+            <text x="500" y="225" fill="#6272a4" font-family="monospace" font-size="10" text-anchor="middle">(Tu GitHub)</text>
+
+            <!-- Box: Your Computer -->
+            <rect x="20" y="180" width="160" height="60" rx="8" fill="#282a36" stroke="#ff5555" stroke-width="2" />
+            <text x="100" y="205" fill="#f8f8f2" font-family="monospace" font-size="14" font-weight="bold" text-anchor="middle">Tu Ordenador</text>
+            <text x="100" y="225" fill="#6272a4" font-family="monospace" font-size="10" text-anchor="middle">(Local)</text>
+
+            <!-- Arrow: Fork (Original -> Your Repo) -->
+            <path d="M 380 50 Q 500 50 500 170" fill="none" stroke="#f1fa8c" stroke-width="3" stroke-dasharray="6,4" />
+            <polygon points="495,160 505,160 500,175" fill="#f1fa8c" />
+            <rect x="440" y="80" width="40" height="20" rx="4" fill="#282a36" />
+            <text x="460" y="94" fill="#f1fa8c" font-family="monospace" font-size="12" font-weight="bold" text-anchor="middle">1. FORK</text>
+
+            <!-- Arrow: Clone (Your Repo -> Local) -->
+            <path d="M 420 210 L 190 210" fill="none" stroke="#50fa7b" stroke-width="3" />
+            <polygon points="200,205 200,215 185,210" fill="#50fa7b" />
+            <rect x="280" y="195" width="50" height="20" rx="4" fill="#282a36" />
+            <text x="305" y="209" fill="#50fa7b" font-family="monospace" font-size="12" font-weight="bold" text-anchor="middle">2. CLONE</text>
+
+            <!-- Arrow: Push (Local -> Your Repo) curve -->
+            <path d="M 180 230 Q 300 280 420 230" fill="none" stroke="#ff79c6" stroke-width="3" />
+            <polygon points="410,225 410,235 425,230" fill="#ff79c6" />
+            <rect x="270" y="245" width="60" height="20" rx="4" fill="#282a36" />
+            <text x="300" y="259" fill="#ff79c6" font-family="monospace" font-size="12" font-weight="bold" text-anchor="middle">3. PUSH</text>
+
+            <!-- Arrow: Pull Request (Your Repo -> Original) -->
+            <path d="M 440 180 Q 260 180 260 90" fill="none" stroke="#bd93f9" stroke-width="3" />
+            <polygon points="255,100 265,100 260,85" fill="#bd93f9" />
+            <rect x="280" y="125" width="120" height="20" rx="4" fill="#282a36" />
+            <text x="340" y="139" fill="#bd93f9" font-family="monospace" font-size="12" font-weight="bold" text-anchor="middle">4. PULL REQUEST</text>
+        </svg>
+
+        <div style="text-align: left; margin-top: 1.5rem; font-size: 0.95rem; background: var(--bg-color); padding: 1.5rem; border-radius: 6px; border-left: 4px solid var(--primary-color);">
+            <strong>Leyenda del flujo de colaboración:</strong>
+            <ul style="margin-bottom: 0; margin-top: 0.8rem; line-height: 1.8;">
+                <li><strong style="color: #f1fa8c;">1. Fork:</strong> Creas en tu propia cuenta de GitHub una copia gemela e independiente del proyecto original ajeno.</li>
+                <li><strong style="color: #50fa7b;">2. Clone:</strong> Te descargas <em>tu copia</em> a tu disco duro local para poder editar el código con tu IDE.</li>
+                <li><strong style="color: #ff79c6;">3. Push:</strong> Subes tu código modificado desde tu PC hacia *tu copia* en GitHub. Aún no has tocado el proyecto original.</li>
+                <li><strong style="color: #bd93f9;">4. Pull Request:</strong> Notificas al autor original desde GitHub proponiendo que integre los cambios de tu copia a su proyecto oficial.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2 id="sec-9">9. Flujo de trabajo completo</h2>
+    <ol>
+        <li><strong>Actualizar:</strong> <code>git pull</code></li>
+        <li><strong>Crear espacio:</strong> <code>git checkout -b feature/nueva-tarea</code></li>
+        <li><strong>Programar:</strong> Edita tus archivos.</li>
+        <li><strong>Revisar:</strong> <code>git status</code></li>
+        <li><strong>Preparar:</strong> <code>git add .</code></li>
+        <li><strong>Guardar:</strong> <code>git commit -m "Descripción"</code></li>
+        <li><strong>Subir:</strong> <code>git push origin feature/nueva-tarea</code></li>
+        <li><strong>Pull Request:</strong> GitHub detectará tu nueva rama y te mostrará un botón amarillo <strong>"Compare &amp; pull request"</strong> en la página de tu repositorio. Haz clic, escribe un título y descripción explicando <em>qué</em> hiciste y <em>por qué</em>, y finalmente haz clic en <strong>"Create pull request"</strong>. Un compañero (o tú mismo) revisará los cambios antes de fusionarlos con <code>main</code>.</li>
+    </ol>
+
+    <h2 id="sec-10">10. Conflictos de merge: cuando dos ramas chocan</h2>
+
+    <p>Los conflictos ocurren cuando dos personas editan exactamente la misma línea de un archivo. Al intentar unificar
+        los cambios, Git detecta la colisión, pausa el proceso y te pedirá que decidas cuál es la versión definitiva.</p>
+
+    <pre><code><span class="cmd-action">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span> <span class="term-comment">(Tu código actual)</span>
+color = "rojo"
+<span class="cmd-action">=======</span>
+color = "azul" <span class="term-comment">(El código entrante)</span>
+<span class="cmd-action">&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/otra-rama</span></code></pre>
+
+    <div class="alert alert-warning">
+        <strong>⚠️ No entres en pánico: el conflicto es un proceso rutinario</strong>
+        <p>Observar texto inyectado con símbolos como <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> suele resultar alarmante, pero es un mecanismo perfectamente normal. Hoy en día, la inmensa mayoría de editores profesionales (como VS Code) identifican este patrón y superponen opciones de resolución con un solo clic: <strong>"Aceptar el cambio actual"</strong>, <strong>"Aceptar el cambio entrante"</strong> o <strong>"Aceptar ambos"</strong>.</p>
+        <p>Selecciona tu opción preferida (o elimina de forma manual todo rastro de los marcadores de Git si optas por editar en texto plano). Cuando el código quede unificado y funcional, guárdalo y finaliza el proceso ejecutando de nuevo un <code>git add .</code> seguido de un último <code>git commit</code>.</p>
+    </div>
+
+    <h2 id="sec-11">11. Deshacer cosas y Diagnóstico: cuando algo sale mal</h2>
+
+    <p><code>HEAD</code> es un puntero interno de Git que indica en qué commit exacto te encuentras en este momento. Es
+        clave para los comandos de reversión.</p>
+
+    <h3>Operaciones para deshacer</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Situación</th>
+                <th>Comando para solucionarlo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="cmd-desc">Me equivoqué y quiero volver al último punto de guardado (sin add).</td>
+                <td><code><span class="cmd-action">git restore</span> <span class="cmd-arg">archivo.py</span></code>
+                </td>
+            </tr>
+            <tr>
+                <td class="cmd-desc">Hice <code>git add</code> por accidente y quiero sacarlo de la zona de preparación.
+                </td>
+                <td><code><span class="cmd-action">git restore --staged</span> <span class="cmd-arg">archivo.py</span></code>
+                </td>
+            </tr>
+            <tr>
+                <td class="cmd-desc">Olvidé añadir un archivo al último guardado que acabo de hacer.</td>
+                <td><code><span class="cmd-action">git add</span> <span class="cmd-arg">archivo.py</span></code> seguido
+                    de <code><span class="cmd-action">git commit --amend --no-edit</span></code></td>
+            </tr>
+            <tr>
+                <td class="cmd-desc">Escribí mal el mensaje del último <code>commit</code>.</td>
+                <td><code><span class="cmd-action">git commit --amend -m</span> <span class="cmd-arg">'nuevo mensaje'</span></code>
+                </td>
+            </tr>
+            <tr>
+                <td class="cmd-desc">Borré un archivo hace tiempo y necesito recuperarlo del historial.</td>
+                <td><code><span class="cmd-action">git checkout</span> <span class="cmd-arg">&lt;hash_del_commit&gt; -- archivo.py</span></code>
+                </td>
+            </tr>
+            <tr>
+                <td class="cmd-desc">Necesito deshacer los cambios de un commit antiguo de forma segura.</td>
+                <td><code><span class="cmd-action">git revert</span> <span class="cmd-arg">HEAD</span></code> (o el hash
+                    específico)</td>
+            </tr>
+            <tr>
+                <td class="cmd-desc">Quiero deshacer el último commit pero <strong>conservar</strong> los cambios en
+                    mis archivos para poder corregirlos.</td>
+                <td><code><span class="cmd-action">git reset --soft</span> <span class="cmd-arg">HEAD~1</span></code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Herramientas de diagnóstico profesional</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Comando</th>
+                <th>Qué analiza</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code><span class="cmd-action">git log</span> <span class="cmd-arg">--oneline --graph</span></code>
+                </td>
+                <td class="cmd-desc">Muestra el historial dibujando un árbol visual de cómo se han fusionado las ramas.
+                </td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git diff</span> <span class="cmd-arg">--staged</span></code></td>
+                <td class="cmd-desc">Muestra las diferencias exactas de código de los archivos que ya están en la "caja"
+                    (staging).</td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git show</span> <span class="cmd-arg">&lt;hash&gt;</span></code></td>
+                <td class="cmd-desc">Muestra el detalle técnico completo (autor, fecha, código añadido/borrado) de un
+                    commit concreto.</td>
+            </tr>
+            <tr>
+                <td><code><span class="cmd-action">git blame</span> <span class="cmd-arg">archivo.py</span></code></td>
+                <td class="cmd-desc">Muestra línea por línea quién fue el último usuario que modificó el código y en qué
+                    commit lo hizo.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="sec-12">12. Buenas prácticas y Seguridad</h2>
+    <ul>
+        <li><strong>Commits pequeños e independientes:</strong> Un commit debe representar un único cambio lógico.</li>
+        <li><strong>Revisa antes de confirmar:</strong> Utiliza <code>git diff</code> antes de hacer tus commits.</li>
+        <li><strong>Mantén la estabilidad:</strong> La rama <code>main</code> siempre debe contener código funcional.
+        </li>
+        <li><strong>Usa el inglés:</strong> Es el estándar en la industria tecnológica para nombrar ramas y commits.
+        </li>
+    </ul>
+
+    <h3>Seguridad: Lo que nunca debe llegar a GitHub</h3>
+    <p>Si subes datos sensibles, quedan en el historial público permanentemente. Aplica estas soluciones:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Elemento a proteger</th>
+                <th>Solución profesional recomendada</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Contraseñas y claves API</strong></td>
+                <td>Usa archivos <code>.env</code> y asegúrate de incluirlos en el <code>.gitignore</code>. Crea un
+                    archivo <code>.env.example</code> con valores vacíos para el equipo.</td>
+            </tr>
+            <tr>
+                <td><strong>Credenciales de Bases de Datos</strong></td>
+                <td>En entornos serios, utiliza gestores de secretos centralizados como HashiCorp Vault o AWS Secrets
+                    Manager.</td>
+            </tr>
+            <tr>
+                <td><strong>Tokens de acceso y despliegue</strong></td>
+                <td>Si automatizas procesos, inyéctalos usando GitHub Secrets para pipelines CI/CD.</td>
+            </tr>
+            <tr>
+                <td><strong>Archivos de build o compilados</strong></td>
+                <td>Carpetas como <code>dist/</code>, <code>build/</code> o archivos <code>.pyc</code> deben estar
+                    estrictamente excluidos vía <code>.gitignore</code> para no inflar el repositorio.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="sec-13">13. Chuleta rápida de comandos</h2>
+
+    <div class="alert alert-info">
+        <strong>Nota sobre sintaxis:</strong> Cuando veas símbolos como <code>&lt;rama&gt;</code> o
+        <code>&lt;URL&gt;</code>, significa que debes sustituir todo ese bloque por el texto real. <strong>NO
+            escribas</strong> los símbolos de mayor/menor qué en tu consola (ej. <code>git clone https...</code> y NO
+        <code>git clone &lt;https...&gt;</code>).
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Comando Principal</th>
+                <th>Formato de uso exacto</th>
+                <th>Explicación breve</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Inicializar</strong></td>
+                <td><code><span class="cmd-action">git init</span></code></td>
+                <td class="cmd-desc">Crea un repositorio nuevo en la carpeta actual.</td>
+            </tr>
+            <tr>
+                <td><strong>Clonar</strong></td>
+                <td><code><span class="cmd-action">git clone</span> <span class="cmd-arg">&lt;URL&gt;</span></code></td>
+                <td class="cmd-desc">Descarga un proyecto de GitHub a tu ordenador.</td>
+            </tr>
+            <tr>
+                <td><strong>Estado</strong></td>
+                <td><code><span class="cmd-action">git status</span></code></td>
+                <td class="cmd-desc">Muestra qué archivos están modificados. <strong>(Usar siempre)</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Añadir (Staging)</strong></td>
+                <td><code><span class="cmd-action">git add</span> <span class="cmd-arg">.</span></code></td>
+                <td class="cmd-desc">Prepara todos los archivos modificados para el guardado.</td>
+            </tr>
+            <tr>
+                <td><strong>Guardar (Commit)</strong></td>
+                <td><code><span class="cmd-action">git commit -m</span> <span class="cmd-arg">"Mensaje"</span></code>
+                </td>
+                <td class="cmd-desc">Guarda los cambios en el historial permanentemente.</td>
+            </tr>
+            <tr>
+                <td><strong>Subir (Push)</strong></td>
+                <td><code><span class="cmd-action">git push origin</span> <span class="cmd-arg">&lt;rama&gt;</span></code>
+                </td>
+                <td class="cmd-desc">Envía tus commits locales al servidor de GitHub.</td>
+            </tr>
+            <tr>
+                <td><strong>Bajar (Pull)</strong></td>
+                <td><code><span class="cmd-action">git pull</span></code></td>
+                <td class="cmd-desc">Descarga y fusiona los cambios de GitHub.</td>
+            </tr>
+            <tr>
+                <td><strong>Crear Rama</strong></td>
+                <td><code><span class="cmd-action">git checkout -b</span> <span class="cmd-arg">&lt;rama&gt;</span></code>
+                </td>
+                <td class="cmd-desc">Crea una nueva rama y te mueve a ella.</td>
+            </tr>
+            <tr>
+                <td><strong>Cambiar Rama</strong></td>
+                <td><code><span class="cmd-action">git checkout</span> <span class="cmd-arg">&lt;rama&gt;</span></code>
+                </td>
+                <td class="cmd-desc">Te mueve a una rama que ya existe.</td>
+            </tr>
+            <tr>
+                <td><strong>Fusionar</strong></td>
+                <td><code><span class="cmd-action">git merge</span> <span class="cmd-arg">&lt;rama&gt;</span></code>
+                </td>
+                <td class="cmd-desc">Integra los cambios de la rama indicada en la tuya.</td>
+            </tr>
+            <tr>
+                <td><strong>Deshacer (Archivo)</strong></td>
+                <td><code><span class="cmd-action">git restore</span> <span class="cmd-arg">&lt;archivo&gt;</span></code>
+                </td>
+                <td class="cmd-desc">Revierte un archivo a su estado original.</td>
+            </tr>
+            <tr>
+                <td><strong>Deshacer (Commit)</strong></td>
+                <td><code><span class="cmd-action">git revert</span> <span class="cmd-arg">HEAD</span></code></td>
+                <td class="cmd-desc">Deshace de forma segura el último commit.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-info">
+        <strong>Ejercicio práctico final (El ciclo completo):</strong>
+        <p>Para consolidar los conocimientos, ejecuta este flujo destructivo para perder el miedo a Git:</p>
+        <ol>
+            <li><strong>Preparación local:</strong> Abre tu terminal, crea una carpeta
+                (<code><span class="cmd-action">mkdir</span> <span class="cmd-arg">bootcamp_git</span></code>), entra en
+                ella (<code><span class="cmd-action">cd</span> <span class="cmd-arg">bootcamp_git</span></code>) e
+                inicializa Git (<code><span class="cmd-action">git init</span></code>).</li>
+            <li><strong>Primer commit:</strong> Crea un archivo <code>historia.txt</code> y escribe una línea. Prepara
+                el archivo (<code><span class="cmd-action">git add</span> <span class="cmd-arg">.</span></code>) y
+                guárdalo
+                (<code><span class="cmd-action">git commit -m</span> <span class="cmd-arg">"Inicio"</span></code>).</li>
+            <li><strong>Preparación remota:</strong> Ve a GitHub.com, haz clic en el botón verde <strong>"New"</strong>
+                (Nuevo repositorio). Nómbralo <code>bootcamp_git</code>. <em>No marques ninguna casilla adicional (ni
+                    README ni gitignore)</em>. Haz clic en "Create repository".</li>
+            <li><strong>Conexión y subida:</strong> Copia la URL HTTPS de tu nuevo repositorio. En tu terminal vincula
+                el repositorio
+                (<code><span class="cmd-action">git remote add origin</span> <span class="cmd-arg">&lt;TU_URL_COPIADA&gt;</span></code>)
+                y sube el código
+                (<code><span class="cmd-action">git push -u origin</span> <span class="cmd-arg">main</span></code>).
+            </li>
+            <li><strong>Destrucción local (Prueba de confianza):</strong> Sal de la carpeta en tu terminal
+                (<code><span class="cmd-action">cd</span> <span class="cmd-arg">..</span></code>) y borra la carpeta
+                <code>bootcamp_git</code> de tu ordenador manualmente a través de tu explorador de archivos. Tu código
+                local ha desaparecido.</li>
+            <li><strong>Resurrección (Clone):</strong> Recupera tu código desde la nube. Ejecuta
+                <code><span class="cmd-action">git clone</span> <span class="cmd-arg">&lt;TU_URL_COPIADA&gt;</span></code>.
+                Entra en la carpeta restaurada
+                (<code><span class="cmd-action">cd</span> <span class="cmd-arg">bootcamp_git</span></code>) y verifica
+                que tu historial sigue intacto ejecutando
+                <code><span class="cmd-action">git log</span> <span class="cmd-arg">--oneline</span></code>.</li>
+            <li><strong>Limpieza:</strong> Ve a tu repositorio en GitHub, accede a <em>Settings</em> (Configuración),
+                baja hasta la "Danger Zone" y elimina el repositorio remoto para mantener tu perfil ordenado.</li>
+        </ol>
+    </div>
+
+</body>
+
+</html>
