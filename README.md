@@ -19,6 +19,19 @@ Una guía completa, visual y didáctica sobre el ciclo de vida de un archivo, c�
 
 ---
 
+### 2. <a href="https://FranExtendsFosas.github.io/guias_fran/Camino_basico.html" target="_blank" rel="noopener noreferrer">Análisis de Caminos y Complejidad Ciclomática</a>
+Guía visual para comprender la construcción de grafos de flujo, cálculos de complejidad ciclomática (McCabe), y diseño de casos de prueba basados en caminos independientes.
+
+* **Nivel:** Intermedio (ingeniería de pruebas, diseño de casos, métricas de código).
+* **Temas principales:**
+  * Dibujar grafos de control y bloques básicos.
+  * Decisiones boolenas con cortocircuito (`&&`, `||`).
+  * Cálculo de complejidad: `V(G)=P+1`, `V(G)=E-N+2`, `V(G)=R`.
+  * Decisión de caminos independientes y cobertura de pruebas.
+  * Ejemplos prácticos y troubleshooting de errores comunes.
+
+---
+
 > **¿Cómo ver las guías visualmente?**  
 > GitHub es un almacén de código, por lo que al hacer clic en un archivo `.html` aquí verás su código fuente. Para ver y leer las guías con su diseño original y colores (Dracula theme), debes acceder a través del visor web animado por GitHub Pages haciendo clic en el enlace de arriba o visitando:
 > <a href="https://FranExtendsFosas.github.io/guias_fran/Guia_Git_GitHub_Fran_Fosas.html" target="_blank" rel="noopener noreferrer">Abrir la Guía</a>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Caminos y Complejidad Ciclomática</title>
+    <style>
+        :root {
+            --bg: #282a36;
+            --current-line: #44475a;
+            --fg: #f8f8f2;
+            --comment: #6272a4;
+            --cyan: #8be9fd;
+            --green: #50fa7b;
+            --orange: #ffb86c;
+            --pink: #ff79c6;
+            --purple: #bd93f9;
+            --red: #ff5555;
+            --yellow: #f1fa8c;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            padding: 40px;
+            max-width: 1100px;
+            margin: auto;
+        }
+        h1 { color: var(--purple); border-bottom: 2px solid var(--purple); padding-bottom: 10px; }
+        h2 { color: var(--pink); margin-top: 40px; border-left: 5px solid var(--pink); padding-left: 15px; }
+        h3 { color: var(--cyan); margin-top: 30px; }
+        p { margin-bottom: 20px; text-align: justify; }
+        code {
+            background-color: var(--current-line);
+            color: var(--yellow);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+        }
+        pre {
+            background-color: var(--current-line);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border-left: 4px solid var(--orange);
+        }
+        pre code { background-color: transparent; color: var(--fg); }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background-color: var(--current-line);
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid var(--comment);
+            text-align: left;
+        }
+        th { background-color: var(--purple); color: var(--bg); }
+        .analogy {
+            background-color: rgba(139, 233, 253, 0.1);
+            border-left: 4px solid var(--cyan);
+            padding: 15px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        .highlight { color: var(--green); font-weight: bold; }
+        .formula-box {
+            background: linear-gradient(135deg, var(--current-line), #383a59);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 1px solid var(--comment);
+        }
+        .formula-title {
+            color: var(--orange);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+        .formula-text {
+            font-size: 1.5em;
+            color: var(--green);
+            font-family: 'serif';
+            text-align: center;
+            display: block;
+        }
+        .svg-container {
+            background: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 20px 0;
+            gap: 20px;
+        }
+        .svg-item {
+            text-align: center;
+            color: var(--bg);
+            width: 250px;
+            margin-bottom: 20px;
+        }
+        .svg-item span {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--purple);
+        }
+        .step-card {
+            border-bottom: 1px solid var(--current-line);
+            padding: 15px 0;
+        }
+        .step-num {
+            color: var(--pink);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .rule-box {
+            border-left: 4px solid var(--red);
+            background-color: rgba(255, 85, 85, 0.1);
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Arquitectura de Pruebas de Camino Básico</h1>
+    <h4>Francesc Fosas + IA</h4>
+    <h2>1. El Grafo de Flujo: Protocolo de Dibujo</h2>
+    <p>
+        Dibujar un grafo de flujo es la <span class="highlight">transcripción lógica</span> del código a una estructura topológica. Para que el grafo sea útil, debe seguir una sintaxis rigurosa que permita aplicar las fórmulas de McCabe con éxito.
+    </p>
+
+    <h3>1.1. Algoritmo Paso a Paso para el Dibujo</h3>
+    <div class="step-card"><span class="step-num">01.</span> <strong>Enumeración:</strong> Numera solo líneas con lógica procedimental.</div>
+    <div class="step-card"><span class="step-num">02.</span> <strong>Bloques Básicos:</strong> Agrupa líneas secuenciales en un solo nodo.</div>
+    <div class="step-card"><span class="step-num">03.</span> <strong>Mapeo de Predicados:</strong> Crea nodos de decisión para cada estructura de control.</div>
+    <div class="step-card"><span class="step-num">04.</span> <strong>Trazado de Aristas:</strong> Conecta los nodos siguiendo el flujo real, incluyendo retornos en bucles.</div>
+    <div class="step-card"><span class="step-num">05.</span> <strong>Sumidero:</strong> Converge todos los finales en un único nodo virtual de salida.</div>
+
+    <h2>2. Diccionario Visual de Predicados</h2>
+    <p>
+        Cada estructura de control tiene una "huella dactilar" única en el grafo de flujo. Entender estas formas básicas es esencial para descomponer códigos complejos rápidamente.
+    </p>
+
+    <div class="svg-container">
+        <!-- IF SIMPLE -->
+        <div class="svg-item">
+            <span>IF Simple</span>
+            <svg width="200" height="150" viewBox="0 0 200 150">
+                <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto"><path d="M0,0 L0,8 L7,4 z" fill="#44475a"/></marker></defs>
+                <circle cx="100" cy="30" r="15" fill="#bd93f9"/><text x="95" y="35" font-size="12" fill="#282a36">if</text>
+                <circle cx="50" cy="80" r="15" fill="#f8f8f2" stroke="#6272a4"/><text x="40" y="85" font-size="10" fill="#282a36">True</text>
+                <circle cx="100" cy="130" r="15" fill="#ff79c6"/><text x="90" y="135" font-size="12" fill="#282a36">Fin</text>
+                <path d="M 90 42 L 60 68" stroke="#44475a" marker-end="url(#arr)" fill="none"/>
+                <path d="M 60 92 L 90 118" stroke="#44475a" marker-end="url(#arr)" fill="none"/>
+                <path d="M 105 45 L 105 115" stroke="#44475a" marker-end="url(#arr)" fill="none"/>
+            </svg>
+            <p style="font-size: 0.8em; color: var(--bg)">Añade 1 punto de decisión. Crea un "salto" opcional.</p>
+        </div>
+
+        <!-- IF-ELSE -->
+        <div class="svg-item">
+            <span>IF-ELSE</span>
+            <svg width="200" height="150" viewBox="0 0 200 150">
+                <circle cx="100" cy="30" r="15" fill="#bd93f9"/><text x="95" y="35" font-size="12" fill="#282a36">if</text>
+                <circle cx="50" cy="80" r="15" fill="#f8f8f2" stroke="#6272a4"/><text x="45" y="85" font-size="10" fill="#282a36">T</text>
+                <circle cx="150" cy="80" r="15" fill="#f8f8f2" stroke="#6272a4"/><text x="145" y="85" font-size="10" fill="#282a36">F</text>
+                <circle cx="100" cy="130" r="15" fill="#ff79c6"/><text x="90" y="135" font-size="12" fill="#282a36">Fin</text>
+                <path d="M 90 42 L 60 68" stroke="#44475a" marker-end="url(#arr)" fill="none"/>
+                <path d="M 110 42 L 140 68" stroke="#44475a" marker-end="url(#arr)" fill="none"/>
+                <path d="M 60 92 L 90 118" stroke="#44475a" marker-end="url(#arr)" fill="none"/>
+                <path d="M 140 92 L 110 118" stroke="#44475a" marker-end="url(#arr)" fill="none"/>
+            </svg>
+            <p style="font-size: 0.8em; color: var(--bg)">Bifurcación binaria. Dos caminos excluyentes.</p>
+        </div>
+
+        <!-- WHILE -->
+        <div class="svg-item">
+            <span>WHILE</span>
+            <svg width="200" height="150" viewBox="0 0 200 150">
+                <circle cx="100" cy="40" r="15" fill="#bd93f9"/><text x="95" y="45" font-size="12" fill="#282a36">W</text>
+                <circle cx="100" cy="90" r="15" fill="#f8f8f2" stroke="#6272a4"/><text x="92" y="95" font-size="10" fill="#282a36">Do</text>
+                <circle cx="160" cy="130" r="15" fill="#ff79c6"/><text x="150" y="135" font-size="12" fill="#282a36">Fin</text>
+                <path d="M 100 55 L 100 75" stroke="#44475a" marker-end="url(#arr)" fill="none"/>
+                <path d="M 85 90 Q 50 65 85 45" stroke="#50fa7b" stroke-width="2" marker-end="url(#arr)" fill="none"/>
+                <path d="M 115 45 Q 160 60 160 115" stroke="#ff5555" marker-end="url(#arr)" fill="none"/>
+            </svg>
+            <p style="font-size: 0.8em; color: var(--bg)">Bucle de pre-condición. Puede ejecutarse 0 veces.</p>
+        </div>
+
+        <!-- DO-WHILE -->
+        <div class="svg-item">
+            <span>DO-WHILE</span>
+            <svg width="200" height="150" viewBox="0 0 200 150">
+                <circle cx="100" cy="30" r="15" fill="#f8f8f2" stroke="#6272a4"/><text x="92" y="35" font-size="10" fill="#282a36">Do</text>
+                <circle cx="100" cy="80" r="15" fill="#bd93f9"/><text x="95" y="85" font-size="12" fill="#282a36">if</text>
+                <circle cx="100" cy="130" r="15" fill="#ff79c6"/><text x="90" y="135" font-size="12" fill="#282a36">Fin</text>
+                <path d="M 100 45 L 100 65" stroke="#44475a" marker-end="url(#arr)" fill="none"/>
+                <path d="M 115 80 Q 150 55 115 35" stroke="#50fa7b" stroke-width="2" marker-end="url(#arr)" fill="none"/>
+                <path d="M 100 95 L 100 115" stroke="#ff5555" marker-end="url(#arr)" fill="none"/>
+            </svg>
+            <p style="font-size: 0.8em; color: var(--bg)">Post-condición. Se ejecuta al menos 1 vez.</p>
+        </div>
+        
+        <!-- CONDICIÓN AND (&&) -->
+        <div class="svg-item" style="border-top: 2px dashed #6272a4; padding-top: 15px; width: 100%;">
+            <span style="color: var(--red);">¡CRÍTICO!: Condición AND ( if (A && B) )</span>
+            <p style="font-size: 0.9em; color: var(--bg); text-align: left; margin-bottom: 10px;">
+                El compilador aplica <strong>cortocircuito</strong>: Si 'A' es Falso, salta directamente al final sin evaluar 'B'. Esto obliga a dibujar <strong>dos nodos de decisión separados</strong>.
+            </p>
+            <svg width="400" height="150" viewBox="0 0 400 150">
+                <circle cx="100" cy="40" r="15" fill="#bd93f9"/><text x="95" y="45" font-size="12" fill="#282a36">A</text>
+                <circle cx="200" cy="40" r="15" fill="#bd93f9"/><text x="195" y="45" font-size="12" fill="#282a36">B</text>
+                <circle cx="300" cy="40" r="15" fill="#f8f8f2" stroke="#6272a4"/><text x="285" y="45" font-size="10" fill="#282a36">Body</text>
+                <circle cx="200" cy="120" r="15" fill="#ff79c6"/><text x="190" y="125" font-size="12" fill="#282a36">Fin</text>
+                
+                <!-- True paths -->
+                <path d="M 115 40 L 175 40" stroke="#50fa7b" marker-end="url(#arr)" fill="none" stroke-width="2"/>
+                <text x="140" y="30" fill="#50fa7b" font-size="10" font-weight="bold">True</text>
+                
+                <path d="M 215 40 L 275 40" stroke="#50fa7b" marker-end="url(#arr)" fill="none" stroke-width="2"/>
+                <text x="240" y="30" fill="#50fa7b" font-size="10" font-weight="bold">True</text>
+                
+                <path d="M 300 55 L 300 100 L 215 120" stroke="#44475a" marker-end="url(#arr)" fill="none"/>
+                
+                <!-- False paths -->
+                <path d="M 100 55 L 100 100 L 185 120" stroke="#ff5555" marker-end="url(#arr)" fill="none" stroke-width="2"/>
+                <text x="105" y="80" fill="#ff5555" font-size="10" font-weight="bold">False</text>
+                
+                <path d="M 200 55 L 200 100" stroke="#ff5555" marker-end="url(#arr)" fill="none" stroke-width="2"/>
+                <text x="205" y="80" fill="#ff5555" font-size="10" font-weight="bold">False</text>
+            </svg>
+        </div>
+
+        <!-- CONDICIÓN OR (||) -->
+        <div class="svg-item" style="border-top: 2px dashed #6272a4; padding-top: 15px; width: 100%;">
+            <span style="color: var(--red);">¡CRÍTICO!: Condición OR ( if (A || B) )</span>
+            <p style="font-size: 0.9em; color: var(--bg); text-align: left; margin-bottom: 10px;">
+                Si 'A' es Verdadero, salta directamente al Body sin evaluar 'B'. De nuevo, son <strong>dos nodos de decisión separados</strong>. Un OR suma +2 a la complejidad total, no +1.
+            </p>
+            <svg width="400" height="150" viewBox="0 0 400 150">
+                <circle cx="100" cy="40" r="15" fill="#bd93f9"/><text x="95" y="45" font-size="12" fill="#282a36">A</text>
+                <circle cx="200" cy="100" r="15" fill="#bd93f9"/><text x="195" y="105" font-size="12" fill="#282a36">B</text>
+                <circle cx="300" cy="40" r="15" fill="#f8f8f2" stroke="#6272a4"/><text x="285" y="45" font-size="10" fill="#282a36">Body</text>
+                <circle cx="300" cy="100" r="15" fill="#ff79c6"/><text x="290" y="105" font-size="12" fill="#282a36">Fin</text>
+                
+                <!-- A True -->
+                <path d="M 115 40 L 275 40" stroke="#50fa7b" marker-end="url(#arr)" fill="none" stroke-width="2"/>
+                <text x="180" y="30" fill="#50fa7b" font-size="10" font-weight="bold">True (Cortocircuito)</text>
+                
+                <!-- A False -->
+                <path d="M 110 50 L 185 95" stroke="#ff5555" marker-end="url(#arr)" fill="none" stroke-width="2"/>
+                <text x="125" y="90" fill="#ff5555" font-size="10" font-weight="bold">False</text>
+                
+                <!-- B True -->
+                <path d="M 210 90 L 285 50" stroke="#50fa7b" marker-end="url(#arr)" fill="none" stroke-width="2"/>
+                <text x="235" y="65" fill="#50fa7b" font-size="10" font-weight="bold">True</text>
+                
+                <!-- B False -->
+                <path d="M 215 100 L 280 100" stroke="#ff5555" marker-end="url(#arr)" fill="none" stroke-width="2"/>
+                <text x="235" y="115" fill="#ff5555" font-size="10" font-weight="bold">False</text>
+                
+                <!-- Body to Fin -->
+                <path d="M 300 55 L 300 80" stroke="#44475a" marker-end="url(#arr)" fill="none"/>
+            </svg>
+        </div>
+    </div>
+
+    <h2>3. Desglose Técnico de las Fórmulas de Complejidad</h2>
+    <p>
+        La Complejidad Ciclomática de McCabe ($V(G)$) no es arbitraria; se fundamenta en la teoría de grafos y la topología. Su objetivo es calcular la dimensión del <span class="highlight">espacio de caminos linealmente independientes</span>. Entender el "porqué" de cada fórmula permite validar los resultados y elegir el método más eficiente según el contexto (análisis de código, diseño visual o auditoría métrica).
+    </p>
+
+    <div class="formula-box">
+        <span class="formula-title">Fórmula 1: Análisis por Regiones (Topológica)</span>
+        <span class="formula-text">V(G) = R</span>
+        <p><strong>¿Cómo se calcula?</strong> Se cuentan las regiones (áreas cerradas) delimitadas por las aristas y los nodos del grafo, sumando siempre 1 (que corresponde a la región infinita exterior al grafo).</p>
+        <p><strong>¿Por qué funciona?</strong> Esta fórmula deriva del teorema de la curva de Jordan. En un plano, cada camino independiente que se cierra sobre sí mismo (un ciclo) crea una nueva partición o "agujero" en el espacio. El número de regiones es una medida directa de cuántos ciclos fundamentales existen en el grafo. Es el método más intuitivo cuando ya tenemos el grafo dibujado.</p>
+    </div>
+
+    <div class="formula-box" style="border-left: 4px solid var(--green);">
+        <span class="formula-title">Fórmula 2: Análisis por Elementos (Grafo Plano)</span>
+        <span class="formula-text">V(G) = E - N + 2</span>
+        <p><strong>¿Cómo se calcula?</strong> Se realiza un conteo exhaustivo de:
+            <br>• <code>E (Edges)</code>: Número de aristas (flechas).
+            <br>• <code>N (Nodes)</code>: Número de nodos (círculos).
+            <br>Se resta el número de nodos al de aristas y se le suma una constante de 2.
+        </p>
+        <p><strong>¿Por qué funciona?</strong> Se basa en la <span class="highlight">Característica de Euler</span> para grafos planos conectados ($V - E + F = 2$). En ingeniería de software, adaptamos esta relación para determinar el número de caminos base. El "+2" asume que el grafo tiene un único componente (una sola función). Si tuviéramos un sistema con $p$ funciones inconexas, la fórmula sería $E - N + 2p$. Es el método más riguroso para auditorías automáticas.</p>
+    </div>
+
+    <div class="formula-box" style="border-left: 4px solid var(--purple);">
+        <span class="formula-title">Fórmula 3: Análisis por Nodos Predicado (Lógica)</span>
+        <span class="formula-text">V(G) = P + 1</span>
+        <p><strong>¿Cómo se calcula?</strong> Identificamos los <code>P (Nodos Predicado)</code>, que son aquellos nodos de los cuales sale más de una arista (puntos de decisión como <code>if</code>, <code>while</code>, <code>for</code>). Sumamos 1 al total.</p>
+        <p><strong>¿Por qué funciona?</strong> Esta es la interpretación más cercana a la programación. Cada decisión lógica en el código "rompe" la linealidad y añade exactamente un nuevo camino posible. El "+1" representa el camino principal (la ruta secuencial por defecto que existiría si no hubiera ninguna decisión). Es el método ideal para calcular la complejidad directamente desde el código fuente sin necesidad de dibujar el grafo.</p>
+    </div>
+
+    <h2>4. Metodología de Obtención de Casos de Prueba</h2>
+    
+    <div class="rule-box">
+        <strong style="color: var(--red);">Definición Crítica: ¿Qué es un Camino Independiente?</strong><br>
+        <span style="color: var(--fg);">Para que un camino sea considerado "independiente" (y por tanto, cuente para reducir la complejidad), <strong>debe recorrer al menos UNA arista (flecha) que no haya sido recorrida por ningún camino definido anteriormente</strong>. No basta con cambiar el orden de los nodos; debe haber una ruta física nueva en el grafo.</span>
+    </div>
+
+    <p>
+        El objetivo es diseñar un conjunto de pruebas tal que cada camino linealmente independiente en el grafo sea recorrido al menos una vez.
+    </p>
+
+    <h3>4.1. Caso Práctico: Evaluación de Riesgo</h3>
+    <pre><code>
+1:  if (edad < 18) {
+2:      return "Menor";
+3:  }
+4:  if (tieneSeguro) {
+5:      return "Aprobado";
+6:  } else {
+7:      return "Pendiente";
+8:  }
+    </code></pre>
+
+    <h3>4.2. Mapeo Visual y Verificación Matemática</h3>
+    <p>
+        A continuación, transcribimos el código a su topología de grafo de flujo, señalando directamente sobre él los elementos empíricos que componen las fórmulas de McCabe. Observa cómo los nodos de predicado (decisiones, marcados con <span style="color: var(--pink); font-weight: bold;">P</span>) dividen el flujo y generan regiones cerradas (<span style="color: var(--cyan); font-weight: bold;">R</span>).
+    </p>
+
+    <div class="svg-container">
+        <svg width="600" height="420" viewBox="0 0 600 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="25" refY="5" orient="auto">
+                    <path d="M0,0 L0,10 L10,5 z" fill="#6272a4"/>
+                </marker>
+            </defs>
+            
+            <!-- Region Highlights -->
+            <path d="M 300 50 L 150 180 L 300 350 L 350 280 L 450 180 Z" fill="rgba(139, 233, 253, 0.05)" stroke="#8be9fd" stroke-dasharray="5,5" stroke-width="1"/>
+            <path d="M 450 180 L 350 280 L 300 350 L 550 280 Z" fill="rgba(80, 250, 123, 0.05)" stroke="#50fa7b" stroke-dasharray="5,5" stroke-width="1"/>
+
+            <!-- Edges (E1 to E7) -->
+            <line x1="300" y1="50" x2="150" y2="180" stroke="#6272a4" stroke-width="2" marker-end="url(#arrowHead)"/>
+            <line x1="300" y1="50" x2="450" y2="180" stroke="#6272a4" stroke-width="2" marker-end="url(#arrowHead)"/>
+            <line x1="150" y1="180" x2="300" y2="350" stroke="#6272a4" stroke-width="2" marker-end="url(#arrowHead)"/>
+            <line x1="450" y1="180" x2="350" y2="280" stroke="#6272a4" stroke-width="2" marker-end="url(#arrowHead)"/>
+            <line x1="450" y1="180" x2="550" y2="280" stroke="#6272a4" stroke-width="2" marker-end="url(#arrowHead)"/>
+            <line x1="350" y1="280" x2="300" y2="350" stroke="#6272a4" stroke-width="2" marker-end="url(#arrowHead)"/>
+            <line x1="550" y1="280" x2="300" y2="350" stroke="#6272a4" stroke-width="2" marker-end="url(#arrowHead)"/>
+
+            <!-- Labels for Edges -->
+            <text x="210" y="110" fill="#6272a4" font-size="12" font-weight="bold">E1</text>
+            <text x="380" y="110" fill="#6272a4" font-size="12" font-weight="bold">E2</text>
+            <text x="200" y="270" fill="#6272a4" font-size="12" font-weight="bold">E3</text>
+            <text x="390" y="230" fill="#6272a4" font-size="12" font-weight="bold">E4</text>
+            <text x="510" y="230" fill="#6272a4" font-size="12" font-weight="bold">E5</text>
+            <text x="310" y="320" fill="#6272a4" font-size="12" font-weight="bold">E6</text>
+            <text x="440" y="330" fill="#6272a4" font-size="12" font-weight="bold">E7</text>
+
+            <!-- Regions Texts -->
+            <text x="280" y="200" fill="#8be9fd" font-weight="bold" font-size="18">R1</text>
+            <text x="440" y="260" fill="#50fa7b" font-weight="bold" font-size="18">R2</text>
+            <text x="50" y="50" fill="#ffb86c" font-weight="bold" font-size="18">R3 (Exterior)</text>
+
+            <!-- N1: Predicate (edad < 18) -->
+            <circle cx="300" cy="50" r="20" fill="#282a36" stroke="#ff79c6" stroke-width="3"/>
+            <text x="295" y="55" fill="#f8f8f2" font-weight="bold">1</text>
+            <rect x="325" y="30" width="25" height="18" rx="4" fill="#ff79c6"/>
+            <text x="330" y="43" fill="#282a36" font-size="10" font-weight="bold">P1</text>
+            <text x="240" y="30" fill="#f1fa8c" font-size="12" font-family="monospace">edad&lt;18</text>
+
+            <!-- N2: return Menor -->
+            <circle cx="150" cy="180" r="20" fill="#44475a" stroke="#6272a4" stroke-width="2"/>
+            <text x="145" y="185" fill="#f8f8f2" font-weight="bold">2</text>
+            <text x="90" y="185" fill="#6272a4" font-size="12">Menor</text>
+
+            <!-- N4: Predicate (tieneSeguro) -->
+            <circle cx="450" cy="180" r="20" fill="#282a36" stroke="#ff79c6" stroke-width="3"/>
+            <text x="445" y="185" fill="#f8f8f2" font-weight="bold">4</text>
+            <rect x="475" y="160" width="25" height="18" rx="4" fill="#ff79c6"/>
+            <text x="480" y="173" fill="#282a36" font-size="10" font-weight="bold">P2</text>
+            <text x="480" y="195" fill="#f1fa8c" font-size="12" font-family="monospace">seguro?</text>
+
+            <!-- N5: return Aprobado -->
+            <circle cx="350" cy="280" r="20" fill="#44475a" stroke="#6272a4" stroke-width="2"/>
+            <text x="345" y="285" fill="#f8f8f2" font-weight="bold">5</text>
+            <text x="280" y="285" fill="#6272a4" font-size="12">Aprob.</text>
+
+            <!-- N7: return Pendiente -->
+            <circle cx="550" cy="280" r="20" fill="#44475a" stroke="#6272a4" stroke-width="2"/>
+            <text x="545" y="285" fill="#f8f8f2" font-weight="bold">7</text>
+            <text x="580" y="285" fill="#6272a4" font-size="12">Pend.</text>
+
+            <!-- NFin: Sumidero -->
+            <circle cx="300" cy="350" r="20" fill="#bd93f9" stroke="#bd93f9" stroke-width="2"/>
+            <text x="290" y="355" fill="#282a36" font-weight="bold" font-size="12">Fin</text>
+        </svg>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Método de Cálculo</th>
+                <th>Verificación Matemática Visual</th>
+                <th>Resultado V(G)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Por Predicados</strong></td>
+                <td><span style="color: var(--pink);">P1</span> (Línea 1) y <span style="color: var(--pink);">P2</span> (Línea 4). <br>$V(G) = P + 1 = 2 + 1$</td>
+                <td><span class="highlight">3</span></td>
+            </tr>
+            <tr>
+                <td><strong>Por Elementos</strong></td>
+                <td>Aristas marcadas <span style="color: var(--comment);">E1...E7</span> (E=7). <br>Nodos (1,2,4,5,7,Fin) (N=6). <br>$V(G) = E - N + 2 = 7 - 6 + 2$</td>
+                <td><span class="highlight">3</span></td>
+            </tr>
+            <tr>
+                <td><strong>Por Regiones</strong></td>
+                <td>Regiones <span style="color: var(--cyan);">R1</span>, <span style="color: var(--green);">R2</span> (interiores) y <span style="color: var(--orange);">R3</span> (exterior). <br>$V(G) = R$</td>
+                <td><span class="highlight">3</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        Tras verificar matemáticamente que la complejidad es 3, extraemos exactamente los tres caminos bases recorriendo las aristas desde el nodo 1 hasta el nodo Fin, y determinamos qué datos obligan al código a seguir esa ruta:
+        <br><br><strong>Camino 1 (C1):</strong> Nodos 1 -> 2 -> Fin. <br><span class="highlight">Datos de prueba:</span> <code>edad = 15</code> (Activa la arista E1 por primera vez).
+        <br><br><strong>Camino 2 (C2):</strong> Nodos 1 -> 4 -> 5 -> Fin. <br><span class="highlight">Datos de prueba:</span> <code>edad = 20, tieneSeguro = true</code> (Activa aristas E2 y E4 por primera vez).
+        <br><br><strong>Camino 3 (C3):</strong> Nodos 1 -> 4 -> 7 -> Fin. <br><span class="highlight">Datos de prueba:</span> <code>edad = 20, tieneSeguro = false</code> (Activa la arista E5 por primera vez).
+    </p>
+
+    <h2>5. Troubleshooting: Errores Comunes en el Análisis</h2>
+    <p>
+        El error más crítico en el cálculo, <strong>como acabamos de ver en los diagramas SVG de AND/OR</strong>, es ignorar el cortocircuito lógico. Si tienes un <code>if (A || B)</code>, para la Fórmula 3 debes contar 2 puntos de decisión (P=2), no uno. La métrica de McCabe busca medir el esfuerzo de testeo, y una condición compuesta genera flujos de control ocultos que obligatoriamente deben probarse por separado.
+    </p>
+
+</body>
+</html>
