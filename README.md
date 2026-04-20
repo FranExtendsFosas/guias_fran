@@ -1,39 +1,58 @@
-# Guías Educativas - Francesc Fosas
+# 📚 Biblioteca de Guías Técnicas — Francesc Fosas
 
-¡Hola! Bienvenid@ a mi repositorio de recursos educativos.
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Active-success?style=flat-square&logo=github)](https://FranExtendsFosas.github.io/guias_fran/guia_sql.html)
+[![Language](https://img.shields.io/badge/Language-Español-blue?style=flat-square)](https://github.com/FranExtendsFosas/guias_fran)
+[![Status](https://img.shields.io/badge/Status-Producción-orange?style=flat-square)](https://github.com/FranExtendsFosas/guias_fran)
 
-Este repositorio está diseñado para alojar guías, tutoriales y recursos didácticos paso a paso. Principalmente pensado para mis estudiantes, pero abierto a cualquier persona que quiera aprender desde cero.
+¡Bienvenido/a! Este repositorio centraliza una colección de guías técnicas interactivas diseñadas para facilitar el aprendizaje de tecnologías clave en el desarrollo de software.
 
-## 📚 Guías Disponibles
-
-### 1. <a href="https://FranExtendsFosas.github.io/guias_fran/Guia_Git_GitHub_Fran_Fosas.html" target="_blank" rel="noopener noreferrer">Guía Interactiva de Git & GitHub</a>
-Una guía completa, visual y didáctica sobre el ciclo de vida de un archivo, cómo gestionar versiones locales con Git y cómo colaborar en la nube usando GitHub.
-
-* **Nivel:** Principiantes (desde "cero absoluto" hasta creación de Pull Requests).
-* **Temas principales:**
-  * Uso de comandos básicos (`add`, `commit`, `push`, `pull`).
-  * Gestión de ramas (branches) y fusiones (merges).
-  * Explicación de las 4 zonas de Git (Working Directory, Staging, Local, Remote).
-  * Cómo recuperar el código "roto" y diagnosticar problemas.
-  * Resolución de errores comunes como conflictos (Merge Conflicts), problemas de SSH y privacidades.
+Cada guía es un documento **auto-contenido, interactivo y con diseño profesional (OneDark)**, optimizado para ser consultado directamente desde el navegador.
 
 ---
 
-### 2. <a href="https://FranExtendsFosas.github.io/guias_fran/Camino_basico.html" target="_blank" rel="noopener noreferrer">Análisis de Caminos y Complejidad Ciclomática</a>
-Guía visual para comprender la construcción de grafos de flujo, cálculos de complejidad ciclomática (McCabe), y diseño de casos de prueba basados en caminos independientes.
+## 🚀 Guías Destacadas
 
-* **Nivel:** Intermedio (ingeniería de pruebas, diseño de casos, métricas de código).
-* **Temas principales:**
-  * Dibujar grafos de control y bloques básicos.
-  * Decisiones boolenas con cortocircuito (`&&`, `||`).
-  * Cálculo de complejidad: `V(G)=P+1`, `V(G)=E-N+2`, `V(G)=R`.
-  * Decisión de caminos independientes y cobertura de pruebas.
-  * Ejemplos prácticos y troubleshooting de errores comunes.
+| Guía | Nivel | Temas Clave | Acceso Directo |
+| :--- | :--- | :--- | :--- |
+| **SQL: De 0 a Producción** | 🟢 🔴 | PostgreSQL, JOINS, Triggers, Window Functions | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/guia_sql.html) |
+| **Git & GitHub Interactiva** | 🟢 🟡 | Ciclo de vida, Ramas, Pull Requests, SSH | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/Guia_Git_GitHub_Fran_Fosas.html) |
+| **Caminos y Complejidad** | 🟡 🔵 | Grafos de flujo, McCabe, Cobertura de tests | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/Camino_basico.html) |
 
 ---
 
-> **¿Cómo ver las guías visualmente?**  
-> GitHub es un almacén de código, por lo que al hacer clic en un archivo `.html` aquí verás su código fuente. Para ver y leer las guías con su diseño original y colores (Dracula theme), debes acceder a través del visor web animado por GitHub Pages haciendo clic en el enlace de arriba o visitando:
-> <a href="https://FranExtendsFosas.github.io/guias_fran/Guia_Git_GitHub_Fran_Fosas.html" target="_blank" rel="noopener noreferrer">Abrir la Guía</a>
+## 📖 Detalle de Contenidos
 
-*(Repositorio creado para fines educativos. Siéntete libre de compartir el conocimiento).*
+### 🐘 1. Biblia Técnica de SQL: De 0 a Producción
+Una inmersión profunda en el mundo de las bases de datos relacionales usando **PostgreSQL**.
+- **Fundamentos:** Instalación, tipos de datos y operaciones CRUD.
+- **Avanzado:** Consultas con JOINs, CTEs (WITH) y Vistas.
+- **Profesional:** Window Functions, Triggers, Procedimientos Almacenados y Normalización (3NF).
+- **Producción:** Seguridad (SQL Injection), Permisos (RBAC), Backups y Migraciones.
+
+### 🌿 2. Guía Interactiva de Git & GitHub
+Dominio del control de versiones desde los conceptos básicos hasta la colaboración profesional.
+- **Flujos de Trabajo:** Working Directory, Staging, Local y Remote.
+- **Resolución de Conflictos:** Cómo actuar cuando el código "rompe".
+- **Colaboración:** Gestión de Pull Requests y buenas prácticas en equipo.
+
+### 📉 3. Análisis de Caminos y Complejidad Ciclomática
+Teoría de grafos aplicada al testing de software y calidad de código.
+- **Métricas:** Cálculo de complejidad ciclomática de McCabe.
+- **Diseño de Pruebas:** Identificación de caminos independientes.
+- **Lógica:** Decisiones booleanas y cortocircuitos de código.
+
+---
+
+## 🛠️ Cómo usar este repositorio
+
+Este repositorio utiliza **GitHub Pages** para renderizar las guías como sitios web. No necesitas descargar nada:
+
+1.  Haz clic en los enlaces de **"Abrir Guía"** de la tabla superior.
+2.  Si estás navegando por el código fuente en GitHub, recuerda que los archivos `.html` no se renderizan automáticamente aquí. Usa siempre los enlaces directos para disfrutar de la experiencia visual completa (estilo OneDark, resaltado de sintaxis y navegación interactiva).
+
+---
+
+> [!NOTE]
+> Este repositorio tiene fines puramente educativos. El conocimiento es libre; siéntete libre de compartir estos enlaces con tus estudiantes o compañeros de trabajo.
+
+*(C) 2026 — Francesc Fosas*
