@@ -14,11 +14,11 @@ Cada guía es un documento **auto-contenido, interactivo y con diseño profesion
 
 | Guía | Nivel | Temas Clave | Acceso Directo |
 | :--- | :--- | :--- | :--- |
-| **SQL: De 0 a Producción** | 🟢 🔴 | PostgreSQL, JOINS, Triggers, Window Functions | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/guia_sql.html) |
-| **Git & GitHub Interactiva** | 🟢 🟡 | Ciclo de vida, Ramas, Pull Requests, SSH | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/Guia_Git_GitHub_Fran_Fosas.html) |
-| **Caminos y Complejidad** | 🟡 🔴 | Grafos de flujo, McCabe, Cobertura de tests | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/Camino_basico.html) |
-| **Docker: De 0 a Producción** | 🟢 🔴 | Contenedores, Volúmenes, Compose, Producción | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/docker-guia.html) |
-| **Modelo OSI: Entendiendo Redes** | 🟢 🟡 | 7 Capas, Encapsulación, TCP/IP, Troubleshooting | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/guia_osi.html) |
+| **SQL: De 0 a Producción** | 🟢🔴 | PostgreSQL, JOINS, Triggers, Window Functions | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/guia_sql.html) |
+| **Git & GitHub Interactiva** | 🟢🟡 | Ciclo de vida, Ramas, Pull Requests, SSH | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/Guia_Git_GitHub_Fran_Fosas.html) |
+| **Caminos y Complejidad** | 🟡🔴 | Grafos de flujo, McCabe, Cobertura de tests | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/Camino_basico.html) |
+| **Docker: De 0 a Producción** | 🟢🔴 | Contenedores, Volúmenes, Compose, Producción | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/docker-guia.html) |
+| **Modelo OSI: Entendiendo Redes** | 🟢🟡 | 7 Capas, Encapsulación, TCP/IP, Troubleshooting | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/guia_osi.html) |
 
 **Leyenda de niveles:**
 - 🟢 **Principiante:** Conceptos base y fundamentos esenciales.
