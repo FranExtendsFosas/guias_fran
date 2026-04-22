@@ -1,1732 +1,2175 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SQL — De 0 a Producción</title>
-<style>
-:root{--bg:#1e2127;--bg2:#282c34;--bg3:#21252b;--sidebar:#181a1f;--border:#3a3f4b;--text:#abb2bf;--text-bright:#dde3ee;--purple:#c678dd;--blue:#61afef;--green:#98c379;--yellow:#e5c07b;--orange:#d19a66;--red:#e06c75;--cyan:#56b6c2;--magenta:#ff79c6;--white:#fff;--sidebar-w:280px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-#sidebar{width:var(--sidebar-w);height:100vh;background:var(--sidebar);border-right:1px solid var(--border);position:fixed;top:0;left:0;overflow-y:auto;z-index:100}
-#main{margin-left:var(--sidebar-w);min-width:0;width:auto;position:relative}
-#sidebar-header{padding:20px 16px 12px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#1a1d23,#232830)}
-#sidebar-header h1{font-size:18px;color:var(--blue);font-weight:700}
-#sidebar-header p{font-size:11px;color:var(--text);margin-top:4px;opacity:.7}
-#search-box{margin:12px 12px 0;padding:7px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text-bright);font-size:13px;width:calc(100% - 24px);outline:none}
-#search-box:focus{border-color:var(--blue)}
-#search-box::placeholder{color:#5c6370}
-nav{padding:8px 0 24px}
-.nav-section{padding:10px 16px 4px;font-size:10px;font-weight:700;color:#5c6370;letter-spacing:1.2px;text-transform:uppercase}
-nav a{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:13px;color:var(--text);text-decoration:none;border-left:3px solid transparent;transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-nav a:hover{color:var(--text-bright);background:rgba(97,175,239,.06);border-left-color:var(--blue)}
-nav a.active{color:var(--blue);background:rgba(97,175,239,.1);border-left-color:var(--blue)}
-nav a .icon{font-size:14px;flex-shrink:0}
-nav a.hidden{display:none}
-#nav-no-results{padding:24px 16px;font-size:12px;color:#5c6370;text-align:center;font-style:italic;display:none}
-#nav-no-results.show{display:block}
-#main{margin-left:var(--sidebar-w);flex:1;padding:0 0 80px}
-.section{padding:48px 52px;border-bottom:1px solid var(--border);scroll-margin-top:20px}
-.sec-header{display:flex;align-items:center;gap:14px;margin-bottom:28px}
-.sec-icon{font-size:28px}
-.sec-title{font-size:28px;font-weight:700;color:var(--text-bright)}
-h2{font-size:20px;color:var(--yellow);margin:32px 0 14px;font-weight:600}
-p{line-height:1.75;margin-bottom:14px;font-size:15px}
-ul,ol{padding-left:22px;line-height:1.8;font-size:15px;margin-bottom:14px}
-li{margin-bottom:4px}
-code{font-family:'Fira Code','Cascadia Code',monospace;font-size:13px;background:rgba(97,175,239,.1);color:var(--blue);padding:2px 6px;border-radius:4px}
-strong{color:var(--text-bright);font-weight:600}
-.code-wrap{margin:18px 0 24px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
-.code-header{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;background:var(--bg3);border-bottom:1px solid var(--border)}
-.code-lang{font-size:11px;color:var(--blue);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
-.copy-btn{font-size:11px;color:#5c6370;background:none;border:1px solid var(--border);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all .15s}
-.copy-btn:hover{color:var(--text-bright);border-color:var(--blue)}
-pre{background:var(--bg3);padding:20px 24px;overflow-x:auto;font-family:'Fira Code','Cascadia Code',monospace;font-size:13.5px;line-height:1.65;color:var(--text)}
-.box{border-radius:8px;padding:16px 20px;margin:16px 0;border-left:4px solid}
-.box-pit{background:rgba(224,108,117,.07);border-color:var(--red)}.box-pit .box-title{color:var(--red);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
-.box-info{background:rgba(97,175,239,.07);border-color:var(--blue)}.box-info .box-title{color:var(--blue);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
-.box-tip{background:rgba(152,195,121,.07);border-color:var(--green)}.box-tip .box-title{color:var(--green);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
-table{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:14px}
-th{background:var(--bg3);color:var(--text-bright);font-weight:600;padding:10px 14px;text-align:left;border:1px solid var(--border)}
-td{padding:9px 14px;border:1px solid var(--border);word-break:break-word}
-tr:nth-child(even) td{background:rgba(255,255,255,.02)}
-.table-container{width:100%;overflow-x:auto;margin:16px 0 24px;border-radius:8px;border:1px solid var(--border)}
-.table-container table{margin:0;border:none}
-.hero{background:linear-gradient(135deg,#1a1d23 0%,#1e2533 50%,#1a1d23 100%);border-bottom:1px solid var(--border);padding:52px 52px 44px;position:relative;overflow:hidden}
-.hero::before{content:'SQL';position:absolute;right:40px;top:20px;font-size:160px;font-weight:900;color:rgba(97,175,239,.04);font-family:monospace}
-.hero-badge{display:inline-flex;background:rgba(97,175,239,.1);border:1px solid rgba(97,175,239,.3);color:var(--blue);font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;margin-bottom:20px}
-.hero h1{font-size:42px;font-weight:800;color:var(--white);letter-spacing:-1px;line-height:1.15;margin-bottom:14px}
-.hero h1 span{color:var(--blue)}
-.hero-desc{font-size:16px;color:var(--text);line-height:1.7;max-width:680px;margin-bottom:24px}
-.hero-meta{display:flex;gap:24px}.hero-stat{display:flex;flex-direction:column}
-.hero-stat .val{font-size:22px;font-weight:700;color:var(--text-bright)}
-.hero-stat .lbl{font-size:12px;color:#5c6370;margin-top:2px}
-html{scroll-behavior:smooth}
-::-webkit-scrollbar{width:7px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-@media(max-width:900px){#sidebar{transform:translateX(-100%)}#main{margin-left:0}.section{padding:32px 20px}.hero{padding:32px 20px}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL — De 0 a Producción</title>
+    <style>
+        :root {
+            --bg: #1e2127;
+            --bg2: #282c34;
+            --bg3: #21252b;
+            --sidebar: #181a1f;
+            --border: #3a3f4b;
+            --text: #abb2bf;
+            --text-bright: #dde3ee;
+            --purple: #c678dd;
+            --blue: #61afef;
+            --green: #98c379;
+            --yellow: #e5c07b;
+            --orange: #d19a66;
+            --red: #e06c75;
+            --cyan: #56b6c2;
+            --magenta: #ff79c6;
+            --white: #fff;
+            --sidebar-w: 280px
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden
+        }
+
+        #sidebar {
+            width: var(--sidebar-w);
+            height: 100vh;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 100
+        }
+
+        #main {
+            margin-left: var(--sidebar-w);
+            min-width: 0;
+            width: auto;
+            position: relative
+        }
+
+        #sidebar-header {
+            padding: 20px 16px 12px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, #1a1d23, #232830)
+        }
+
+        #sidebar-header h1 {
+            font-size: 18px;
+            color: var(--blue);
+            font-weight: 700
+        }
+
+        #sidebar-header p {
+            font-size: 11px;
+            color: var(--text);
+            margin-top: 4px;
+            opacity: .7
+        }
+
+        #search-box {
+            margin: 12px 12px 0;
+            padding: 7px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg2);
+            color: var(--text-bright);
+            font-size: 13px;
+            width: calc(100% - 24px);
+            outline: none
+        }
+
+        #search-box:focus {
+            border-color: var(--blue)
+        }
+
+        #search-box::placeholder {
+            color: #5c6370
+        }
+
+        nav {
+            padding: 8px 0 24px
+        }
+
+        .nav-section {
+            padding: 10px 16px 4px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #5c6370;
+            letter-spacing: 1.2px;
+            text-transform: uppercase
+        }
+
+        nav a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px;
+            font-size: 13px;
+            color: var(--text);
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all .15s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        nav a:hover {
+            color: var(--text-bright);
+            background: rgba(97, 175, 239, .06);
+            border-left-color: var(--blue)
+        }
+
+        nav a.active {
+            color: var(--blue);
+            background: rgba(97, 175, 239, .1);
+            border-left-color: var(--blue)
+        }
+
+        nav a .icon {
+            font-size: 14px;
+            flex-shrink: 0
+        }
+
+        nav a.hidden {
+            display: none
+        }
+
+        #nav-no-results {
+            padding: 24px 16px;
+            font-size: 12px;
+            color: #5c6370;
+            text-align: center;
+            font-style: italic;
+            display: none
+        }
+
+        #nav-no-results.show {
+            display: block
+        }
+
+        #main {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            padding: 0 0 80px
+        }
+
+        .section {
+            padding: 48px 52px;
+            border-bottom: 1px solid var(--border);
+            scroll-margin-top: 20px
+        }
+
+        .sec-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px
+        }
+
+        .sec-icon {
+            font-size: 28px
+        }
+
+        .sec-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-bright)
+        }
+
+        h2 {
+            font-size: 20px;
+            color: var(--yellow);
+            margin: 32px 0 14px;
+            font-weight: 600
+        }
+
+        p {
+            line-height: 1.75;
+            margin-bottom: 14px;
+            font-size: 15px
+        }
+
+        ul,
+        ol {
+            padding-left: 22px;
+            line-height: 1.8;
+            font-size: 15px;
+            margin-bottom: 14px
+        }
+
+        li {
+            margin-bottom: 4px
+        }
+
+        code {
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 13px;
+            background: rgba(97, 175, 239, .1);
+            color: var(--blue);
+            padding: 2px 6px;
+            border-radius: 4px
+        }
+
+        strong {
+            color: var(--text-bright);
+            font-weight: 600
+        }
+
+        .code-wrap {
+            margin: 18px 0 24px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border)
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 16px;
+            background: var(--bg3);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .code-lang {
+            font-size: 11px;
+            color: var(--blue);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px
+        }
+
+        .copy-btn {
+            font-size: 11px;
+            color: #5c6370;
+            background: none;
+            border: 1px solid var(--border);
+            padding: 3px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all .15s
+        }
+
+        .copy-btn:hover {
+            color: var(--text-bright);
+            border-color: var(--blue)
+        }
+
+        pre {
+            background: var(--bg3);
+            padding: 20px 24px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 13.5px;
+            line-height: 1.65;
+            color: var(--text)
+        }
+
+        .box {
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-left: 4px solid
+        }
+
+        .box-pit {
+            background: rgba(224, 108, 117, .07);
+            border-color: var(--red)
+        }
+
+        .box-pit .box-title {
+            color: var(--red);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            margin-bottom: 8px
+        }
+
+        .box-info {
+            background: rgba(97, 175, 239, .07);
+            border-color: var(--blue)
+        }
+
+        .box-info .box-title {
+            color: var(--blue);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            margin-bottom: 8px
+        }
+
+        .box-tip {
+            background: rgba(152, 195, 121, .07);
+            border-color: var(--green)
+        }
+
+        .box-tip .box-title {
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            margin-bottom: 8px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 24px;
+            font-size: 14px
+        }
+
+        th {
+            background: var(--bg3);
+            color: var(--text-bright);
+            font-weight: 600;
+            padding: 10px 14px;
+            text-align: left;
+            border: 1px solid var(--border)
+        }
+
+        td {
+            padding: 9px 14px;
+            border: 1px solid var(--border);
+            word-break: break-word
+        }
+
+        tr:nth-child(even) td {
+            background: rgba(255, 255, 255, .02)
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin: 16px 0 24px;
+            border-radius: 8px;
+            border: 1px solid var(--border)
+        }
+
+        .table-container table {
+            margin: 0;
+            border: none
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1a1d23 0%, #1e2533 50%, #1a1d23 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 52px 52px 44px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .hero::before {
+            content: 'SQL';
+            position: absolute;
+            right: 40px;
+            top: 20px;
+            font-size: 160px;
+            font-weight: 900;
+            color: rgba(97, 175, 239, .04);
+            font-family: monospace
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            background: rgba(97, 175, 239, .1);
+            border: 1px solid rgba(97, 175, 239, .3);
+            color: var(--blue);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-bottom: 20px
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--white);
+            letter-spacing: -1px;
+            line-height: 1.15;
+            margin-bottom: 14px
+        }
+
+        .hero h1 span {
+            color: var(--blue)
+        }
+
+        .hero-desc {
+            font-size: 16px;
+            color: var(--text);
+            line-height: 1.7;
+            max-width: 680px;
+            margin-bottom: 24px
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 24px
+        }
+
+        .hero-stat {
+            display: flex;
+            flex-direction: column
+        }
+
+        .hero-stat .val {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-bright)
+        }
+
+        .hero-stat .lbl {
+            font-size: 12px;
+            color: #5c6370;
+            margin-top: 2px
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg)
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px
+        }
+
+        @media(max-width:900px) {
+            #sidebar {
+                transform: translateX(-100%)
+            }
+
+            #main {
+                margin-left: 0
+            }
+
+            .section {
+                padding: 32px 20px
+            }
+
+            .hero {
+                padding: 32px 20px
+            }
+        }
+    </style>
 </head>
+
 <body>
-<aside id="sidebar">
-<div id="sidebar-header"><h1>🗄️ SQL</h1><p>De 0 a Producción — PostgreSQL</p></div>
-<input id="search-box" type="text" placeholder="🔍 Buscar sección..." oninput="filterNav(this.value)">
-<nav id="nav">
-<div class="nav-section">🟢 Fundamentos</div>
-<a href="#s1" class="nav-link"><span class="icon">🗄️</span>1. ¿Qué es SQL?</a>
-<a href="#s2" class="nav-link"><span class="icon">⚙️</span>2. Instalación</a>
-<a href="#s3" class="nav-link"><span class="icon">📊</span>3. Tablas, tipos y CRUD</a>
-<div class="nav-section">🟡 Intermedio</div>
-<a href="#s4" class="nav-link"><span class="icon">🔍</span>4. Filtrado y funciones</a>
-<a href="#s5" class="nav-link"><span class="icon">🔗</span>5. Relaciones (JOINs)</a>
-<div class="nav-section">🔵 Avanzado</div>
-<a href="#s6" class="nav-link"><span class="icon">⚡</span>6. Índices y rendimiento</a>
-<a href="#s7" class="nav-link"><span class="icon">📦</span>7. CTEs y Vistas</a>
-<a href="#s8" class="nav-link"><span class="icon">🔒</span>8. Transacciones</a>
-<div class="nav-section">🟣 Producción</div>
-<a href="#s9" class="nav-link"><span class="icon">🛡️</span>9. Permisos y seguridad</a>
-<a href="#s10" class="nav-link"><span class="icon">🚀</span>10. Deploy a producción</a>
-<div class="nav-section">⚫ Profesional</div>
-<a href="#s11" class="nav-link"><span class="icon">📈</span>11. Window Functions</a>
-<a href="#s12" class="nav-link"><span class="icon">🔔</span>12. Triggers</a>
-<a href="#s13" class="nav-link"><span class="icon">🏗️</span>13. Normalización</a>
-<a href="#s14" class="nav-link"><span class="icon">🧱</span>14. Constraints</a>
-<a href="#s15" class="nav-link"><span class="icon">🛒</span>15. Esquema e-commerce</a>
-<div class="nav-section">🔴 Consolidación</div>
-<a href="#s16" class="nav-link"><span class="icon">⚠️</span>16. 10 Pitfalls</a>
-<a href="#s17" class="nav-link"><span class="icon">🏆</span>17. Gran Reto Final</a>
-<a href="#s18" class="nav-link"><span class="icon">💡</span>18. Solución Maestra</a>
-<a href="#resumen" class="nav-link"><span class="icon">📄</span>Hoja de ruta</a>
-<div id="nav-no-results">No se encontraron temas</div>
-</nav>
-</aside>
-<main id="main">
-<div class="hero">
-<div class="hero-badge">📅 Actualizado — 2026 · PostgreSQL 16+</div>
-<h1><span>SQL</span><br>De 0 a Producción</h1>
-<p class="hero-desc">Guía completa de SQL con PostgreSQL: desde tu primera consulta hasta esquemas profesionales de e-commerce, con analogías, Mini-Labs y mejores prácticas de producción.</p>
-<div class="hero-meta">
-<div class="hero-stat"><span class="val">18</span><span class="lbl">Secciones</span></div>
-<div class="hero-stat"><span class="val">3</span><span class="lbl">Mini-Labs</span></div>
-<div class="hero-stat"><span class="val">10</span><span class="lbl">Pitfalls</span></div>
-<div class="hero-stat"><span class="val">1</span><span class="lbl">Capstone</span></div>
-</div>
-</div>
-<div id="raw-md" style="display:none">
-## 1. ¿Qué es SQL y por qué lo necesitas?
-
-### El problema que resuelve
-
-Imagina que tienes una agenda de contactos en una libreta de papel. Mientras tienes 20 contactos, todo va bien. Pero cuando tienes 20.000… ¿cómo buscas a alguien por ciudad? ¿Cómo eliminas todos los duplicados? Necesitas un sistema que **organice, busque y manipule datos de forma eficiente**. Eso es una **base de datos**, y **SQL** (Structured Query Language — Lenguaje de Consulta Estructurado) es el idioma universal para hablar con ella.
-
-### Concepto clave
-
-SQL no es un lenguaje de programación general como Python o Java. Es un **lenguaje declarativo**: tú le dices **qué quieres**, no **cómo hacerlo**. Es como pedir en un restaurante: dices "quiero una pizza" y la cocina se encarga del cómo.
-
-> [!NOTE]
-> Aunque existe un estándar internacional (SQL:2023), cada motor añade sus propias "extensiones". Es como el español: el estándar es el mismo, pero los acentos y modismos cambian entre países.
-
-> [!NOTE]
-> SQL se pronuncia "ese-cu-ele" en español o "sequel" en inglés. Ambas formas son correctas y las encontrarás en documentación profesional.
-
-### Motores de bases de datos más comunes
-
-No existe "un solo SQL". Hay varios **motores** (SGBD — Sistemas Gestores de Bases de Datos) que hablan SQL con ligeras variaciones de dialecto:
-
-| Motor | Uso típico | Licencia |
-|-------|-----------|----------|
-| PostgreSQL | Aplicaciones empresariales, datos complejos | Open Source |
-| MySQL / MariaDB | Web (WordPress, Laravel, etc.) | Open Source |
-| SQLite | Apps móviles, prototipos, testing | Open Source |
-| SQL Server | Entornos corporativos Microsoft | Comercial |
-| Oracle DB | Grandes corporaciones, banca | Comercial |
-
-> [!TIP]
-> Para esta guía usaremos **PostgreSQL** por ser el más completo y profesional. Todo lo que aprendas aquí es transferible al 95% a cualquier otro motor.
-
----
-
-## 2. Instalación y primer contacto
-
-### Instalar PostgreSQL
-
-```bash
-# Ubuntu / Debian
-sudo apt update
-sudo apt install postgresql postgresql-client
-
-# openSUSE
-sudo zypper install postgresql postgresql-server
-
-# macOS con Homebrew
-brew install postgresql@16
-
-# Verificar que el servicio está corriendo
-sudo systemctl start postgresql   # Iniciar el servicio
-sudo systemctl enable postgresql  # Que arranque con el sistema
-sudo systemctl status postgresql  # Comprobar estado
-```
-
-### Acceder por primera vez
-
-PostgreSQL crea un usuario del sistema llamado `postgres`. Vamos a usarlo para entrar:
+    <aside id="sidebar">
+        <div id="sidebar-header">
+            <h1>🗄️ SQL</h1>
+            <p>De 0 a Producción — PostgreSQL</p>
+        </div>
+        <input id="search-box" type="text" placeholder="🔍 Buscar sección..." oninput="filterNav(this.value)">
+        <nav id="nav">
+            <div class="nav-section">🟢 Fundamentos</div>
+            <a href="#s1" class="nav-link"><span class="icon">🗄️</span>1. ¿Qué es SQL?</a>
+            <a href="#s2" class="nav-link"><span class="icon">⚙️</span>2. Instalación</a>
+            <a href="#s3" class="nav-link"><span class="icon">📊</span>3. Tablas, tipos y CRUD</a>
+            <div class="nav-section">🟡 Intermedio</div>
+            <a href="#s4" class="nav-link"><span class="icon">🔍</span>4. Filtrado y funciones</a>
+            <a href="#s5" class="nav-link"><span class="icon">🔗</span>5. Relaciones (JOINs)</a>
+            <div class="nav-section">🔵 Avanzado</div>
+            <a href="#s6" class="nav-link"><span class="icon">⚡</span>6. Índices y rendimiento</a>
+            <a href="#s7" class="nav-link"><span class="icon">📦</span>7. CTEs y Vistas</a>
+            <a href="#s8" class="nav-link"><span class="icon">🔒</span>8. Transacciones</a>
+            <div class="nav-section">🟣 Producción</div>
+            <a href="#s9" class="nav-link"><span class="icon">🛡️</span>9. Permisos y seguridad</a>
+            <a href="#s10" class="nav-link"><span class="icon">🚀</span>10. Deploy a producción</a>
+            <div class="nav-section">⚫ Profesional</div>
+            <a href="#s11" class="nav-link"><span class="icon">📈</span>11. Window Functions</a>
+            <a href="#s12" class="nav-link"><span class="icon">🔔</span>12. Triggers</a>
+            <a href="#s13" class="nav-link"><span class="icon">🏗️</span>13. Normalización</a>
+            <a href="#s14" class="nav-link"><span class="icon">🧱</span>14. Constraints</a>
+            <a href="#s15" class="nav-link"><span class="icon">🛒</span>15. Esquema e-commerce</a>
+            <div class="nav-section">🔴 Consolidación</div>
+            <a href="#s16" class="nav-link"><span class="icon">⚠️</span>16. 10 Pitfalls</a>
+            <a href="#s17" class="nav-link"><span class="icon">🏆</span>17. Gran Reto Final</a>
+            <a href="#s18" class="nav-link"><span class="icon">💡</span>18. Solución Maestra</a>
+            <a href="#resumen" class="nav-link"><span class="icon">📄</span>Hoja de ruta</a>
+            <div id="nav-no-results">No se encontraron temas</div>
+        </nav>
+    </aside>
+    <main id="main">
+        <div class="hero">
+            <div class="hero-badge">📅 Actualizado — 2026 · PostgreSQL 16+</div>
+            <h1><span>SQL</span><br>De 0 a Producción</h1>
+            <p class="hero-desc">Guía completa de SQL con PostgreSQL: desde tu primera consulta hasta esquemas
+                profesionales de e-commerce, con analogías, Mini-Labs y mejores prácticas de producción.</p>
+            <div class="hero-meta">
+                <div class="hero-stat"><span class="val">18</span><span class="lbl">Secciones</span></div>
+                <div class="hero-stat"><span class="val">3</span><span class="lbl">Mini-Labs</span></div>
+                <div class="hero-stat"><span class="val">10</span><span class="lbl">Pitfalls</span></div>
+                <div class="hero-stat"><span class="val">1</span><span class="lbl">Capstone</span></div>
+            </div>
+        </div>
+        <div id="raw-md" style="display:none">
+            ## 1. ¿Qué es SQL y por qué lo necesitas?
+
+            ### El problema que resuelve
+
+            Imagina que tienes una agenda de contactos en una libreta de papel. Mientras tienes 20 contactos, todo va
+            bien. Pero cuando tienes 20.000… ¿cómo buscas a alguien por ciudad? ¿Cómo eliminas todos los duplicados?
+            Necesitas un sistema que **organice, busque y manipule datos de forma eficiente**. Eso es una **base de
+            datos**, y **SQL** (Structured Query Language — Lenguaje de Consulta Estructurado) es el idioma universal
+            para hablar con ella.
+
+            ### Concepto clave
+
+            SQL no es un lenguaje de programación general como Python o Java. Es un **lenguaje declarativo**: tú le
+            dices **qué quieres**, no **cómo hacerlo**. Es como pedir en un restaurante: dices "quiero una pizza" y la
+            cocina se encarga del cómo.
+
+            > [!NOTE]
+            > Aunque existe un estándar internacional (SQL:2023), cada motor añade sus propias "extensiones". Es como el
+            español: el estándar es el mismo, pero los acentos y modismos cambian entre países.
+
+            > [!NOTE]
+            > SQL se pronuncia "ese-cu-ele" en español o "sequel" en inglés. Ambas formas son correctas y las
+            encontrarás en documentación profesional.
+
+            ### Motores de bases de datos más comunes
+
+            No existe "un solo SQL". Hay varios **motores** (SGBD — Sistemas Gestores de Bases de Datos) que hablan SQL
+            con ligeras variaciones de dialecto:
+
+            | Motor | Uso típico | Licencia |
+            |-------|-----------|----------|
+            | PostgreSQL | Aplicaciones empresariales, datos complejos | Open Source |
+            | MySQL / MariaDB | Web (WordPress, Laravel, etc.) | Open Source |
+            | SQLite | Apps móviles, prototipos, testing | Open Source |
+            | SQL Server | Entornos corporativos Microsoft | Comercial |
+            | Oracle DB | Grandes corporaciones, banca | Comercial |
+
+            > [!TIP]
+            > Para esta guía usaremos **PostgreSQL** por ser el más completo y profesional. Todo lo que aprendas aquí es
+            transferible al 95% a cualquier otro motor.
+
+            ---
+
+            ## 2. Instalación y primer contacto
+
+            ### Instalar PostgreSQL
+
+            ```bash
+            # Ubuntu / Debian
+            sudo apt update
+            sudo apt install postgresql postgresql-client
+
+            # openSUSE
+            sudo zypper install postgresql postgresql-server
 
-```bash
-# Cambiar al usuario postgres del sistema
-sudo -u postgres psql
-```
+            # macOS con Homebrew
+            brew install postgresql@16
 
-Verás un prompt así:
+            # Verificar que el servicio está corriendo
+            sudo systemctl start postgresql # Iniciar el servicio
+            sudo systemctl enable postgresql # Que arranque con el sistema
+            sudo systemctl status postgresql # Comprobar estado
+            ```
 
-```
-postgres=#
-```
+            ### Acceder por primera vez
 
-¡Estás dentro! Ese `#` significa que tienes privilegios de superusuario.
+            PostgreSQL crea un usuario del sistema llamado `postgres`. Vamos a usarlo para entrar:
 
-```sql
--- Ver la versión instalada
-SELECT version();
+            ```bash
+            # Cambiar al usuario postgres del sistema
+            sudo -u postgres psql
+            ```
 
--- Listar todas las bases de datos existentes
-\l
+            Verás un prompt así:
 
--- Salir de psql
-\q
-```
+            ```
+            postgres=#
+            ```
 
-> [!WARNING]
-> El usuario `postgres` es el superadministrador. **Nunca** lo uses para aplicaciones en producción. Es como usar la cuenta root de Linux para navegar por internet. Más adelante crearemos usuarios con permisos limitados.
+            ¡Estás dentro! Ese `#` significa que tienes privilegios de superusuario.
 
-### Crear tu usuario y tu primera base de datos
+            ```sql
+            -- Ver la versión instalada
+            SELECT version();
 
-```sql
--- Desde psql como usuario postgres:
+            -- Listar todas las bases de datos existentes
+            \l
 
--- 1. Crear un usuario (rol) con contraseña
-CREATE USER dev_user WITH PASSWORD 'mi_password_segura';
+            -- Salir de psql
+            \q
+            ```
 
--- 2. Crear una base de datos asignada a ese usuario
-CREATE DATABASE mi_primera_db OWNER dev_user;
+            > [!WARNING]
+            > El usuario `postgres` es el superadministrador. **Nunca** lo uses para aplicaciones en producción. Es como
+            usar la cuenta root de Linux para navegar por internet. Más adelante crearemos usuarios con permisos
+            limitados.
+
+            ### Crear tu usuario y tu primera base de datos
 
--- 3. Conectarte a ella
-\c mi_primera_db
-```
+            ```sql
+            -- Desde psql como usuario postgres:
 
-```bash
-# Ahora puedes conectarte directamente desde la terminal:
-psql -U dev_user -d mi_primera_db -h localhost
-```
+            -- 1. Crear un usuario (rol) con contraseña
+            CREATE USER fran WITH PASSWORD 'mi_password_segura';
 
-> [!WARNING]
-> En muchas instalaciones de Linux, al conectar con `-h localhost` recibirás el error **Peer authentication failed**. Esto ocurre porque PostgreSQL usa autenticación por sistema operativo en lugar de por contraseña. Para solucionarlo, edita `pg_hba.conf`: busca la línea `local all all peer` y cámbiala por `local all all md5` (o `scram-sha-256`). Luego reinicia con `sudo systemctl restart postgresql`.
+            -- 2. Crear una base de datos asignada a ese usuario
+            CREATE DATABASE mi_primera_db OWNER fran;
 
----
+            -- 3. Conectarte a ella
+            \c mi_primera_db
+            ```
 
-## 3. Los fundamentos: tablas, tipos de datos y CRUD
+            ```bash
+            # Ahora puedes conectarte directamente desde la terminal:
+            psql -U fran -d mi_primera_db -h localhost
+            ```
 
-### ¿Qué es una tabla?
+            > [!WARNING]
+            > En muchas instalaciones de Linux, al conectar con `-h localhost` recibirás el error **Peer authentication
+            failed**. Esto ocurre porque PostgreSQL usa autenticación por sistema operativo en lugar de por contraseña.
+            Para solucionarlo, edita `pg_hba.conf`: busca la línea `local all all peer` y cámbiala por `local all all
+            md5` (o `scram-sha-256`). Luego reinicia con `sudo systemctl restart postgresql`.
 
-Piensa en una **hoja de cálculo de Excel**: tiene columnas (nombre, edad, email) y filas (cada persona). En SQL:
-
-- **Columna** = Campo / Atributo (define el TIPO de dato)
-- **Fila** = Registro / Tupla (un dato concreto)
-- **Tabla** = Conjunto de filas y columnas con un nombre
-
-### Tipos de datos esenciales
-
-```sql
--- Los tipos que usarás en el 90% de los casos:
-
-INTEGER          -- Números enteros: 1, 42, -7
-BIGINT           -- Enteros muy grandes (IDs en apps con millones de registros)
-SERIAL           -- Entero autoincremental (perfecto para IDs automáticos)
-VARCHAR(n)       -- Texto de longitud variable, máximo n caracteres
-TEXT             -- Texto sin límite de longitud
-BOOLEAN          -- true / false
-DATE             -- Fecha: '2026-04-20'
-TIMESTAMP        -- Fecha + hora: '2026-04-20 19:30:00'
-NUMERIC(10,2)    -- Números decimales exactos (perfecto para dinero): 1234567.89
-JSON / JSONB     -- Datos en formato JSON (JSONB es más rápido para consultas)
-UUID             -- Identificador único universal
-```
-
-> [!TIP]
-> Usa `NUMERIC` para dinero, **nunca** `FLOAT` ni `REAL`. Los tipos flotantes tienen errores de redondeo. Imagina que tu banco te cobra 0.000001€ de más en cada operación: a escala de millones de transacciones, eso es un problema serio.
-
-### CREATE TABLE — Crear tu primera tabla
-
-```sql
--- Creamos una tabla de productos para una tienda online
-CREATE TABLE productos (
-    id          SERIAL PRIMARY KEY,        -- ID único, se genera solo
-    nombre      VARCHAR(200) NOT NULL,     -- Obligatorio (NOT NULL)
-    descripcion TEXT,                       -- Opcional, sin límite de longitud
-    precio      NUMERIC(10,2) NOT NULL,    -- Hasta 99999999.99
-    stock       INTEGER DEFAULT 0,          -- Si no se indica, vale 0
-    activo      BOOLEAN DEFAULT true,       -- Producto visible o no
-    created_at  TIMESTAMP DEFAULT NOW()     -- Fecha de creación automática
-);
-```
-
-> [!NOTE]
-> `PRIMARY KEY` significa que esa columna identifica de forma única cada fila. No puede haber dos productos con el mismo `id`. Es como el DNI de cada registro.
-
-### INSERT — Meter datos
-
-```sql
--- Insertar un producto
-INSERT INTO productos (nombre, precio, stock)
-VALUES ('Teclado mecánico', 89.99, 50);
-
--- Insertar varios a la vez
-INSERT INTO productos (nombre, precio, stock) VALUES
-    ('Ratón gaming', 45.50, 120),
-    ('Monitor 27"', 329.99, 15),
-    ('Webcam HD', 59.90, 80),
-    ('Cable USB-C', 12.99, 500);
-```
-
-> [!WARNING]
-> No incluimos `id` ni `created_at` en el INSERT porque se generan automáticamente (SERIAL y DEFAULT NOW()). Si intentas insertar un id duplicado, PostgreSQL te devolverá un error.
-
-### SELECT — Leer datos (la consulta más importante)
-
-```sql
--- Traer TODOS los productos con TODAS las columnas
-SELECT * FROM productos;
-
--- Solo nombre y precio
-SELECT nombre, precio FROM productos;
-
--- Filtrar con WHERE
-SELECT nombre, precio
-FROM productos
-WHERE precio > 50;
-
--- Combinar condiciones con AND / OR
-SELECT nombre, precio, stock
-FROM productos
-WHERE precio > 50 AND stock > 20;
-
--- Ordenar resultados
-SELECT nombre, precio
-FROM productos
-ORDER BY precio DESC;       -- DESC = de mayor a menor, ASC = de menor a mayor
-
--- Limitar resultados (paginación básica)
-SELECT nombre, precio
-FROM productos
-ORDER BY precio DESC
-LIMIT 3 OFFSET 0;            -- Los 3 primeros caros
--- OFFSET salta las primeras N filas. Útil para páginas: 
--- Página 2: LIMIT 3 OFFSET 3
-```
-
-### UPDATE — Modificar datos existentes
-
-```sql
--- Subir el precio del teclado un 10%
-UPDATE productos
-SET precio = precio * 1.10
-WHERE nombre = 'Teclado mecánico';
-
--- Desactivar productos sin stock
-UPDATE productos
-SET activo = false
-WHERE stock = 0;
-```
-
-> [!WARNING]
-> **SIEMPRE** usa `WHERE` en un UPDATE. Si lo olvidas, modificarás TODAS las filas de la tabla. Esto es uno de los errores más devastadores en producción. Regla de oro: escribe primero el WHERE, luego el SET.
-
-### DELETE — Eliminar datos
-
-```sql
--- Eliminar un producto concreto
-DELETE FROM productos
-WHERE id = 5;
-
--- Eliminar productos inactivos
-DELETE FROM productos
-WHERE activo = false;
-```
-
-> [!WARNING]
-> La misma regla que con UPDATE: **jamás** un DELETE sin WHERE en producción. `DELETE FROM productos;` sin WHERE borra TODA la tabla. No hay papelera de reciclaje.
-
-### 🧪 Mini-Lab 1: Tu primera tabla completa
-
-Pon en práctica todo lo aprendido en esta sección. **Hazlo tú sin mirar la solución:**
-
-**Reto:** Crea una tabla `alumnos` con estos campos: `id` (autoincremental), `nombre`, `email` (único), `nota_media` (decimal), `fecha_matricula` (fecha) y `activo` (booleano). Luego:
-
-- Inserta 5 alumnos con datos inventados
-- Consulta los alumnos con nota media superior a 7
-- Actualiza la nota media del alumno con id 3
-- Desactiva (`activo = false`) a todos los alumnos con nota inferior a 5
-- Elimina los alumnos inactivos
-
-```sql
--- SOLUCIÓN (intenta hacerlo antes de mirar)
-
--- Paso 0: Crear la tabla
-CREATE TABLE alumnos (
-    id              SERIAL PRIMARY KEY,
-    nombre          VARCHAR(100) NOT NULL,
-    email           VARCHAR(150) UNIQUE NOT NULL,
-    nota_media      NUMERIC(4,2) CHECK (nota_media BETWEEN 0 AND 10),
-    fecha_matricula DATE DEFAULT CURRENT_DATE,
-    activo          BOOLEAN DEFAULT true
-);
-
--- Paso 1: Insertar 5 alumnos
-INSERT INTO alumnos (nombre, email, nota_media) VALUES
-    ('María Torres', 'maria@uni.es', 8.5),
-    ('Carlos Ruiz', 'carlos@uni.es', 6.2),
-    ('Laura Sánchez', 'laura@uni.es', 4.3),
-    ('Pedro Gómez', 'pedro@uni.es', 9.1),
-    ('Ana Martín', 'ana@uni.es', 3.8);
-
--- Paso 2: Nota media > 7
-SELECT nombre, nota_media FROM alumnos WHERE nota_media > 7;
-
--- Paso 3: Actualizamos al alumno 3. Ahora su nota es 5.5 (aprobado).
--- Esto evitará que sea borrado en los pasos siguientes (efecto cascada lógico).
-UPDATE alumnos SET nota_media = 5.5 WHERE id = 3;
-
--- Paso 4: Marcamos como inactivos a los que siguen por debajo de 5.
--- El alumno 3 ya NO entra aquí porque su nota ahora es superior a 5.
-UPDATE alumnos SET activo = false WHERE nota_media < 5;
-
--- Paso 5: Limpieza física. Borramos definitivamente a los que 
--- marcamos como inactivos (soft-delete) en el paso anterior.
-DELETE FROM alumnos WHERE activo = false;
-```
-
----
-
-## 4. Filtrado avanzado y funciones
-
-### El problema
-
-Ya sabes hacer consultas básicas con WHERE, pero en producción las búsquedas son mucho más complejas: rangos de precios, búsquedas por texto parcial, valores nulos, agrupaciones por categoría. Necesitas herramientas más potentes.
-
-### Operadores de comparación y lógicos
-
-```sql
--- BETWEEN: rango inclusivo
-SELECT * FROM productos
-WHERE precio BETWEEN 40 AND 100;
-
--- IN: lista de valores
-SELECT * FROM productos
-WHERE nombre IN ('Ratón gaming', 'Webcam HD');
-
--- LIKE: búsqueda por patrón
-SELECT * FROM productos
-WHERE nombre LIKE '%gaming%';    -- Contiene "gaming"
--- % = cualquier cosa, _ = un solo carácter
-
--- ILIKE: como LIKE pero ignora mayúsculas/minúsculas (exclusivo PostgreSQL)
-SELECT * FROM productos
-WHERE nombre ILIKE '%teclado%';
-
--- IS NULL / IS NOT NULL
-SELECT * FROM productos
-WHERE descripcion IS NULL;       -- Productos sin descripción
-```
-
-### DISTINCT — Eliminar duplicados
-
-Antes de ver cómo resumir datos, necesitamos saber cómo limpiar duplicados en los resultados:
-
-```sql
--- Si quieres saber qué categorías existen (sin que se repitan)
-SELECT DISTINCT categoria FROM productos;
-```
-
-### COALESCE — Manejo de Nulos
-
-Sirve para dar un valor por defecto cuando algo es `NULL`:
-
-```sql
--- Si la descripción es NULL, muestra 'Sin descripción'
-SELECT nombre, COALESCE(descripcion, 'Sin descripción') FROM productos;
-```
-
-### CASE WHEN — Lógica condicional en SQL
-
-A veces necesitas que el resultado dependa de una condición (como un `if/else`). Para eso usamos `CASE`:
-
-```sql
--- Clasificar productos según su stock
-SELECT 
-    nombre,
-    stock,
-    CASE 
-        WHEN stock = 0 THEN 'Agotado'
-        WHEN stock < 10 THEN 'Bajo stock'
-        ELSE 'Suficiente'
-    END AS estado_alerta
-FROM productos;
-```
-
-### Funciones de agregación
-
-Las funciones de agregación resumen muchas filas en un solo valor. Son el equivalente a las fórmulas de Excel tipo SUMA, PROMEDIO, etc.
-
-```sql
--- Contar cuántos productos hay
-SELECT COUNT(*) FROM productos;
-
--- Precio medio
-SELECT AVG(precio) FROM productos;
-
--- Precio máximo y mínimo
-SELECT MAX(precio), MIN(precio) FROM productos;
-
--- Suma total del valor del inventario
-SELECT SUM(precio * stock) AS valor_inventario
-FROM productos;
-```
-
-> [!NOTE]
-> `AS valor_inventario` es un **alias**: renombra la columna en el resultado. No cambia nada en la base de datos, solo en la presentación.
-
-### GROUP BY — Agrupar para resumir
-
-```sql
--- Supongamos que añadimos una columna "categoria"
-ALTER TABLE productos ADD COLUMN categoria VARCHAR(50);
-
--- Actualizar las categorías
-UPDATE productos SET categoria = 'Periféricos' WHERE nombre IN ('Teclado mecánico', 'Ratón gaming');
-UPDATE productos SET categoria = 'Monitores' WHERE nombre LIKE '%Monitor%';
-UPDATE productos SET categoria = 'Accesorios' WHERE nombre IN ('Webcam HD', 'Cable USB-C');
-
--- Ahora agrupamos: ¿cuántos productos hay por categoría?
-SELECT categoria, COUNT(*) AS total, AVG(precio) AS precio_medio
-FROM productos
-GROUP BY categoria
-ORDER BY total DESC;
-
--- HAVING: filtrar DESPUÉS de agrupar (WHERE filtra ANTES)
-SELECT categoria, AVG(precio) AS precio_medio
-FROM productos
-GROUP BY categoria
-HAVING AVG(precio) > 50;     -- Solo categorías con precio medio > 50€
-```
-
-> [!IMPORTANT]
-> **WHERE vs HAVING:** Esta es la mayor trampa para principiantes. `WHERE` filtra filas individuales **antes** de agrupar; `HAVING` filtra el resultado del grupo **después** de calcular la estadística. Si intentas usar un `WHERE` con una función de agregación (como `AVG`), SQL te dará un error.
-
-> [!TIP]
-> Regla mnemotécnica del orden de ejecución SQL: **F-W-G-H-S-O-L** (FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY, LIMIT). SQL NO se ejecuta en el orden en que lo escribes.
-
----
-
-## 5. Relaciones entre tablas (el corazón de SQL)
-
-### El problema
-
-Imagina que metes toda la información en una sola tabla: productos, clientes, pedidos, direcciones de envío… Tendrías datos repetidos por todas partes (el nombre del cliente aparecería en cada pedido). Esto se llama **redundancia** y causa:
-
-- Desperdicio de espacio
-- Inconsistencias (cambias el email en un sitio pero no en otro)
-- Pesadilla de mantenimiento
-
-La solución: **dividir la información en tablas especializadas y conectarlas con relaciones**.
-
-### Tipos de relaciones
-
-```
-1:1 (Uno a Uno)    → Un usuario tiene UN perfil detallado
-1:N (Uno a Muchos) → Un cliente tiene MUCHOS pedidos
-N:M (Muchos a Muchos) → Un pedido tiene MUCHOS productos Y un producto está en MUCHOS pedidos
-```
-
-### Foreign Key (Clave Foránea) — El puente entre tablas
-
-```sql
--- Tabla de clientes
-CREATE TABLE clientes (
-    id      SERIAL PRIMARY KEY,
-    nombre  VARCHAR(100) NOT NULL,
-    email   VARCHAR(150) UNIQUE NOT NULL,   -- UNIQUE = no puede haber emails repetidos
-    ciudad  VARCHAR(100)
-);
-
--- Tabla de pedidos: cada pedido PERTENECE a un cliente
-CREATE TABLE pedidos (
-    id          SERIAL PRIMARY KEY,
-    cliente_id  INTEGER NOT NULL REFERENCES clientes(id),  -- FK: apunta a clientes
-    fecha       TIMESTAMP DEFAULT NOW(),
-    total       NUMERIC(10,2) NOT NULL,
-    estado      VARCHAR(20) DEFAULT 'pendiente'
-);
-
--- Tabla intermedia para la relación N:M entre pedidos y productos
-CREATE TABLE pedido_productos (
-    pedido_id   INTEGER REFERENCES pedidos(id),
-    producto_id INTEGER REFERENCES productos(id),
-    cantidad    INTEGER NOT NULL DEFAULT 1,
-    precio_unit NUMERIC(10,2) NOT NULL,     -- Precio en el momento de la compra
-    PRIMARY KEY (pedido_id, producto_id)     -- Clave primaria compuesta
-);
-```
-
-> [!NOTE]
-> `REFERENCES clientes(id)` es la **Foreign Key**. Le dice a PostgreSQL: "el valor de `cliente_id` DEBE existir en la columna `id` de la tabla `clientes`". Si intentas crear un pedido con un `cliente_id` que no existe, la base de datos lo rechazará. Esto garantiza la **integridad referencial**.
-
-### JOIN — Unir tablas en consultas
-
-```sql
--- Insertar datos de ejemplo
-INSERT INTO clientes (nombre, email, ciudad) VALUES
-    ('Ana García', 'ana@email.com', 'Madrid'),
-    ('Luis López', 'luis@email.com', 'Barcelona');
-
-INSERT INTO pedidos (cliente_id, total, estado) VALUES
-    (1, 135.49, 'completado'),
-    (1, 329.99, 'enviado'),
-    (2, 45.50, 'pendiente');
-
--- INNER JOIN: solo filas que coinciden en AMBAS tablas
-SELECT
-    c.nombre AS cliente,
-    p.id AS pedido_num,
-    p.total,
-    p.estado
-FROM pedidos p
-INNER JOIN clientes c ON p.cliente_id = c.id;
-
-> [!WARNING]
-> **Nunca olvides la cláusula ON.** Si haces un JOIN sin ella (o te equivocas), podrías provocar un **producto cartesiano**: la base de datos combinará CADA fila de una tabla con CADA fila de la otra. Si tienes 1.000 clientes y 1.000 pedidos, ¡acabarás con un millón de filas de basura!
-
--- LEFT JOIN: TODOS los clientes, aunque no tengan pedidos
-SELECT
-    c.nombre,
-    COUNT(p.id) AS total_pedidos
-FROM clientes c
-LEFT JOIN pedidos p ON c.id = p.cliente_id
-GROUP BY c.nombre;
-```
-
-> [!TIP]
-> Usa alias cortos para las tablas (`c` para clientes, `p` para pedidos). Hace las consultas mucho más legibles, especialmente cuando unes 3 o más tablas.
-
-> [!NOTE]
-> Existen otros tipos como `RIGHT JOIN` (lo opuesto al LEFT) y `CROSS JOIN` (producto cartesiano), pero en el 99% de los casos usarás INNER y LEFT JOIN.
-
-### 🧪 Mini-Lab 2: Diseña una biblioteca con JOINs
-
-**Reto:** Diseña un esquema para una **biblioteca** y practica relaciones:
-
-- Crea las tablas `autores` (id, nombre, pais), `libros` (id, titulo, anio, autor_id) y `prestamos` (id, libro_id, lector, fecha_prestamo, fecha_devolucion)
-- Inserta 3 autores, 5 libros y 4 préstamos
-- Haz un INNER JOIN para listar "Título del libro — Nombre del autor"
-- Haz un LEFT JOIN para encontrar autores que no tienen libros registrados
-- Cuenta cuántos libros tiene cada autor con GROUP BY
-
-```sql
--- SOLUCIÓN
-
-CREATE TABLE autores (
-    id     SERIAL PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    pais   VARCHAR(50)
-);
-
-CREATE TABLE libros (
-    id       SERIAL PRIMARY KEY,
-    titulo   VARCHAR(200) NOT NULL,
-    anio     INTEGER CHECK (anio > 0),
-    autor_id INTEGER REFERENCES autores(id)
-);
-
-CREATE TABLE prestamos (
-    id               SERIAL PRIMARY KEY,
-    libro_id         INTEGER REFERENCES libros(id),
-    lector           VARCHAR(100) NOT NULL,
-    fecha_prestamo   DATE DEFAULT CURRENT_DATE,
-    fecha_devolucion DATE
-);
-
-INSERT INTO autores (nombre, pais) VALUES
-    ('Gabriel García Márquez', 'Colombia'),
-    ('Isabel Allende', 'Chile'),
-    ('Arturo Pérez-Reverte', 'España');
-
-INSERT INTO libros (titulo, anio, autor_id) VALUES
-    ('Cien años de soledad', 1967, 1),
-    ('El amor en los tiempos del cólera', 1985, 1),
-    ('La casa de los espíritus', 1982, 2),
-    ('El capitán Alatriste', 1996, 3),
-    ('Eva Luna', 1987, 2);
-
-INSERT INTO prestamos (libro_id, lector, fecha_prestamo) VALUES
-    (1, 'Juan Pérez', '2026-04-01'),
-    (3, 'Laura Gómez', '2026-04-05'),
-    (1, 'María López', '2026-04-10'),
-    (5, 'Carlos Ruiz', '2026-04-15');
-
--- Consulta 3: Título + Autor
-SELECT l.titulo, a.nombre AS autor
-FROM libros l
-INNER JOIN autores a ON l.autor_id = a.id;
-
--- Consulta 4: Autores sin libros (añade uno de prueba primero)
-INSERT INTO autores (nombre, pais) VALUES ('Autor Sin Libros', 'Test');
-SELECT a.nombre
-FROM autores a
-LEFT JOIN libros l ON a.id = l.autor_id
-WHERE l.id IS NULL;
-
--- Consulta 5: Libros por autor
-SELECT a.nombre, COUNT(l.id) AS total_libros
-FROM autores a
-LEFT JOIN libros l ON a.id = l.autor_id
-GROUP BY a.nombre
-ORDER BY total_libros DESC;
-```
-
----
-
-## 6. Índices y rendimiento
-
-### El problema
-
-Tu aplicación funciona perfecta en desarrollo con 50 registros. Pero en producción tiene 10 millones de filas y una consulta que tardaba 5ms ahora tarda 30 segundos. Los usuarios se quejan. ¿Qué ha pasado? Sin índices, cada consulta con WHERE recorre **TODAS** las filas de la tabla (lo que se conoce como **Full Table Scan** — Escaneo Completo de Tabla).
-
-### ¿Qué es un índice?
-
-Piensa en el **índice alfabético de un libro de texto**. Si quieres buscar "PostgreSQL", no lees las 500 páginas: vas al índice al final, buscas la P, y saltas directamente a la página 347. Un índice en SQL funciona exactamente igual: crea una estructura interna ordenada que permite a la base de datos **saltar directamente** al dato que busca.
-
-```sql
--- Crear un índice en la columna email (búsquedas frecuentes)
-CREATE INDEX idx_clientes_email ON clientes(email);
-
--- Índice compuesto: cuando siempre filtras por dos columnas juntas
-CREATE INDEX idx_pedidos_cliente_estado ON pedidos(cliente_id, estado);
-
-### Tipos de índices
-
-PostgreSQL soporta varios tipos de índices según el dato:
-
-| Tipo | Uso principal | Ejemplo |
-|---|---|---|
-| **B-Tree** | Por defecto. Igualdad y rangos | `id`, `precio`, `fecha` |
-| **GIN** | Datos compuestos o búsqueda de texto | `JSONB`, `Arrays`, Búsqueda parcial |
-| **GiST** | Datos geométricos o rangos de tiempo | `Coordenadas`, `TSRANGE` |
-
-> [!WARNING]
-> Los índices **GIN** son muy potentes para búsquedas dentro de JSONB o texto, pero tienen un coste de almacenamiento alto y ralentizan las inserciones más que un B-Tree. Úsalos solo donde la velocidad de búsqueda sea crítica.
-
--- Ver los índices de una tabla
-\di   -- En psql
-
--- Ver si una consulta usa el índice (EXPLAIN)
-EXPLAIN ANALYZE
-SELECT * FROM clientes WHERE email = 'ana@email.com';
-```
-
-> [!WARNING]
-> Los índices aceleran las lecturas (SELECT) pero ralentizan las escrituras (INSERT, UPDATE, DELETE) porque cada cambio debe actualizar también el índice. No indexes TODAS las columnas; solo las que aparecen frecuentemente en WHERE, JOIN y ORDER BY.
-
----
-
-## 7. Subconsultas, CTEs y Vistas
-
-### El problema
-
-A medida que tus consultas crecen en complejidad, necesitas combinar resultados, reutilizar cálculos y guardar consultas frecuentes para no repetirte. Imagina que cada vez que quieres saber el resumen de ventas tienes que escribir un JOIN de 15 líneas — eso no escala.
-
-### Subconsultas (Subqueries)
-
-Una subconsulta es una **consulta dentro de otra consulta**. Piensa en las muñecas rusas (matrioshkas): abres una y dentro hay otra más pequeña:
-
-```sql
--- Productos con precio superior a la media
-SELECT nombre, precio
-FROM productos
-WHERE precio > (SELECT AVG(precio) FROM productos);
-
--- Clientes que han hecho al menos un pedido
-SELECT nombre FROM clientes
-WHERE id IN (SELECT DISTINCT cliente_id FROM pedidos);
-```
-
-### CTEs (Common Table Expressions) — Consultas legibles
-
-Las CTEs son como **variables temporales** para tus consultas. En lugar de anidar subconsulta dentro de subconsulta (código espagueti SQL), les das un nombre y las usas como si fueran tablas normales:
-
-```sql
--- CTE: "WITH" crea una tabla temporal nombrada para esa consulta
-WITH resumen_clientes AS (
-    SELECT
-        c.id,
-        c.nombre,
-        COUNT(p.id) AS total_pedidos,
-        COALESCE(SUM(p.total), 0) AS gasto_total
-    FROM clientes c
-    LEFT JOIN pedidos p ON c.id = p.cliente_id
-    GROUP BY c.id, c.nombre
-)
-SELECT nombre, total_pedidos, gasto_total
-FROM resumen_clientes
-WHERE gasto_total > 100
-ORDER BY gasto_total DESC;
-```
-
-> [!TIP]
-> Las CTEs son como variables temporales. Hacen las consultas complejas mucho más legibles. Úsalas siempre que una subconsulta haga el código difícil de seguir.
-
-### Vistas (Views) — Consultas guardadas
-
-```sql
--- Crear una vista: es como guardar un SELECT con nombre
-CREATE VIEW v_resumen_pedidos AS
-SELECT
-    c.nombre AS cliente,
-    c.email,
-    COUNT(p.id) AS pedidos,
-    COALESCE(SUM(p.total), 0) AS total_gastado
-FROM clientes c
-LEFT JOIN pedidos p ON c.id = p.cliente_id
-GROUP BY c.id, c.nombre, c.email;
-
--- Ahora la usas como si fuera una tabla
-SELECT * FROM v_resumen_pedidos WHERE total_gastado > 100;
-```
-
----
-
-## 8. Transacciones y seguridad de datos
-
-### El problema
-
-Imagina que transfieres 100€ de tu cuenta a la de un amigo. Esto implica DOS operaciones: restar de tu cuenta y sumar a la suya. Si el sistema falla entre ambas operaciones, el dinero desaparece. Las **transacciones** garantizan que o se ejecutan TODAS las operaciones, o NINGUNA (principio de **atomicidad**).
-
-```sql
--- Iniciar una transacción
-BEGIN;
-
--- Operación 1: restar stock
-UPDATE productos SET stock = stock - 2 WHERE id = 1;
-
--- Operación 2: crear registro de pedido
-INSERT INTO pedidos (cliente_id, total, estado) VALUES (1, 179.98, 'completado');
-
--- Si todo va bien: confirmar
-COMMIT;
-
--- Si algo falla: deshacer TODO
--- ROLLBACK;
-```
-
-> [!WARNING]
-> En producción, tu código de aplicación (Python, Java, Node.js) debe gestionar transacciones automáticamente. Si una operación falla, se ejecuta ROLLBACK. Nunca dejes una transacción abierta sin cerrar: bloquea las filas afectadas para otros usuarios.
-
-### ACID — Las 4 garantías de una transacción
-
-| Propiedad | Significado |
-|-----------|------------|
-| **A**tomicidad | Todo o nada |
-| **C**onsistencia | La BD pasa de un estado válido a otro válido |
-| **I**solamiento | Las transacciones concurrentes no se interfieren |
-| **D**urabilidad | Una vez hecho COMMIT, el dato sobrevive a un corte de luz |
-
-### 🧪 Mini-Lab 3: Transferencia bancaria con transacciones
-
-**Reto:** Simula un sistema bancario básico y practica transacciones:
-
-- Crea una tabla `cuentas` con `id`, `titular` y `saldo` (NUMERIC)
-- Inserta dos cuentas: Ana con 1000€ y Luis con 500€
-- Haz una transferencia de 200€ de Ana a Luis usando BEGIN/COMMIT
-- Intenta transferir 2000€ (más de lo que tiene Ana) — usa ROLLBACK
-- Verifica que los saldos son correctos tras cada operación
-
-```sql
--- SOLUCIÓN
-
-CREATE TABLE cuentas (
-    id      SERIAL PRIMARY KEY,
-    titular VARCHAR(100) NOT NULL,
-    saldo   NUMERIC(10,2) NOT NULL CHECK (saldo >= 0)  -- No permite saldo negativo
-);
-
-INSERT INTO cuentas (titular, saldo) VALUES
-    ('Ana', 1000.00),
-    ('Luis', 500.00);
-
--- Transferencia exitosa: 200€ de Ana (ID 1) a Luis (ID 2)
-BEGIN;
-    UPDATE cuentas SET saldo = saldo - 200 WHERE id = 1;
-    UPDATE cuentas SET saldo = saldo + 200 WHERE id = 2;
-    -- Verificar antes de confirmar
-    SELECT * FROM cuentas;
-COMMIT;
--- Resultado: Ana=800, Luis=700
-
--- Transferencia fallida: 2000€ (Ana solo tiene 800)
-BEGIN;
-    UPDATE cuentas SET saldo = saldo - 2000 WHERE id = 1;
-    -- Esto FALLA por el CHECK (saldo >= 0)
-    -- PostgreSQL abortará automáticamente la transacción
-ROLLBACK;
-
--- Verificar que los saldos no cambiaron
-SELECT * FROM cuentas;
--- Resultado: Ana=800, Luis=700 (intactos gracias al ROLLBACK)
-```
-
-> [!NOTE]
-> Observa cómo el `CHECK (saldo >= 0)` actúa como red de seguridad: incluso si olvidas validar en tu código, la base de datos rechaza la operación. Esto es **defensa en profundidad**.
-
----
-
-## 9. Usuarios, permisos y seguridad
-
-### El problema
-
-Hasta ahora hemos trabajado como superusuario `postgres`, que puede hacer **absolutamente todo**: crear, borrar, modificar cualquier tabla. Eso es como darle las llaves maestras del edificio entero al repartidor de pizzas. Si alguien compromete tu aplicación web, el atacante heredaría todos esos permisos. Necesitas un sistema de **permisos granulares**.
-
-### Principio de mínimo privilegio
-
-Cada usuario/aplicación debe tener **solo** los permisos que necesita, ni uno más. Es como las tarjetas de acceso de una oficina: el programador entra al piso de desarrollo, pero no a la sala de servidores.
-
-```sql
--- Crear un usuario para la aplicación web
--- (En producción: usar contraseñas aleatorias o Vault)
-CREATE USER app_web WITH PASSWORD 'password_muy_segura_123!';
-
--- Darle permisos solo de lectura y escritura en tablas específicas
-GRANT SELECT, INSERT, UPDATE ON productos, pedidos, clientes TO app_web;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO app_web;
-
--- Crear un usuario de solo lectura para informes
-CREATE USER analista WITH PASSWORD 'otra_password_segura';
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO analista;
-
--- Revocar permisos
-REVOKE DELETE ON productos FROM app_web;
-
--- Ver permisos actuales
-\dp productos
-```
-
-> [!WARNING]
-> **Nunca** pongas contraseñas en el código fuente. Usa variables de entorno (`DATABASE_URL`) o gestores de secretos (Vault, AWS Secrets Manager). Si tu repo de Git es público, cualquiera tendría acceso a tu base de datos.
-
----
-
-## 10. De desarrollo a producción
-
-### El problema
-
-Tu base de datos funciona perfecta en tu portátil. Pero llevarla a producción implica nuevos retos: migraciones de esquema, backups, conexión segura desde la aplicación y monitorización. Un solo error aquí puede significar pérdida de datos irreversible.
-
-### Migraciones: control de versiones para tu BD
-
-Igual que usas Git para versionar tu código, necesitas **migraciones** para versionar los cambios en la estructura de tu base de datos.
-
-```bash
-# Ejemplo con herramientas populares:
-
-# Python (Alembic con SQLAlchemy)
-pip install alembic
-alembic init migrations
-alembic revision --autogenerate -m "crear_tabla_productos"
-alembic upgrade head
-
-# Node.js (Knex.js)
-npx knex migrate:make crear_tabla_productos
-npx knex migrate:latest
-
-# Java (Flyway)
-# Los scripts SQL se ponen en src/main/resources/db/migration/
-# V1__crear_tabla_productos.sql
-```
-
-### Backups — Tu seguro de vida
-
-```bash
-# Backup completo de una base de datos
-pg_dump -U dev_user -d mi_primera_db -F c -f backup_20260420.dump
-
-# Restaurar
-pg_restore -U dev_user -d mi_primera_db backup_20260420.dump
-
-# Backup automático diario (añadir a crontab)
-# crontab -e
-# 0 3 * * * pg_dump -U dev_user -d mi_primera_db -F c -f /backups/db_$(date +\%Y\%m\%d).dump
-```
-
-> [!WARNING]
-> Un backup que no se ha probado restaurar NO es un backup. Prueba regularmente que puedes restaurar tus dumps en un entorno de test. Muchas empresas han descubierto tarde que sus backups estaban corruptos.
-
-### Conectar desde tu aplicación (Python)
-
-```python
-import os
-import psycopg2
-
-# Usar context manager para garantizar que la conexión Y el cursor
-# se cierren automáticamente, incluso si hay un error.
-try:
-    with psycopg2.connect(
-        host=os.environ['DB_HOST'],
-        dbname=os.environ['DB_NAME'],
-        user=os.environ['DB_USER'],
-        password=os.environ['DB_PASSWORD'],
-        sslmode='require'
-    ) as conn:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT * FROM productos WHERE activo = %s", (True,))
-            resultados = cursor.fetchall()
-            print(f"Cargados {len(resultados)} productos")
-except Exception as e:
-    print(f"Error de base de datos: {e}")
-```
-
-> [!WARNING]
-> **SQL Injection** es cuando un atacante inyecta código SQL malicioso a través de inputs de usuario. SIEMPRE usa consultas parametrizadas (`%s`, `?`, `$1`) en lugar de concatenar strings. Ejemplo de ataque: si el input es `'; DROP TABLE productos; --`, y tú concatenas, acabas de perder tu tabla.
-
-> [!TIP]
-> En producción real, usa un **context manager** (`with psycopg2.connect(...) as conn:`) para garantizar que la conexión se cierra correctamente incluso si hay excepciones. Esto evita fugas de conexiones que degradan el rendimiento del servidor.
-
-### Checklist de producción
-
-```markdown
-✅ Usuario dedicado (no usar postgres)
-✅ Contraseñas en variables de entorno
-✅ SSL habilitado (sslmode='require')
-✅ Backups diarios automatizados
-✅ Backups probados (restauración verificada)
-✅ Migraciones versionadas en Git
-✅ Monitorización (pg_stat_activity, deadlocks)
-✅ Índices en columnas de WHERE y JOIN
-✅ Connection pooling (PgBouncer) si hay alta concurrencia
-✅ Logs de queries lentas (log_min_duration_statement)
-```
-
----
-
-## 11. Window Functions — Análisis sin perder detalle
-
-### El problema
-
-Con `GROUP BY` puedes calcular totales por categoría, pero pierdes las filas individuales. ¿Y si quieres ver cada pedido de un cliente Y al mismo tiempo el acumulado total? Es como un director de maratón que necesita ver la posición de cada corredor EN CADA KILÓMETRO, no solo el resultado final.
-
-### Anatomía de una Window Function
-
-> [!NOTE]
-> **Diferencia clave:** Mientras que `GROUP BY` colapsa las filas en una sola para darte un total, las **Window Functions** mantienen las filas originales intactas pero les "pegan" una columna nueva con el cálculo del grupo. Es lo mejor de ambos mundos.
-
-```sql
--- Acumulado de gasto por cliente, SIN perder detalle de cada pedido
-SELECT
-    c.nombre,
-    DATE_TRUNC('month', p.fecha) AS mes,  -- Trunca la fecha al inicio del mes
-    p.total,
-    SUM(p.total) OVER (PARTITION BY c.id ORDER BY p.fecha) AS acumulado
-FROM pedidos p
-JOIN clientes c ON p.cliente_id = c.id;
-```
-
-Desglose de la sintaxis:
-
-- `SUM(p.total)` es la función de agregación
-- `OVER (...)` la convierte en Window Function
-- `PARTITION BY c.id` agrupa por cliente (como GROUP BY, pero sin colapsar filas)
-- `ORDER BY p.fecha` calcula el acumulado en orden cronológico
-
-### Funciones de ranking
-
-```sql
--- Ranking de productos por precio (del más caro al más barato)
-SELECT
-    nombre,
-    precio,
-    ROW_NUMBER() OVER (ORDER BY precio DESC) AS posicion,       -- 1, 2, 3... (sin empates)
-    RANK()       OVER (ORDER BY precio DESC) AS ranking,        -- 1, 2, 2, 4... (con huecos)
-    DENSE_RANK() OVER (ORDER BY precio DESC) AS ranking_denso   -- 1, 2, 2, 3... (sin huecos)
-FROM productos;
-
--- Top 1 producto más caro por categoría
-SELECT * FROM (
-    SELECT
-        nombre,
-        categoria,
-        precio,
-        ROW_NUMBER() OVER (PARTITION BY categoria ORDER BY precio DESC) AS rn
-    FROM productos
-) sub
-WHERE rn = 1;
-```
-
-### LAG y LEAD — Mirar filas vecinas
-
-```sql
--- Comparar cada pedido con el anterior (LAG) y el siguiente (LEAD)
-SELECT
-    c.nombre,
-    p.total,
-    LAG(p.total)  OVER (PARTITION BY c.id ORDER BY p.fecha) AS anterior,
-    LEAD(p.total) OVER (PARTITION BY c.id ORDER BY p.fecha) AS siguiente
-FROM pedidos p
-JOIN clientes c ON p.cliente_id = c.id;
-```
-
-> [!TIP]
-> Las Window Functions son la herramienta favorita en entrevistas técnicas de SQL. Domínalas y destacarás sobre el 90% de los candidatos. Son esenciales para reportes, dashboards y análisis de datos.
-
----
-
-## 12. Triggers y Procedimientos Almacenados
-
-### El problema
-
-Alguien modifica el precio de un producto y nadie sabe quién fue ni cuándo. Un desarrollador junior ejecuta un UPDATE masivo por error y no hay rastro. Necesitas un sistema de **auditoría automática** que registre cada cambio sin depender de que la aplicación lo haga.
-
-### ¿Qué es un Trigger?
-
-Un trigger (disparador) es una **acción automática** que se ejecuta cuando ocurre un evento en una tabla (INSERT, UPDATE, DELETE). Es como la alarma de una tienda: cuando alguien pasa por la puerta con un artículo sin pagar, salta automáticamente.
-
-### Ejemplo práctico: auditoría automática
-
-```sql
--- 1. Crear tabla de auditoría
-CREATE TABLE auditoria_productos (
-    id          SERIAL PRIMARY KEY,
-    producto_id INTEGER,
-    accion      VARCHAR(10),          -- INSERT, UPDATE, DELETE
-    datos_old   JSONB,                -- Estado anterior
-    datos_new   JSONB,                -- Estado nuevo
-    usuario     VARCHAR(50) DEFAULT current_user,
-    fecha       TIMESTAMP DEFAULT NOW()
-);
-
--- 2. Crear la función que ejecutará el trigger
--- Advertencia: OLD es NULL en INSERT, NEW es NULL en DELETE.
--- Si manejas TRUNCATE, ambos serán NULL.
-CREATE OR REPLACE FUNCTION fn_auditar_productos()
-RETURNS TRIGGER AS $$
-BEGIN
-    -- TG_OP contiene la operación: INSERT, UPDATE o DELETE
-    IF TG_OP = 'DELETE' THEN
-        INSERT INTO auditoria_productos (producto_id, accion, datos_old)
-        VALUES (OLD.id, 'DELETE', to_jsonb(OLD));
-        RETURN OLD;
-    ELSIF TG_OP = 'UPDATE' THEN
-        INSERT INTO auditoria_productos (producto_id, accion, datos_old, datos_new)
-        VALUES (OLD.id, 'UPDATE', to_jsonb(OLD), to_jsonb(NEW));
-        RETURN NEW;
-    ELSIF TG_OP = 'INSERT' THEN
-        INSERT INTO auditoria_productos (producto_id, accion, datos_new)
-        VALUES (NEW.id, 'INSERT', to_jsonb(NEW));
-        RETURN NEW;
-    END IF;
-END;
-$$ LANGUAGE plpgsql;
-
--- 3. Conectar la función a la tabla
-CREATE TRIGGER trg_auditoria_productos
-    AFTER INSERT OR UPDATE OR DELETE ON productos
-    FOR EACH ROW EXECUTE FUNCTION fn_auditar_productos();
-```
-
-Ahora, cada vez que alguien modifique la tabla `productos`, queda registro automático en `auditoria_productos`.
-
-> [!WARNING]
-> Los triggers son potentes pero invisibles. Si algo raro pasa en tu base de datos, revisa si hay triggers activos. Demasiados triggers encadenados pueden convertirse en una pesadilla de depuración. Documéntalos bien.
-
-### Procedimientos almacenados (Stored Procedures)
-
-Son bloques de lógica que viven dentro de la base de datos. Útiles para operaciones que se repiten:
-
-```sql
--- Procedimiento para procesar un pedido completo
-CREATE OR REPLACE PROCEDURE sp_procesar_pedido(
-    p_cliente_id INTEGER,
-    p_producto_id INTEGER,
-    p_cantidad INTEGER
-)
-LANGUAGE plpgsql AS $$
-DECLARE
-    v_precio NUMERIC(10,2);
-    v_stock INTEGER;
-BEGIN
-    -- Verificar stock disponible
-    SELECT precio, stock INTO v_precio, v_stock
-    FROM productos WHERE id = p_producto_id;
-
-    IF v_stock < p_cantidad THEN
-        RAISE EXCEPTION 'Stock insuficiente: disponible %, solicitado %', v_stock, p_cantidad;
-    END IF;
-
-    -- Restar stock
-    UPDATE productos SET stock = stock - p_cantidad WHERE id = p_producto_id;
-
-    -- Crear pedido
-    INSERT INTO pedidos (cliente_id, total, estado)
-    VALUES (p_cliente_id, v_precio * p_cantidad, 'completado');
-
-    RAISE NOTICE 'Pedido procesado: % unidades de producto % para cliente %',
-        p_cantidad, p_producto_id, p_cliente_id;
-END;
-$$;
-
--- Usar el procedimiento
-CALL sp_procesar_pedido(1, 1, 3);
-```
-
----
-
-## 13. Normalización — Diseñar bases de datos sin dolor
-
-### El problema
-
-Diseñas una tabla con toda la información junta y al principio parece funcionar. Pero pronto descubres que al cambiar el nombre de un proveedor tienes que actualizarlo en 500 filas, y si olvidas una, tu base de datos tiene datos contradictorios. Esto se llama **anomalía de actualización** y es el síntoma de un diseño no normalizado.
-
-### ¿Qué es normalizar?
-
-Normalizar es el proceso de **organizar las tablas para eliminar redundancia y dependencias problemáticas**. Piensa en ello como ordenar tu armario: separar camisetas, pantalones y zapatos en cajones diferentes, en vez de tenerlo todo revuelto.
-
-> [!IMPORTANT]
-> **La Regla de Oro:** Si tienes que cambiar un mismo dato en más de un sitio (ej: el email de un cliente en cada pedido), tu base de datos **no está bien diseñada**. Un dato real debe existir en un único lugar.
-
-### Las 3 formas normales esenciales
-
-**1NF (Primera Forma Normal):** Cada celda contiene UN solo valor atómico.
-
-```sql
--- MAL: múltiples teléfonos en una celda
-CREATE TABLE clientes_mal (
-    id      SERIAL PRIMARY KEY,
-    nombre  VARCHAR(100),
-    telefonos VARCHAR(200)   -- "666111222, 677333444" — NO atómico
-);
-
--- BIEN: tabla separada para teléfonos
-CREATE TABLE telefonos (
-    id         SERIAL PRIMARY KEY,
-    cliente_id INTEGER REFERENCES clientes(id),
-    numero     VARCHAR(20) NOT NULL,
-    tipo       VARCHAR(20) DEFAULT 'móvil'   -- móvil, fijo, trabajo
-);
-
--- Ejemplo de migración: pasar datos de la tabla "MAL" a la "BIEN"
--- INSERT INTO telefonos (cliente_id, numero)
--- SELECT id, telefonos FROM clientes_mal;
-```
-
-**2NF (Segunda Forma Normal):** Cumple 1NF + cada columna no-clave depende de TODA la clave primaria (relevante en claves compuestas).
-
-```sql
--- MAL: nombre_producto depende solo de producto_id, no de pedido_id
-CREATE TABLE pedido_detalle_mal (
-    pedido_id      INTEGER,
-    producto_id    INTEGER,
-    nombre_producto VARCHAR(200),   -- Depende SOLO de producto_id
-    cantidad       INTEGER,
-    PRIMARY KEY (pedido_id, producto_id)
-);
-
--- BIEN: nombre_producto vive en la tabla productos
--- La tabla intermedia solo tiene datos que dependen de AMBAS claves
-CREATE TABLE pedido_detalle_bien (
-    pedido_id   INTEGER REFERENCES pedidos(id),
-    producto_id INTEGER REFERENCES productos(id),
-    cantidad    INTEGER NOT NULL,
-    precio_unit NUMERIC(10,2) NOT NULL,
-    PRIMARY KEY (pedido_id, producto_id)
-);
-```
-
-**3NF (Tercera Forma Normal):** Cumple 2NF + ninguna columna no-clave depende de otra columna no-clave.
-
-```sql
--- MAL: codigo_postal determina la ciudad (dependencia transitiva)
-CREATE TABLE clientes_mal_3nf (
-    id             SERIAL PRIMARY KEY,
-    nombre         VARCHAR(100),
-    codigo_postal  VARCHAR(10),
-    ciudad         VARCHAR(100)   -- Se puede deducir del código postal
-);
-
--- BIEN: separar en tabla de códigos postales
-CREATE TABLE codigos_postales (
-    codigo VARCHAR(10) PRIMARY KEY,
-    ciudad VARCHAR(100) NOT NULL,
-    provincia VARCHAR(100)
-);
-
-CREATE TABLE clientes_3nf (
-    id            SERIAL PRIMARY KEY,
-    nombre        VARCHAR(100),
-    codigo_postal VARCHAR(10) REFERENCES codigos_postales(codigo)
-);
-```
-
-> [!TIP]
-> En la práctica profesional, **3NF es suficiente** para el 95% de los proyectos. No te obsesiones con BCNF o 4NF a menos que trabajes en sistemas de alta criticidad (banca, salud). A veces, una **desnormalización controlada** (duplicar algún dato a propósito) es aceptable si ganas rendimiento significativo.
-
-> [!TIP]
-> Antes de tocar el código, **dibuja tu base de datos**. Usa diagramas **Entidad-Relación (ER)**. Herramientas gratuitas como `dbdiagram.io` o `draw.io` te ahorrarán horas de refactorización posterior.
-
----
-
-## 14. Constraints avanzadas e integridad
-
-### El problema
-
-Tu aplicación valida los datos antes de guardarlos. Pero un día, alguien ejecuta un script de migración directamente en la base de datos, saltándose tu aplicación. Sin constraints a nivel de base de datos, entran datos inválidos: precios negativos, stocks imposibles, reservas que se solapan. Necesitas que **la propia base de datos sea la última línea de defensa**.
-
-### Más allá de PRIMARY KEY y NOT NULL
-
-```sql
--- CHECK: validar que un valor cumple una condición
-ALTER TABLE productos
-ADD CONSTRAINT chk_precio_positivo CHECK (precio > 0);
-
-ALTER TABLE productos
-ADD CONSTRAINT chk_stock_no_negativo CHECK (stock >= 0);
-
--- UNIQUE en múltiples columnas: combinación única
-ALTER TABLE pedido_productos
-ADD CONSTRAINT uq_pedido_producto UNIQUE (pedido_id, producto_id);
-
--- EXCLUDE: restricciones de exclusión (ej: no solapar rangos de fechas)
--- Útil para reservas de hotel, citas médicas, etc.
-
-> [!TIP]
-> Piensa en la restricción `EXCLUDE` como un **Google Calendar automático**: si alguien intenta reservar una sala en una hora que ya está ocupada, la base de datos simplemente "rebota" la transacción. Es la defensa perfecta para sistemas de citas o reservas.
-CREATE EXTENSION IF NOT EXISTS btree_gist;
-
-CREATE TABLE reservas (
-    id         SERIAL PRIMARY KEY,
-    sala       VARCHAR(50),
-    durante    TSRANGE,   -- Rango de timestamps (inicio, fin)
-    EXCLUDE USING GIST (sala WITH =, durante WITH &&)
-    -- No permitir que dos reservas de la misma sala se solapen
-);
-
--- ON DELETE CASCADE: borrar registros hijos automáticamente
-ALTER TABLE pedidos
-DROP CONSTRAINT IF EXISTS pedidos_cliente_id_fkey,
-ADD CONSTRAINT pedidos_cliente_id_fkey
-    FOREIGN KEY (cliente_id) REFERENCES clientes(id)
-    ON DELETE CASCADE    -- Si borras un cliente, se borran sus pedidos
-    ON UPDATE CASCADE;   -- Si cambias el id del cliente, se actualiza en pedidos
-```
-
-> [!WARNING]
-> Usa `ON DELETE CASCADE` con mucho cuidado. Un `DELETE FROM clientes WHERE id = 1` borraría automáticamente todos los pedidos de ese cliente. En muchos sistemas, es preferible usar `ON DELETE RESTRICT` (impedir el borrado si hay datos relacionados) o un borrado lógico (`activo = false`).
-
----
-
-## 15. Receta completa: esquema profesional de e-commerce
-
-Juntando todo lo aprendido, así se ve un esquema real de base de datos para producción:
-
-```sql
--- ============================================================
--- ESQUEMA PROFESIONAL: Tienda Online (e-commerce)
--- De 0 a Producción — Juntando todo lo aprendido
--- ============================================================
-
--- Extensiones necesarias
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";    -- Para generar UUIDs
-CREATE EXTENSION IF NOT EXISTS "pg_trgm";      -- Para búsqueda por similitud
-
--- ---- TABLA: categorias ----
-CREATE TABLE categorias (
-    id          SERIAL PRIMARY KEY,
-    nombre      VARCHAR(100) NOT NULL UNIQUE,
-    slug        VARCHAR(100) NOT NULL UNIQUE,  -- URL amigable: "teclados-mecanicos"
-    descripcion TEXT,
-    padre_id    INTEGER REFERENCES categorias(id),  -- Subcategorías (autorreferencia)
-    activo      BOOLEAN DEFAULT true,
-    created_at  TIMESTAMP DEFAULT NOW()
-);
-
--- ---- TABLA: productos (profesional) ----
-CREATE TABLE productos_pro (
-    id          UUID DEFAULT uuid_generate_v4() PRIMARY KEY,  -- UUID en vez de SERIAL
-    sku         VARCHAR(50) UNIQUE NOT NULL,  -- Código único del producto
-    nombre      VARCHAR(200) NOT NULL,
-    slug        VARCHAR(200) NOT NULL UNIQUE,
-    descripcion TEXT,
-    precio      NUMERIC(10,2) NOT NULL CHECK (precio > 0),
-    stock       INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
-    categoria_id INTEGER REFERENCES categorias(id),
-    metadata    JSONB DEFAULT '{}',  -- Datos flexibles: color, talla, peso...
-    activo      BOOLEAN DEFAULT true,
-    created_at  TIMESTAMP DEFAULT NOW(),
-    updated_at  TIMESTAMP DEFAULT NOW()
-);
-
--- Índices para rendimiento
-CREATE INDEX idx_productos_categoria ON productos_pro(categoria_id);
-CREATE INDEX idx_productos_activo ON productos_pro(activo) WHERE activo = true;
-CREATE INDEX idx_productos_nombre_trgm ON productos_pro USING GIN (nombre gin_trgm_ops);
-
--- ---- TABLA: usuarios ----
-CREATE TABLE usuarios (
-    id          UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    email       VARCHAR(150) UNIQUE NOT NULL,
-    password    VARCHAR(255) NOT NULL, -- Siempre hasheada (usar Argon2 o BCrypt)
-    nombre      VARCHAR(100),
-    metadata    JSONB DEFAULT '{}',
-    created_at  TIMESTAMP DEFAULT NOW()
-);
-
--- ---- TABLA: direcciones ----
-CREATE TABLE direcciones (
-    id          SERIAL PRIMARY KEY,
-    usuario_id  UUID REFERENCES usuarios(id) ON DELETE CASCADE,
-    calle       VARCHAR(255) NOT NULL,
-    ciudad      VARCHAR(100) NOT NULL,
-    cp          VARCHAR(10) NOT NULL,
-    principal   BOOLEAN DEFAULT false
-);
-
--- ---- TABLA: pedidos ----
-CREATE TABLE pedidos_pro (
-    id          UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    usuario_id  UUID REFERENCES usuarios(id),
-    direccion_id INTEGER REFERENCES direcciones(id),
-    total       NUMERIC(12,2) NOT NULL DEFAULT 0,
-    estado      VARCHAR(20) DEFAULT 'pendiente', -- pendiente, pagado, enviado, cancelado
-    created_at  TIMESTAMP DEFAULT NOW()
-);
-
--- ---- TABLA: pedido_items ----
-CREATE TABLE pedido_items (
-    pedido_id   UUID REFERENCES pedidos_pro(id) ON DELETE CASCADE,
-    producto_id UUID REFERENCES productos_pro(id),
-    cantidad    INTEGER NOT NULL CHECK (cantidad > 0),
-    precio_unit NUMERIC(10,2) NOT NULL,
-    PRIMARY KEY (pedido_id, producto_id)
-);
-```
-
-> [!NOTE]
-> Observa el uso de **UUID** en vez de SERIAL para el id de productos. En APIs públicas, los IDs secuenciales (1, 2, 3...) permiten a un atacante adivinar cuántos registros tienes y enumerar recursos. UUID elimina ese riesgo.
-
----
-
-## 16. Los 10 Pitfalls que te tumban en producción
-
-| # | Pitfall | Consecuencia | Solución |
-|---|---------|-------------|----------|
-| 1 | UPDATE/DELETE sin WHERE | Modificas/borras TODA la tabla | Escribe WHERE primero, luego SET/DELETE |
-| 2 | No usar transacciones | Datos inconsistentes tras error | BEGIN/COMMIT en operaciones múltiples |
-| 3 | SQL Injection | Atacante controla tu BD | Consultas parametrizadas SIEMPRE |
-| 4 | Usar FLOAT para dinero | Errores de redondeo | NUMERIC(10,2) |
-| 5 | No hacer backups | Pérdida total de datos | pg_dump diario + restauración probada |
-| 6 | Superusuario en producción | Ataque = acceso total | Usuarios con mínimos privilegios |
-| 7 | No poner índices | Consultas lentas en producción | Indexar columnas de WHERE y JOIN |
-| 8 | Contraseñas en el código | Filtración de credenciales | Variables de entorno |
-| 9 | No validar con CHECK | Datos basura en la BD | Constraints a nivel de tabla |
-| 10 | Transacciones abiertas | Bloqueo de filas (deadlocks) | COMMIT/ROLLBACK inmediato |
-
----
-
-## 🚀 17. El Gran Reto Final: E-commerce desde cero
-
-**Objetivo:** Construye desde cero el esquema completo de una tienda online funcional. Este reto integra TODO lo aprendido en la guía.
-
-**Requisitos:**
-
-- Crea las tablas: `usuarios`, `categorias`, `productos`, `pedidos`, `pedido_items`, `direcciones`
-- Implementa todas las relaciones (1:N, N:M)
-- Añade constraints: CHECK para precios y stock, UNIQUE para emails y SKUs
-- Crea al menos 2 índices estratégicos
-- Implementa un trigger de auditoría para cambios de precio
-- Escribe un procedimiento almacenado para procesar un pedido (verificar stock, calcular total, crear pedido)
-- Crea una vista con el resumen de ventas por categoría
-- Haz una consulta con Window Functions que muestre el ranking de productos más vendidos
-
-```
-Flujo sugerido:
-
-1. Diseña el esquema (normalizado a 3NF)
-   └─ categorias, productos, usuarios, direcciones, pedidos, pedido_items
-
-2. Crea las tablas con constraints
-   └─ CHECK, UNIQUE, REFERENCES, DEFAULT
-
-3. Inserta datos de prueba (al menos 10 productos, 5 usuarios, 10 pedidos)
-
-4. Escribe las consultas de negocio
-   └─ JOINs, GROUP BY, Window Functions
-
-5. Añade seguridad
-   └─ Usuarios con permisos limitados
-   └─ Trigger de auditoría
-
-6. Crea el procedimiento sp_procesar_pedido
-   └─ BEGIN, verificar stock, INSERT, UPDATE, COMMIT
-
-7. Haz un backup y restáuralo (sección 10)
-   └─ pg_dump + pg_restore
-```
-
-> [!TIP]
-> Si completas este reto, tienes el conocimiento SQL equivalente al que se pide en una entrevista técnica para un puesto de backend junior/mid. La sección 15 contiene una solución profesional completa que puedes usar como referencia.
-
----
-
-## Resumen: tu hoja de ruta SQL
-
-| Nivel | Temas | Secciones |
-|-------|-------|-----------|
-| 🟢 Principiante | Instalación, CRUD, tipos de datos | 1 — 3 + Mini-Lab 1 |
-| 🟡 Intermedio | Filtros, JOINs, agregaciones, GROUP BY | 4 — 5 + Mini-Lab 2 |
-| 🔵 Avanzado | Índices, CTEs, Vistas, Transacciones | 6 — 8 + Mini-Lab 3 |
-| 🟣 Producción | Seguridad, backups, migraciones, deploy | 9 — 10 |
-| ⚫ Profesional | Window Functions, Triggers, Normalización, Diseño | 11 — 15 |
-| 🔴 Consolidación | Pitfalls, Gran Reto Final | 16 — 17 |
-
-> [!NOTE]
-> **¿Quieres ir más allá?** Explora: **Replicación** (read replicas para alta disponibilidad), **Particionamiento** (dividir tablas enormes por fecha/rango), **Full-Text Search** nativo de PostgreSQL, y **PgBouncer** para connection pooling en aplicaciones de alta concurrencia.
-
----
-
-## 18. Solución Maestra: E-commerce Pro
-
-Este script unifica **todo lo aprendido en la guía**. Es un esquema profesional, seguro y analítico que puedes ejecutar en tu base de datos para ver cómo interactúan todas las piezas.
-
-```sql
--- ============================================================
--- SOLUCIÓN AL GRAN RETO FINAL: E-commerce Completo
--- ============================================================
-
--- 1. Extensiones y Limpieza de entorno
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-DROP TABLE IF EXISTS pedido_items, pedidos_pro, direcciones, productos_pro, categorias, usuarios, auditoria_precios CASCADE;
-
--- 2. Tablas Maestras
-CREATE TABLE usuarios (
-    id          UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    email       VARCHAR(150) UNIQUE NOT NULL,
-    password    VARCHAR(255) NOT NULL,
-    nombre      VARCHAR(100),
-    created_at  TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE categorias (
-    id          SERIAL PRIMARY KEY,
-    nombre      VARCHAR(100) UNIQUE NOT NULL
-);
-
-CREATE TABLE productos_pro (
-    id          UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    sku         VARCHAR(50) UNIQUE NOT NULL,
-    nombre      VARCHAR(200) NOT NULL,
-    precio      NUMERIC(10,2) NOT NULL CHECK (precio > 0),
-    stock       INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
-    categoria_id INTEGER REFERENCES categorias(id)
-);
-
--- 3. Auditoría Automática (Trigger)
-CREATE TABLE auditoria_precios (
-    id            SERIAL PRIMARY KEY,
-    producto_id   UUID,
-    precio_viejo  NUMERIC(10,2),
-    precio_nuevo  NUMERIC(10,2),
-    usuario       VARCHAR(50) DEFAULT current_user,
-    fecha         TIMESTAMP DEFAULT NOW()
-);
-
-CREATE OR REPLACE FUNCTION fn_log_cambio_precio()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF OLD.precio <> NEW.precio THEN
-        INSERT INTO auditoria_precios (producto_id, precio_viejo, precio_nuevo)
-        VALUES (OLD.id, OLD.precio, NEW.precio);
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_cambio_precio
-    AFTER UPDATE ON productos_pro
-    FOR EACH ROW EXECUTE FUNCTION fn_log_cambio_precio();
-
--- 4. Pedidos y Relaciones N:M
-CREATE TABLE pedidos_pro (
-    id          UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    usuario_id  UUID REFERENCES usuarios(id),
-    total       NUMERIC(12,2) DEFAULT 0,
-    estado      VARCHAR(20) DEFAULT 'pendiente',
-    created_at  TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE pedido_items (
-    pedido_id   UUID REFERENCES pedidos_pro(id) ON DELETE CASCADE,
-    producto_id UUID REFERENCES productos_pro(id),
-    cantidad    INTEGER NOT NULL CHECK (cantidad > 0),
-    precio_unit NUMERIC(10,2) NOT NULL,
-    PRIMARY KEY (pedido_id, producto_id)
-);
-
--- 5. Lógica de Negocio (Procedimiento Almacenado)
--- Procesa un pedido validando stock y calculando totales
-CREATE OR REPLACE PROCEDURE sp_registrar_compra(
-    p_usuario_id UUID,
-    p_producto_id UUID,
-    p_cantidad INTEGER
-)
-LANGUAGE plpgsql AS $$
-DECLARE
-    v_precio NUMERIC(10,2);
-    v_pedido_id UUID;
-BEGIN
-    -- FLUJO LÓGICO: Validar -> Actuar -> Confirmar
-
-    -- 1. FASE DE VALIDACIÓN: Obtener precio y validar stock
-    -- Si el stock es insuficiente, la consulta no devolverá nada
-    SELECT precio INTO v_precio FROM productos_pro 
-    WHERE id = p_producto_id AND stock >= p_cantidad;
-
-    IF NOT FOUND THEN
-        -- Si no hay stock, lanzamos error y se aborta todo automáticamente
-        RAISE EXCEPTION 'Producto no encontrado o stock insuficiente';
-    END IF;
-
-    -- 2. FASE DE ACCIÓN: Descontar stock del inventario
-    UPDATE productos_pro SET stock = stock - p_cantidad WHERE id = p_producto_id;
-
-    -- 3. FASE DE REGISTRO: Crear cabecera del pedido
-    INSERT INTO pedidos_pro (usuario_id, total, estado)
-    VALUES (p_usuario_id, v_precio * p_cantidad, 'pagado')
-    RETURNING id INTO v_pedido_id;
-
-    -- 4. FASE DE DETALLE: Insertar los items del pedido
-    INSERT INTO pedido_items (pedido_id, producto_id, cantidad, precio_unit)
-    VALUES (v_pedido_id, p_producto_id, p_cantidad, v_precio);
-
-    -- 5. FINALIZACIÓN: El COMMIT se hace al terminar el bloque si no hubo errores
-    RAISE NOTICE 'Venta registrada con éxito. Pedido ID: %', v_pedido_id;
-END;
-$$;
-
--- 6. Análisis de Datos (Vistas y Window Functions)
-CREATE OR REPLACE VIEW v_ranking_ventas AS
-SELECT 
-    c.nombre AS categoria,
-    p.nombre AS producto,
-    SUM(i.cantidad) AS unidades,
-    SUM(i.cantidad * i.precio_unit) AS ingresos,
-    RANK() OVER (PARTITION BY c.id ORDER BY SUM(i.cantidad * i.precio_unit) DESC) AS ranking_en_categoria
-FROM pedido_items i
-JOIN productos_pro p ON i.producto_id = p.id
-JOIN categorias c ON p.categoria_id = c.id
-GROUP BY c.id, c.nombre, p.id, p.nombre;
-
--- ¿Cómo usarlo?
--- SELECT * FROM v_ranking_ventas WHERE ranking_en_categoria <= 3;
-```
-</div>
-<div id="content"></div>
-</main>
-<script>
-const ICONS={"1":"🗄️","2":"⚙️","3":"📊","4":"🔍","5":"🔗","6":"⚡","7":"📦","8":"🔒","9":"🛡️","10":"🚀","11":"📈","12":"🔔","13":"🏗️","14":"🧱","15":"🛒","16":"⚠️","17":"🏆","18":"💡"};
-const md=document.getElementById('raw-md').textContent;
-const lines=md.split('\n');
-let html='',inCode=false,codeBuf=[],codeLang='',liBuf=[];
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function inlineMd(s){s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');s=s.replace(/`([^`]+)`/g,'<code>$1</code>');return s;}
-function flushLi(){if(liBuf.length){html+='<ul>'+liBuf.join('')+'</ul>\n';liBuf=[];}}
-function hlSQL(c){
-  c=esc(c);const cm=[];
-  c=c.replace(/--.*$/gm,m=>{cm.push(m);return`__CM${cm.length-1}__`;});
-  c=c.replace(/(?<![a-zA-Z_"'])(\d+\.?\d*)(?![a-zA-Z_])/g,'<span style="color:var(--orange)">$1</span>');
-  c=c.replace(/'[^']*'/g,'<span style="color:var(--green)">$&</span>');
-  c=c.replace(/\b(SELECT|FROM|WHERE|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|ALTER|DROP|ADD|COLUMN|INDEX|VIEW|TRIGGER|FUNCTION|PROCEDURE|BEGIN|COMMIT|ROLLBACK|GRANT|REVOKE|ON|TO|AS|JOIN|INNER|LEFT|RIGHT|FULL|OUTER|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|AND|OR|NOT|IN|BETWEEN|LIKE|ILIKE|IS|NULL|EXISTS|DISTINCT|UNION|ALL|CASE|WHEN|THEN|ELSE|END|IF|ELSIF|RETURN|RETURNS|DECLARE|RAISE|EXCEPTION|NOTICE|CALL|WITH|RECURSIVE|PRIMARY|KEY|FOREIGN|REFERENCES|UNIQUE|CHECK|DEFAULT|CONSTRAINT|CASCADE|RESTRICT|AFTER|BEFORE|FOR|EACH|ROW|EXECUTE|LANGUAGE|REPLACE|USING|GENERATED|ALWAYS|EXTENSION|EXCLUDE|GIST|GIN|DESC|ASC|SERIAL|BIGINT|INTEGER|VARCHAR|TEXT|BOOLEAN|DATE|TIMESTAMP|NUMERIC|JSON|JSONB|UUID|TSRANGE|PARTITION|OVER|EXPLAIN|ANALYZE|SCHEMA|SEQUENCES|USAGE)\b/gi,'<span style="color:var(--purple);font-weight:600">$&</span>');
-  c=c.replace(/\b(COUNT|SUM|AVG|MAX|MIN|COALESCE|NOW|DATE_TRUNC|ROW_NUMBER|RANK|DENSE_RANK|LAG|LEAD|NTILE|uuid_generate_v4|to_jsonb|current_user)\b/gi,'<span style="color:var(--blue)">$&</span>');
-  cm.forEach((v,i)=>{c=c.replace(`__CM${i}__`,`<span style="color:#5c6370;font-style:italic">${v}</span>`);});
-  return c;
-}
-function hlBash(c){
-  c=esc(c);const cm=[];
-  c=c.replace(/#.*$/gm,m=>{cm.push(m);return`__CM${cm.length-1}__`;});
-  c=c.replace(/(?<![a-zA-Z_"'])(\d+\.?\d*)(?![a-zA-Z_])/g,'<span style="color:var(--orange)">$1</span>');
-  c=c.replace(/\b(sudo|apt|install|zypper|brew|systemctl|start|enable|status|pip|npx|find|nano|crontab|pg_dump|pg_restore|alembic|knex)\b/gi,'<span style="color:var(--purple);font-weight:600">$&</span>');
-  cm.forEach((v,i)=>{c=c.replace(`__CM${i}__`,`<span style="color:#5c6370;font-style:italic">${v}</span>`);});
-  return c;
-}
-function hlPy(c){
-  c=esc(c);const cm=[];
-  c=c.replace(/#.*$/gm,m=>{cm.push(m);return`__CM${cm.length-1}__`;});
-  c=c.replace(/(?<![a-zA-Z_"'])(\d+\.?\d*)(?![a-zA-Z_])/g,'<span style="color:var(--orange)">$1</span>');
-  c=c.replace(/'[^']*'|"[^"]*"/g,'<span style="color:var(--green)">$&</span>');
-  c=c.replace(/\b(import|from|as|def|class|return|if|else|elif|with|try|except|finally|raise|True|False|None|not|and|or|in|is)\b/g,'<span style="color:var(--purple);font-weight:600">$&</span>');
-  c=c.replace(/\b(connect|cursor|execute|fetchall|close|print|environ|get)\b/g,'<span style="color:var(--blue)">$&</span>');
-  cm.forEach((v,i)=>{c=c.replace(`__CM${i}__`,`<span style="color:#5c6370;font-style:italic">${v}</span>`);});
-  return c;
-}
-function hl(code,lang){
-  if(lang==='sql')return hlSQL(code);
-  if(lang==='bash'||lang==='sh')return hlBash(code);
-  if(lang==='python'||lang==='py')return hlPy(code);
-  return esc(code);
-}
-let secNum=0;
-for(let i=0;i<lines.length;i++){
-  const line=lines[i];
-  if(line.trim().startsWith('```')){
-    if(!inCode){flushLi();inCode=true;codeLang=line.trim().slice(3).trim();codeBuf=[];}
-    else{inCode=false;const code=codeBuf.join('\n');const label=({'sql':'SQL','bash':'BASH','python':'PYTHON','py':'PYTHON','sh':'BASH','markdown':'CHECKLIST','':'TEXT'}[codeLang.toLowerCase()]||codeLang.toUpperCase());
-      html+=`<div class="code-wrap"><div class="code-header"><span class="code-lang">${label}</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div><pre>${hl(code,codeLang.toLowerCase())}</pre></div>\n`;}
-    continue;
-  }
-  if(inCode){codeBuf.push(line);continue;}
-  if(line.startsWith('---')){flushLi();continue;}
-  let m=line.match(/^## (.+)/);
-  if(m){flushLi();secNum++;const t=m[1].trim();const nm=t.match(/(\d+)/);const n=nm?nm[1]:'0';const icon=ICONS[n]||'📄';const id=n!=='0'?'s'+n:'resumen';
-    html+=`</section><section class="section" id="${id}"><div class="sec-header"><span class="sec-icon">${icon}</span><div><div class="sec-title">${esc(t)}</div></div></div>\n`;continue;}
-  m=line.match(/^### (.+)/);
-  if(m){flushLi();html+=`<h2>${inlineMd(esc(m[1].trim()))}</h2>\n`;continue;}
-  if(line.trim().startsWith('> [!')){
-    flushLi();let type='info';if(line.includes('[!WARNING]'))type='pit';else if(line.includes('[!TIP]'))type='tip';
-    const titles={pit:'⚠️ CUIDADO',tip:'💡 TIP',info:'ℹ️ NOTA'};
-    let content=[];i++;while(i<lines.length&&lines[i].startsWith('>')){content.push(lines[i].replace(/^>\s?/,''));i++;}i--;
-    html+=`<div class="box box-${type}"><div class="box-title">${titles[type]}</div><p>${inlineMd(esc(content.join(' ')))}</p></div>\n`;continue;}
-  if(line.includes('|')&&i+1<lines.length&&/^[\|\s\-:]+$/.test(lines[i+1].trim())){
-    flushLi();const hdr=line.trim().replace(/^\||\|$/g,'').split('|').map(c=>c.trim());
-    i+=2;const rows=[];while(i<lines.length&&lines[i].includes('|')&&lines[i].trim()){rows.push(lines[i].trim().replace(/^\||\|$/g,'').split('|').map(c=>c.trim()));i++;}i--;
-    html+='<div class="table-container"><table><thead><tr>'+hdr.map(h=>`<th>${esc(h)}</th>`).join('')+'</tr></thead><tbody>';
-    rows.forEach(r=>{html+='<tr>'+r.map(c=>`<td>${inlineMd(esc(c))}</td>`).join('')+'</tr>';});
-    html+='</tbody></table></div>\n';continue;}
-  if(line.trim().startsWith('- ')){liBuf.push(`<li>${inlineMd(esc(line.trim().slice(2)))}</li>`);continue;}
-  if(/^\d+\.\s/.test(line.trim())){liBuf.push(`<li>${inlineMd(esc(line.trim().replace(/^\d+\.\s/,'')))}</li>`);continue;}
-  if(line.trim()){flushLi();html+=`<p>${inlineMd(esc(line.trim()))}</p>\n`;}
-}
-flushLi();html+='</section>';
-// Remove first empty </section>
-html=html.replace(/^<\/section>/,'');
-document.getElementById('content').innerHTML=html;
-// Nav observer
-const navLinks=document.querySelectorAll('.nav-link');
-const secs=document.querySelectorAll('.section');
-const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){navLinks.forEach(l=>l.classList.remove('active'));const a=document.querySelector(`nav a[href="#${e.target.id}"]`);if(a)a.classList.add('active');}});},{threshold:0.15});
-secs.forEach(s=>{if(s.id)obs.observe(s);});
-function filterNav(q){
-  q=q.toLowerCase().trim();
-  let visibleCount=0;
-  navLinks.forEach(l=>{
-    const match=q.length===0||l.textContent.toLowerCase().includes(q);
-    l.classList.toggle('hidden',!match);
-    if(match)visibleCount++;
-  });
-  const noRes=document.getElementById('nav-no-results');
-  if(noRes)noRes.classList.toggle('show',visibleCount===0&&q.length>0);
-}
-function copyCode(btn){const pre=btn.closest('.code-wrap').querySelector('pre');navigator.clipboard.writeText(pre.innerText).then(()=>{btn.textContent='✓ Copiado';setTimeout(()=>btn.textContent='Copiar',2000);});}
-</script>
+            ---
+
+            ## 3. Los fundamentos: tablas, tipos de datos y CRUD
+
+            ### ¿Qué es una tabla?
+
+            Piensa en una **hoja de cálculo de Excel**: tiene columnas (nombre, edad, email) y filas (cada persona). En
+            SQL:
+
+            - **Columna** = Campo / Atributo (define el TIPO de dato)
+            - **Fila** = Registro / Tupla (un dato concreto)
+            - **Tabla** = Conjunto de filas y columnas con un nombre
+
+            ### Tipos de datos esenciales
+
+            ```sql
+            -- Los tipos que usarás en el 90% de los casos:
+
+            INTEGER -- Números enteros: 1, 42, -7
+            BIGINT -- Enteros muy grandes (IDs en apps con millones de registros)
+            SERIAL -- Entero autoincremental (perfecto para IDs automáticos)
+            VARCHAR(n) -- Texto de longitud variable, máximo n caracteres
+            TEXT -- Texto sin límite de longitud
+            BOOLEAN -- true / false
+            DATE -- Fecha: '2026-04-20'
+            TIMESTAMP -- Fecha + hora: '2026-04-20 19:30:00'
+            NUMERIC(10,2) -- Números decimales exactos (perfecto para dinero): 1234567.89
+            JSON / JSONB -- Datos en formato JSON (JSONB es más rápido para consultas)
+            UUID -- Identificador único universal
+            ```
+
+            > [!TIP]
+            > Usa `NUMERIC` para dinero, **nunca** `FLOAT` ni `REAL`. Los tipos flotantes tienen errores de redondeo.
+            Imagina que tu banco te cobra 0.000001€ de más en cada operación: a escala de millones de transacciones, eso
+            es un problema serio.
+
+            ### CREATE TABLE — Crear tu primera tabla
+
+            ```sql
+            -- Creamos una tabla de productos para una tienda online
+            CREATE TABLE productos (
+            id SERIAL PRIMARY KEY, -- ID único, se genera solo
+            nombre VARCHAR(200) NOT NULL, -- Obligatorio (NOT NULL)
+            descripcion TEXT, -- Opcional, sin límite de longitud
+            precio NUMERIC(10,2) NOT NULL, -- Hasta 99999999.99
+            stock INTEGER DEFAULT 0, -- Si no se indica, vale 0
+            activo BOOLEAN DEFAULT true, -- Producto visible o no
+            created_at TIMESTAMP DEFAULT NOW() -- Fecha de creación automática
+            );
+            ```
+
+            > [!NOTE]
+            > `PRIMARY KEY` significa que esa columna identifica de forma única cada fila. No puede haber dos productos
+            con el mismo `id`. Es como el DNI de cada registro.
+
+            ### INSERT — Meter datos
+
+            ```sql
+            -- Insertar un producto
+            INSERT INTO productos (nombre, precio, stock)
+            VALUES ('Teclado mecánico', 89.99, 50);
+
+            -- Insertar varios a la vez
+            INSERT INTO productos (nombre, precio, stock) VALUES
+            ('Ratón gaming', 45.50, 120),
+            ('Monitor 27"', 329.99, 15),
+            ('Webcam HD', 59.90, 80),
+            ('Cable USB-C', 12.99, 500);
+            ```
+
+            > [!WARNING]
+            > No incluimos `id` ni `created_at` en el INSERT porque se generan automáticamente (SERIAL y DEFAULT NOW()).
+            Si intentas insertar un id duplicado, PostgreSQL te devolverá un error.
+
+            ### SELECT — Leer datos (la consulta más importante)
+
+            ```sql
+            -- Traer TODOS los productos con TODAS las columnas
+            SELECT * FROM productos;
+
+            -- Solo nombre y precio
+            SELECT nombre, precio FROM productos;
+
+            -- Filtrar con WHERE
+            SELECT nombre, precio
+            FROM productos
+            WHERE precio > 50;
+
+            -- Combinar condiciones con AND / OR
+            SELECT nombre, precio, stock
+            FROM productos
+            WHERE precio > 50 AND stock > 20;
+
+            -- Ordenar resultados
+            SELECT nombre, precio
+            FROM productos
+            ORDER BY precio DESC; -- DESC = de mayor a menor, ASC = de menor a mayor
+
+            -- Limitar resultados (paginación básica)
+            SELECT nombre, precio
+            FROM productos
+            ORDER BY precio DESC
+            LIMIT 3 OFFSET 0; -- Los 3 primeros caros
+            -- OFFSET salta las primeras N filas. Útil para páginas:
+            -- Página 2: LIMIT 3 OFFSET 3
+            ```
+
+            ### UPDATE — Modificar datos existentes
+
+            ```sql
+            -- Subir el precio del teclado un 10%
+            UPDATE productos
+            SET precio = precio * 1.10
+            WHERE nombre = 'Teclado mecánico';
+
+            -- Desactivar productos sin stock
+            UPDATE productos
+            SET activo = false
+            WHERE stock = 0;
+            ```
+
+            > [!WARNING]
+            > **SIEMPRE** usa `WHERE` en un UPDATE. Si lo olvidas, modificarás TODAS las filas de la tabla. Esto es uno
+            de los errores más devastadores en producción. Regla de oro: escribe primero el WHERE, luego el SET.
+
+            ### DELETE — Eliminar datos
+
+            ```sql
+            -- Eliminar un producto concreto
+            DELETE FROM productos
+            WHERE id = 5;
+
+            -- Eliminar productos inactivos
+            DELETE FROM productos
+            WHERE activo = false;
+            ```
+
+            > [!WARNING]
+            > La misma regla que con UPDATE: **jamás** un DELETE sin WHERE en producción. `DELETE FROM productos;` sin
+            WHERE borra TODA la tabla. No hay papelera de reciclaje.
+
+            ### 🧪 Mini-Lab 1: Tu primera tabla completa
+
+            Pon en práctica todo lo aprendido en esta sección. **Hazlo tú sin mirar la solución:**
+
+            **Reto:** Crea una tabla `alumnos` con estos campos: `id` (autoincremental), `nombre`, `email` (único),
+            `nota_media` (decimal), `fecha_matricula` (fecha) y `activo` (booleano). Luego:
+
+            - Inserta 5 alumnos con datos inventados
+            - Consulta los alumnos con nota media superior a 7
+            - Actualiza la nota media del alumno con id 3
+            - Desactiva (`activo = false`) a todos los alumnos con nota inferior a 5
+            - Elimina los alumnos inactivos
+
+            ```sql
+            -- SOLUCIÓN (intenta hacerlo antes de mirar)
+
+            -- Paso 0: Crear la tabla
+            CREATE TABLE alumnos (
+            id SERIAL PRIMARY KEY,
+            nombre VARCHAR(100) NOT NULL,
+            email VARCHAR(150) UNIQUE NOT NULL,
+            nota_media NUMERIC(4,2) CHECK (nota_media BETWEEN 0 AND 10),
+            fecha_matricula DATE DEFAULT CURRENT_DATE,
+            activo BOOLEAN DEFAULT true
+            );
+
+            -- Paso 1: Insertar 5 alumnos
+            INSERT INTO alumnos (nombre, email, nota_media) VALUES
+            ('María Torres', 'maria@uni.es', 8.5),
+            ('Carlos Ruiz', 'carlos@uni.es', 6.2),
+            ('Laura Sánchez', 'laura@uni.es', 4.3),
+            ('Pedro Gómez', 'pedro@uni.es', 9.1),
+            ('Ana Martín', 'ana@uni.es', 3.8);
+
+            -- Paso 2: Nota media > 7
+            SELECT nombre, nota_media FROM alumnos WHERE nota_media > 7;
+
+            -- Paso 3: Actualizamos al alumno 3. Ahora su nota es 5.5 (aprobado).
+            -- Esto evitará que sea borrado en los pasos siguientes (efecto cascada lógico).
+            UPDATE alumnos SET nota_media = 5.5 WHERE id = 3;
+
+            -- Paso 4: Marcamos como inactivos a los que siguen por debajo de 5.
+            -- El alumno 3 ya NO entra aquí porque su nota ahora es superior a 5.
+            UPDATE alumnos SET activo = false WHERE nota_media < 5; -- Paso 5: Limpieza física. Borramos definitivamente
+                a los que -- marcamos como inactivos (soft-delete) en el paso anterior. DELETE FROM alumnos WHERE
+                activo=false; ``` --- ## 4. Filtrado avanzado y funciones ### El problema Ya sabes hacer consultas
+                básicas con WHERE, pero en producción las búsquedas son mucho más complejas: rangos de precios,
+                búsquedas por texto parcial, valores nulos, agrupaciones por categoría. Necesitas herramientas más
+                potentes. ### Operadores de comparación y lógicos ```sql -- BETWEEN: rango inclusivo SELECT * FROM
+                productos WHERE precio BETWEEN 40 AND 100; -- IN: lista de valores SELECT * FROM productos WHERE nombre
+                IN ('Ratón gaming', 'Webcam HD' ); -- LIKE: búsqueda por patrón SELECT * FROM productos WHERE nombre
+                LIKE '%gaming%' ; -- Contiene "gaming" -- %=cualquier cosa, _=un solo carácter -- ILIKE: como LIKE pero
+                ignora mayúsculas/minúsculas (exclusivo PostgreSQL) SELECT * FROM productos WHERE nombre
+                ILIKE '%teclado%' ; -- IS NULL / IS NOT NULL SELECT * FROM productos WHERE descripcion IS NULL; --
+                Productos sin descripción ``` ### DISTINCT — Eliminar duplicados Antes de ver cómo resumir datos,
+                necesitamos saber cómo limpiar duplicados en los resultados: ```sql -- Si quieres saber qué categorías
+                existen (sin que se repitan) SELECT DISTINCT categoria FROM productos; ``` ### COALESCE — Manejo de
+                Nulos Sirve para dar un valor por defecto cuando algo es `NULL`: ```sql -- Si la descripción es NULL,
+                muestra 'Sin descripción' SELECT nombre, COALESCE(descripcion, 'Sin descripción' ) FROM productos; ```
+                ### CASE WHEN — Lógica condicional en SQL A veces necesitas que el resultado dependa de una condición
+                (como un `if/else`). Para eso usamos `CASE`: ```sql -- Clasificar productos según su stock SELECT
+                nombre, stock, CASE WHEN stock=0 THEN 'Agotado' WHEN stock < 10 THEN 'Bajo stock' ELSE 'Suficiente' END
+                AS estado_alerta FROM productos; ``` ### Funciones de agregación Las funciones de agregación resumen
+                muchas filas en un solo valor. Son el equivalente a las fórmulas de Excel tipo SUMA, PROMEDIO, etc.
+                ```sql -- Contar cuántos productos hay SELECT COUNT(*) FROM productos; -- Precio medio SELECT
+                AVG(precio) FROM productos; -- Precio máximo y mínimo SELECT MAX(precio), MIN(precio) FROM productos; --
+                Suma total del valor del inventario SELECT SUM(precio * stock) AS valor_inventario FROM productos; ```>
+                [!NOTE]
+                > `AS valor_inventario` es un **alias**: renombra la columna en el resultado. No cambia nada en la base
+                de datos, solo en la presentación.
+
+                ### GROUP BY — Agrupar para resumir
+
+                ```sql
+                -- Supongamos que añadimos una columna "categoria"
+                ALTER TABLE productos ADD COLUMN categoria VARCHAR(50);
+
+                -- Actualizar las categorías
+                UPDATE productos SET categoria = 'Periféricos' WHERE nombre IN ('Teclado mecánico', 'Ratón gaming');
+                UPDATE productos SET categoria = 'Monitores' WHERE nombre LIKE '%Monitor%';
+                UPDATE productos SET categoria = 'Accesorios' WHERE nombre IN ('Webcam HD', 'Cable USB-C');
+
+                -- Ahora agrupamos: ¿cuántos productos hay por categoría?
+                SELECT categoria, COUNT(*) AS total, AVG(precio) AS precio_medio
+                FROM productos
+                GROUP BY categoria
+                ORDER BY total DESC;
+
+                -- HAVING: filtrar DESPUÉS de agrupar (WHERE filtra ANTES)
+                SELECT categoria, AVG(precio) AS precio_medio
+                FROM productos
+                GROUP BY categoria
+                HAVING AVG(precio) > 50; -- Solo categorías con precio medio > 50€
+                ```
+
+                > [!IMPORTANT]
+                > **WHERE vs HAVING:** Esta es la mayor trampa para principiantes. `WHERE` filtra filas individuales
+                **antes** de agrupar; `HAVING` filtra el resultado del grupo **después** de calcular la estadística. Si
+                intentas usar un `WHERE` con una función de agregación (como `AVG`), SQL te dará un error.
+
+                > [!TIP]
+                > Regla mnemotécnica del orden de ejecución SQL: **F-W-G-H-S-O-L** (FROM, WHERE, GROUP BY, HAVING,
+                SELECT, ORDER BY, LIMIT). SQL NO se ejecuta en el orden en que lo escribes.
+
+                ---
+
+                ## 5. Relaciones entre tablas (el corazón de SQL)
+
+                ### El problema
+
+                Imagina que metes toda la información en una sola tabla: productos, clientes, pedidos, direcciones de
+                envío… Tendrías datos repetidos por todas partes (el nombre del cliente aparecería en cada pedido). Esto
+                se llama **redundancia** y causa:
+
+                - Desperdicio de espacio
+                - Inconsistencias (cambias el email en un sitio pero no en otro)
+                - Pesadilla de mantenimiento
+
+                La solución: **dividir la información en tablas especializadas y conectarlas con relaciones**.
+
+                ### Tipos de relaciones
+
+                ```
+                1:1 (Uno a Uno) → Un usuario tiene UN perfil detallado
+                1:N (Uno a Muchos) → Un cliente tiene MUCHOS pedidos
+                N:M (Muchos a Muchos) → Un pedido tiene MUCHOS productos Y un producto está en MUCHOS pedidos
+                ```
+
+                ### Foreign Key (Clave Foránea) — El puente entre tablas
+
+                ```sql
+                -- Tabla de clientes
+                CREATE TABLE clientes (
+                id SERIAL PRIMARY KEY,
+                nombre VARCHAR(100) NOT NULL,
+                email VARCHAR(150) UNIQUE NOT NULL, -- UNIQUE = no puede haber emails repetidos
+                ciudad VARCHAR(100)
+                );
+
+                -- Tabla de pedidos: cada pedido PERTENECE a un cliente
+                CREATE TABLE pedidos (
+                id SERIAL PRIMARY KEY,
+                cliente_id INTEGER NOT NULL REFERENCES clientes(id), -- FK: apunta a clientes
+                fecha TIMESTAMP DEFAULT NOW(),
+                total NUMERIC(10,2) NOT NULL,
+                estado VARCHAR(20) DEFAULT 'pendiente'
+                );
+
+                -- Tabla intermedia para la relación N:M entre pedidos y productos
+                CREATE TABLE pedido_productos (
+                pedido_id INTEGER REFERENCES pedidos(id),
+                producto_id INTEGER REFERENCES productos(id),
+                cantidad INTEGER NOT NULL DEFAULT 1,
+                precio_unit NUMERIC(10,2) NOT NULL, -- Precio en el momento de la compra
+                PRIMARY KEY (pedido_id, producto_id) -- Clave primaria compuesta
+                );
+                ```
+
+                > [!NOTE]
+                > `REFERENCES clientes(id)` es la **Foreign Key**. Le dice a PostgreSQL: "el valor de `cliente_id` DEBE
+                existir en la columna `id` de la tabla `clientes`". Si intentas crear un pedido con un `cliente_id` que
+                no existe, la base de datos lo rechazará. Esto garantiza la **integridad referencial**.
+
+                ### JOIN — Unir tablas en consultas
+
+                ```sql
+                -- Insertar datos de ejemplo
+                INSERT INTO clientes (nombre, email, ciudad) VALUES
+                ('Ana García', 'ana@email.com', 'Madrid'),
+                ('Luis López', 'luis@email.com', 'Barcelona');
+
+                INSERT INTO pedidos (cliente_id, total, estado) VALUES
+                (1, 135.49, 'completado'),
+                (1, 329.99, 'enviado'),
+                (2, 45.50, 'pendiente');
+
+                -- INNER JOIN: solo filas que coinciden en AMBAS tablas
+                SELECT
+                c.nombre AS cliente,
+                p.id AS pedido_num,
+                p.total,
+                p.estado
+                FROM pedidos p
+                INNER JOIN clientes c ON p.cliente_id = c.id;
+
+                > [!WARNING]
+                > **Nunca olvides la cláusula ON.** Si haces un JOIN sin ella (o te equivocas), podrías provocar un
+                **producto cartesiano**: la base de datos combinará CADA fila de una tabla con CADA fila de la otra. Si
+                tienes 1.000 clientes y 1.000 pedidos, ¡acabarás con un millón de filas de basura!
+
+                -- LEFT JOIN: TODOS los clientes, aunque no tengan pedidos
+                SELECT
+                c.nombre,
+                COUNT(p.id) AS total_pedidos
+                FROM clientes c
+                LEFT JOIN pedidos p ON c.id = p.cliente_id
+                GROUP BY c.nombre;
+                ```
+
+                > [!TIP]
+                > Usa alias cortos para las tablas (`c` para clientes, `p` para pedidos). Hace las consultas mucho más
+                legibles, especialmente cuando unes 3 o más tablas.
+
+                > [!NOTE]
+                > Existen otros tipos como `RIGHT JOIN` (lo opuesto al LEFT) y `CROSS JOIN` (producto cartesiano), pero
+                en el 99% de los casos usarás INNER y LEFT JOIN.
+
+                ### 🧪 Mini-Lab 2: Diseña una biblioteca con JOINs
+
+                **Reto:** Diseña un esquema para una **biblioteca** y practica relaciones:
+
+                - Crea las tablas `autores` (id, nombre, pais), `libros` (id, titulo, anio, autor_id) y `prestamos` (id,
+                libro_id, lector, fecha_prestamo, fecha_devolucion)
+                - Inserta 3 autores, 5 libros y 4 préstamos
+                - Haz un INNER JOIN para listar "Título del libro — Nombre del autor"
+                - Haz un LEFT JOIN para encontrar autores que no tienen libros registrados
+                - Cuenta cuántos libros tiene cada autor con GROUP BY
+
+                ```sql
+                -- SOLUCIÓN
+
+                CREATE TABLE autores (
+                id SERIAL PRIMARY KEY,
+                nombre VARCHAR(100) NOT NULL,
+                pais VARCHAR(50)
+                );
+
+                CREATE TABLE libros (
+                id SERIAL PRIMARY KEY,
+                titulo VARCHAR(200) NOT NULL,
+                anio INTEGER CHECK (anio > 0),
+                autor_id INTEGER REFERENCES autores(id)
+                );
+
+                CREATE TABLE prestamos (
+                id SERIAL PRIMARY KEY,
+                libro_id INTEGER REFERENCES libros(id),
+                lector VARCHAR(100) NOT NULL,
+                fecha_prestamo DATE DEFAULT CURRENT_DATE,
+                fecha_devolucion DATE
+                );
+
+                INSERT INTO autores (nombre, pais) VALUES
+                ('Gabriel García Márquez', 'Colombia'),
+                ('Isabel Allende', 'Chile'),
+                ('Arturo Pérez-Reverte', 'España');
+
+                INSERT INTO libros (titulo, anio, autor_id) VALUES
+                ('Cien años de soledad', 1967, 1),
+                ('El amor en los tiempos del cólera', 1985, 1),
+                ('La casa de los espíritus', 1982, 2),
+                ('El capitán Alatriste', 1996, 3),
+                ('Eva Luna', 1987, 2);
+
+                INSERT INTO prestamos (libro_id, lector, fecha_prestamo) VALUES
+                (1, 'Juan Pérez', '2026-04-01'),
+                (3, 'Laura Gómez', '2026-04-05'),
+                (1, 'María López', '2026-04-10'),
+                (5, 'Carlos Ruiz', '2026-04-15');
+
+                -- Consulta 3: Título + Autor
+                SELECT l.titulo, a.nombre AS autor
+                FROM libros l
+                INNER JOIN autores a ON l.autor_id = a.id;
+
+                -- Consulta 4: Autores sin libros (añade uno de prueba primero)
+                INSERT INTO autores (nombre, pais) VALUES ('Autor Sin Libros', 'Test');
+                SELECT a.nombre
+                FROM autores a
+                LEFT JOIN libros l ON a.id = l.autor_id
+                WHERE l.id IS NULL;
+
+                -- Consulta 5: Libros por autor
+                SELECT a.nombre, COUNT(l.id) AS total_libros
+                FROM autores a
+                LEFT JOIN libros l ON a.id = l.autor_id
+                GROUP BY a.nombre
+                ORDER BY total_libros DESC;
+                ```
+
+                ---
+
+                ## 6. Índices y rendimiento
+
+                ### El problema
+
+                Tu aplicación funciona perfecta en desarrollo con 50 registros. Pero en producción tiene 10 millones de
+                filas y una consulta que tardaba 5ms ahora tarda 30 segundos. Los usuarios se quejan. ¿Qué ha pasado?
+                Sin índices, cada consulta con WHERE recorre **TODAS** las filas de la tabla (lo que se conoce como
+                **Full Table Scan** — Escaneo Completo de Tabla).
+
+                ### ¿Qué es un índice?
+
+                Piensa en el **índice alfabético de un libro de texto**. Si quieres buscar "PostgreSQL", no lees las 500
+                páginas: vas al índice al final, buscas la P, y saltas directamente a la página 347. Un índice en SQL
+                funciona exactamente igual: crea una estructura interna ordenada que permite a la base de datos **saltar
+                directamente** al dato que busca.
+
+                ```sql
+                -- Crear un índice en la columna email (búsquedas frecuentes)
+                CREATE INDEX idx_clientes_email ON clientes(email);
+
+                -- Índice compuesto: cuando siempre filtras por dos columnas juntas
+                CREATE INDEX idx_pedidos_cliente_estado ON pedidos(cliente_id, estado);
+
+                ### Tipos de índices
+
+                PostgreSQL soporta varios tipos de índices según el dato:
+
+                | Tipo | Uso principal | Ejemplo |
+                |---|---|---|
+                | **B-Tree** | Por defecto. Igualdad y rangos | `id`, `precio`, `fecha` |
+                | **GIN** | Datos compuestos o búsqueda de texto | `JSONB`, `Arrays`, Búsqueda parcial |
+                | **GiST** | Datos geométricos o rangos de tiempo | `Coordenadas`, `TSRANGE` |
+
+                > [!WARNING]
+                > Los índices **GIN** son muy potentes para búsquedas dentro de JSONB o texto, pero tienen un coste de
+                almacenamiento alto y ralentizan las inserciones más que un B-Tree. Úsalos solo donde la velocidad de
+                búsqueda sea crítica.
+
+                -- Ver los índices de una tabla
+                \di -- En psql
+
+                -- Ver si una consulta usa el índice (EXPLAIN)
+                EXPLAIN ANALYZE
+                SELECT * FROM clientes WHERE email = 'ana@email.com';
+                ```
+
+                > [!WARNING]
+                > Los índices aceleran las lecturas (SELECT) pero ralentizan las escrituras (INSERT, UPDATE, DELETE)
+                porque cada cambio debe actualizar también el índice. No indexes TODAS las columnas; solo las que
+                aparecen frecuentemente en WHERE, JOIN y ORDER BY.
+
+                ---
+
+                ## 7. Subconsultas, CTEs y Vistas
+
+                ### El problema
+
+                A medida que tus consultas crecen en complejidad, necesitas combinar resultados, reutilizar cálculos y
+                guardar consultas frecuentes para no repetirte. Imagina que cada vez que quieres saber el resumen de
+                ventas tienes que escribir un JOIN de 15 líneas — eso no escala.
+
+                ### Subconsultas (Subqueries)
+
+                Una subconsulta es una **consulta dentro de otra consulta**. Piensa en las muñecas rusas (matrioshkas):
+                abres una y dentro hay otra más pequeña:
+
+                ```sql
+                -- Productos con precio superior a la media
+                SELECT nombre, precio
+                FROM productos
+                WHERE precio > (SELECT AVG(precio) FROM productos);
+
+                -- Clientes que han hecho al menos un pedido
+                SELECT nombre FROM clientes
+                WHERE id IN (SELECT DISTINCT cliente_id FROM pedidos);
+                ```
+
+                ### CTEs (Common Table Expressions) — Consultas legibles
+
+                Las CTEs son como **variables temporales** para tus consultas. En lugar de anidar subconsulta dentro de
+                subconsulta (código espagueti SQL), les das un nombre y las usas como si fueran tablas normales:
+
+                ```sql
+                -- CTE: "WITH" crea una tabla temporal nombrada para esa consulta
+                WITH resumen_clientes AS (
+                SELECT
+                c.id,
+                c.nombre,
+                COUNT(p.id) AS total_pedidos,
+                COALESCE(SUM(p.total), 0) AS gasto_total
+                FROM clientes c
+                LEFT JOIN pedidos p ON c.id = p.cliente_id
+                GROUP BY c.id, c.nombre
+                )
+                SELECT nombre, total_pedidos, gasto_total
+                FROM resumen_clientes
+                WHERE gasto_total > 100
+                ORDER BY gasto_total DESC;
+                ```
+
+                > [!TIP]
+                > Las CTEs son como variables temporales. Hacen las consultas complejas mucho más legibles. Úsalas
+                siempre que una subconsulta haga el código difícil de seguir.
+
+                ### Vistas (Views) — Consultas guardadas
+
+                ```sql
+                -- Crear una vista: es como guardar un SELECT con nombre
+                CREATE VIEW v_resumen_pedidos AS
+                SELECT
+                c.nombre AS cliente,
+                c.email,
+                COUNT(p.id) AS pedidos,
+                COALESCE(SUM(p.total), 0) AS total_gastado
+                FROM clientes c
+                LEFT JOIN pedidos p ON c.id = p.cliente_id
+                GROUP BY c.id, c.nombre, c.email;
+
+                -- Ahora la usas como si fuera una tabla
+                SELECT * FROM v_resumen_pedidos WHERE total_gastado > 100;
+                ```
+
+                ---
+
+                ## 8. Transacciones y seguridad de datos
+
+                ### El problema
+
+                Imagina que transfieres 100€ de tu cuenta a la de un amigo. Esto implica DOS operaciones: restar de tu
+                cuenta y sumar a la suya. Si el sistema falla entre ambas operaciones, el dinero desaparece. Las
+                **transacciones** garantizan que o se ejecutan TODAS las operaciones, o NINGUNA (principio de
+                **atomicidad**).
+
+                ```sql
+                -- Iniciar una transacción
+                BEGIN;
+
+                -- Operación 1: restar stock
+                UPDATE productos SET stock = stock - 2 WHERE id = 1;
+
+                -- Operación 2: crear registro de pedido
+                INSERT INTO pedidos (cliente_id, total, estado) VALUES (1, 179.98, 'completado');
+
+                -- Si todo va bien: confirmar
+                COMMIT;
+
+                -- Si algo falla: deshacer TODO
+                -- ROLLBACK;
+                ```
+
+                > [!WARNING]
+                > En producción, tu código de aplicación (Python, Java, Node.js) debe gestionar transacciones
+                automáticamente. Si una operación falla, se ejecuta ROLLBACK. Nunca dejes una transacción abierta sin
+                cerrar: bloquea las filas afectadas para otros usuarios.
+
+                ### ACID — Las 4 garantías de una transacción
+
+                | Propiedad | Significado |
+                |-----------|------------|
+                | **A**tomicidad | Todo o nada |
+                | **C**onsistencia | La BD pasa de un estado válido a otro válido |
+                | **I**solamiento | Las transacciones concurrentes no se interfieren |
+                | **D**urabilidad | Una vez hecho COMMIT, el dato sobrevive a un corte de luz |
+
+                ### 🧪 Mini-Lab 3: Transferencia bancaria con transacciones
+
+                **Reto:** Simula un sistema bancario básico y practica transacciones:
+
+                - Crea una tabla `cuentas` con `id`, `titular` y `saldo` (NUMERIC)
+                - Inserta dos cuentas: Ana con 1000€ y Luis con 500€
+                - Haz una transferencia de 200€ de Ana a Luis usando BEGIN/COMMIT
+                - Intenta transferir 2000€ (más de lo que tiene Ana) — usa ROLLBACK
+                - Verifica que los saldos son correctos tras cada operación
+
+                ```sql
+                -- SOLUCIÓN
+
+                CREATE TABLE cuentas (
+                id SERIAL PRIMARY KEY,
+                titular VARCHAR(100) NOT NULL,
+                saldo NUMERIC(10,2) NOT NULL CHECK (saldo >= 0) -- No permite saldo negativo
+                );
+
+                INSERT INTO cuentas (titular, saldo) VALUES
+                ('Ana', 1000.00),
+                ('Luis', 500.00);
+
+                -- Transferencia exitosa: 200€ de Ana (ID 1) a Luis (ID 2)
+                BEGIN;
+                UPDATE cuentas SET saldo = saldo - 200 WHERE id = 1;
+                UPDATE cuentas SET saldo = saldo + 200 WHERE id = 2;
+                -- Verificar antes de confirmar
+                SELECT * FROM cuentas;
+                COMMIT;
+                -- Resultado: Ana=800, Luis=700
+
+                -- Transferencia fallida: 2000€ (Ana solo tiene 800)
+                BEGIN;
+                UPDATE cuentas SET saldo = saldo - 2000 WHERE id = 1;
+                -- Esto FALLA por el CHECK (saldo >= 0)
+                -- PostgreSQL abortará automáticamente la transacción
+                ROLLBACK;
+
+                -- Verificar que los saldos no cambiaron
+                SELECT * FROM cuentas;
+                -- Resultado: Ana=800, Luis=700 (intactos gracias al ROLLBACK)
+                ```
+
+                > [!NOTE]
+                > Observa cómo el `CHECK (saldo >= 0)` actúa como red de seguridad: incluso si olvidas validar en tu
+                código, la base de datos rechaza la operación. Esto es **defensa en profundidad**.
+
+                ---
+
+                ## 9. Usuarios, permisos y seguridad
+
+                ### El problema
+
+                Hasta ahora hemos trabajado como superusuario `postgres`, que puede hacer **absolutamente todo**: crear,
+                borrar, modificar cualquier tabla. Eso es como darle las llaves maestras del edificio entero al
+                repartidor de pizzas. Si alguien compromete tu aplicación web, el atacante heredaría todos esos
+                permisos. Necesitas un sistema de **permisos granulares**.
+
+                ### Principio de mínimo privilegio
+
+                Cada usuario/aplicación debe tener **solo** los permisos que necesita, ni uno más. Es como las tarjetas
+                de acceso de una oficina: el programador entra al piso de desarrollo, pero no a la sala de servidores.
+
+                ```sql
+                -- Crear un usuario para la aplicación web
+                -- (En producción: usar contraseñas aleatorias o Vault)
+                CREATE USER app_web WITH PASSWORD 'password_muy_segura_123!';
+
+                -- Darle permisos solo de lectura y escritura en tablas específicas
+                GRANT SELECT, INSERT, UPDATE ON productos, pedidos, clientes TO app_web;
+                GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO app_web;
+
+                -- Crear un usuario de solo lectura para informes
+                CREATE USER analista WITH PASSWORD 'otra_password_segura';
+                GRANT SELECT ON ALL TABLES IN SCHEMA public TO analista;
+
+                -- Revocar permisos
+                REVOKE DELETE ON productos FROM app_web;
+
+                -- Ver permisos actuales
+                \dp productos
+                ```
+
+                > [!WARNING]
+                > **Nunca** pongas contraseñas en el código fuente. Usa variables de entorno (`DATABASE_URL`) o gestores
+                de secretos (Vault, AWS Secrets Manager). Si tu repo de Git es público, cualquiera tendría acceso a tu
+                base de datos.
+
+                ---
+
+                ## 10. De desarrollo a producción
+
+                ### El problema
+
+                Tu base de datos funciona perfecta en tu portátil. Pero llevarla a producción implica nuevos retos:
+                migraciones de esquema, backups, conexión segura desde la aplicación y monitorización. Un solo error
+                aquí puede significar pérdida de datos irreversible.
+
+                ### Migraciones: control de versiones para tu BD
+
+                Igual que usas Git para versionar tu código, necesitas **migraciones** para versionar los cambios en la
+                estructura de tu base de datos.
+
+                ```bash
+                # Ejemplo con herramientas populares:
+
+                # Python (Alembic con SQLAlchemy)
+                pip install alembic
+                alembic init migrations
+                alembic revision --autogenerate -m "crear_tabla_productos"
+                alembic upgrade head
+
+                # Node.js (Knex.js)
+                npx knex migrate:make crear_tabla_productos
+                npx knex migrate:latest
+
+                # Java (Flyway)
+                # Los scripts SQL se ponen en src/main/resources/db/migration/
+                # V1__crear_tabla_productos.sql
+                ```
+
+                ### Backups — Tu seguro de vida
+
+                ```bash
+                # Backup completo de una base de datos
+                pg_dump -U fran -d mi_primera_db -F c -f backup_20260420.dump
+
+                # Restaurar
+                pg_restore -U fran -d mi_primera_db backup_20260420.dump
+
+                # Backup automático diario (añadir a crontab)
+                # crontab -e
+                # 0 3 * * * pg_dump -U fran -d mi_primera_db -F c -f /backups/db_$(date +\%Y\%m\%d).dump
+                ```
+
+                > [!WARNING]
+                > Un backup que no se ha probado restaurar NO es un backup. Prueba regularmente que puedes restaurar tus
+                dumps en un entorno de test. Muchas empresas han descubierto tarde que sus backups estaban corruptos.
+
+                ### Conectar desde tu aplicación (Python)
+
+                ```python
+                import os
+                import psycopg2
+
+                # Usar context manager para garantizar que la conexión Y el cursor
+                # se cierren automáticamente, incluso si hay un error.
+                try:
+                with psycopg2.connect(
+                host=os.environ['DB_HOST'],
+                dbname=os.environ['DB_NAME'],
+                user=os.environ['DB_USER'],
+                password=os.environ['DB_PASSWORD'],
+                sslmode='require'
+                ) as conn:
+                with conn.cursor() as cursor:
+                cursor.execute("SELECT * FROM productos WHERE activo = %s", (True,))
+                resultados = cursor.fetchall()
+                print(f"Cargados {len(resultados)} productos")
+                except Exception as e:
+                print(f"Error de base de datos: {e}")
+                ```
+
+                > [!WARNING]
+                > **SQL Injection** es cuando un atacante inyecta código SQL malicioso a través de inputs de usuario.
+                SIEMPRE usa consultas parametrizadas (`%s`, `?`, `$1`) en lugar de concatenar strings. Ejemplo de
+                ataque: si el input es `'; DROP TABLE productos; --`, y tú concatenas, acabas de perder tu tabla.
+
+                > [!TIP]
+                > En producción real, usa un **context manager** (`with psycopg2.connect(...) as conn:`) para garantizar
+                que la conexión se cierra correctamente incluso si hay excepciones. Esto evita fugas de conexiones que
+                degradan el rendimiento del servidor.
+
+                ### Checklist de producción
+
+                ```markdown
+                ✅ Usuario dedicado (no usar postgres)
+                ✅ Contraseñas en variables de entorno
+                ✅ SSL habilitado (sslmode='require')
+                ✅ Backups diarios automatizados
+                ✅ Backups probados (restauración verificada)
+                ✅ Migraciones versionadas en Git
+                ✅ Monitorización (pg_stat_activity, deadlocks)
+                ✅ Índices en columnas de WHERE y JOIN
+                ✅ Connection pooling (PgBouncer) si hay alta concurrencia
+                ✅ Logs de queries lentas (log_min_duration_statement)
+                ```
+
+                ---
+
+                ## 11. Window Functions — Análisis sin perder detalle
+
+                ### El problema
+
+                Con `GROUP BY` puedes calcular totales por categoría, pero pierdes las filas individuales. ¿Y si quieres
+                ver cada pedido de un cliente Y al mismo tiempo el acumulado total? Es como un director de maratón que
+                necesita ver la posición de cada corredor EN CADA KILÓMETRO, no solo el resultado final.
+
+                ### Anatomía de una Window Function
+
+                > [!NOTE]
+                > **Diferencia clave:** Mientras que `GROUP BY` colapsa las filas en una sola para darte un total, las
+                **Window Functions** mantienen las filas originales intactas pero les "pegan" una columna nueva con el
+                cálculo del grupo. Es lo mejor de ambos mundos.
+
+                ```sql
+                -- Acumulado de gasto por cliente, SIN perder detalle de cada pedido
+                SELECT
+                c.nombre,
+                DATE_TRUNC('month', p.fecha) AS mes, -- Trunca la fecha al inicio del mes
+                p.total,
+                SUM(p.total) OVER (PARTITION BY c.id ORDER BY p.fecha) AS acumulado
+                FROM pedidos p
+                JOIN clientes c ON p.cliente_id = c.id;
+                ```
+
+                Desglose de la sintaxis:
+
+                - `SUM(p.total)` es la función de agregación
+                - `OVER (...)` la convierte en Window Function
+                - `PARTITION BY c.id` agrupa por cliente (como GROUP BY, pero sin colapsar filas)
+                - `ORDER BY p.fecha` calcula el acumulado en orden cronológico
+
+                ### Funciones de ranking
+
+                ```sql
+                -- Ranking de productos por precio (del más caro al más barato)
+                SELECT
+                nombre,
+                precio,
+                ROW_NUMBER() OVER (ORDER BY precio DESC) AS posicion, -- 1, 2, 3... (sin empates)
+                RANK() OVER (ORDER BY precio DESC) AS ranking, -- 1, 2, 2, 4... (con huecos)
+                DENSE_RANK() OVER (ORDER BY precio DESC) AS ranking_denso -- 1, 2, 2, 3... (sin huecos)
+                FROM productos;
+
+                -- Top 1 producto más caro por categoría
+                SELECT * FROM (
+                SELECT
+                nombre,
+                categoria,
+                precio,
+                ROW_NUMBER() OVER (PARTITION BY categoria ORDER BY precio DESC) AS rn
+                FROM productos
+                ) sub
+                WHERE rn = 1;
+                ```
+
+                ### LAG y LEAD — Mirar filas vecinas
+
+                ```sql
+                -- Comparar cada pedido con el anterior (LAG) y el siguiente (LEAD)
+                SELECT
+                c.nombre,
+                p.total,
+                LAG(p.total) OVER (PARTITION BY c.id ORDER BY p.fecha) AS anterior,
+                LEAD(p.total) OVER (PARTITION BY c.id ORDER BY p.fecha) AS siguiente
+                FROM pedidos p
+                JOIN clientes c ON p.cliente_id = c.id;
+                ```
+
+                > [!TIP]
+                > Las Window Functions son la herramienta favorita en entrevistas técnicas de SQL. Domínalas y
+                destacarás sobre el 90% de los candidatos. Son esenciales para reportes, dashboards y análisis de datos.
+
+                ---
+
+                ## 12. Triggers y Procedimientos Almacenados
+
+                ### El problema
+
+                Alguien modifica el precio de un producto y nadie sabe quién fue ni cuándo. Un desarrollador junior
+                ejecuta un UPDATE masivo por error y no hay rastro. Necesitas un sistema de **auditoría automática** que
+                registre cada cambio sin depender de que la aplicación lo haga.
+
+                ### ¿Qué es un Trigger?
+
+                Un trigger (disparador) es una **acción automática** que se ejecuta cuando ocurre un evento en una tabla
+                (INSERT, UPDATE, DELETE). Es como la alarma de una tienda: cuando alguien pasa por la puerta con un
+                artículo sin pagar, salta automáticamente.
+
+                ### Ejemplo práctico: auditoría automática
+
+                ```sql
+                -- 1. Crear tabla de auditoría
+                CREATE TABLE auditoria_productos (
+                id SERIAL PRIMARY KEY,
+                producto_id INTEGER,
+                accion VARCHAR(10), -- INSERT, UPDATE, DELETE
+                datos_old JSONB, -- Estado anterior
+                datos_new JSONB, -- Estado nuevo
+                usuario VARCHAR(50) DEFAULT current_user,
+                fecha TIMESTAMP DEFAULT NOW()
+                );
+
+                -- 2. Crear la función que ejecutará el trigger
+                -- Advertencia: OLD es NULL en INSERT, NEW es NULL en DELETE.
+                -- Si manejas TRUNCATE, ambos serán NULL.
+                CREATE OR REPLACE FUNCTION fn_auditar_productos()
+                RETURNS TRIGGER AS $$
+                BEGIN
+                -- TG_OP contiene la operación: INSERT, UPDATE o DELETE
+                IF TG_OP = 'DELETE' THEN
+                INSERT INTO auditoria_productos (producto_id, accion, datos_old)
+                VALUES (OLD.id, 'DELETE', to_jsonb(OLD));
+                RETURN OLD;
+                ELSIF TG_OP = 'UPDATE' THEN
+                INSERT INTO auditoria_productos (producto_id, accion, datos_old, datos_new)
+                VALUES (OLD.id, 'UPDATE', to_jsonb(OLD), to_jsonb(NEW));
+                RETURN NEW;
+                ELSIF TG_OP = 'INSERT' THEN
+                INSERT INTO auditoria_productos (producto_id, accion, datos_new)
+                VALUES (NEW.id, 'INSERT', to_jsonb(NEW));
+                RETURN NEW;
+                END IF;
+                END;
+                $$ LANGUAGE plpgsql;
+
+                -- 3. Conectar la función a la tabla
+                CREATE TRIGGER trg_auditoria_productos
+                AFTER INSERT OR UPDATE OR DELETE ON productos
+                FOR EACH ROW EXECUTE FUNCTION fn_auditar_productos();
+                ```
+
+                Ahora, cada vez que alguien modifique la tabla `productos`, queda registro automático en
+                `auditoria_productos`.
+
+                > [!WARNING]
+                > Los triggers son potentes pero invisibles. Si algo raro pasa en tu base de datos, revisa si hay
+                triggers activos. Demasiados triggers encadenados pueden convertirse en una pesadilla de depuración.
+                Documéntalos bien.
+
+                ### Procedimientos almacenados (Stored Procedures)
+
+                Son bloques de lógica que viven dentro de la base de datos. Útiles para operaciones que se repiten:
+
+                ```sql
+                -- Procedimiento para procesar un pedido completo
+                CREATE OR REPLACE PROCEDURE sp_procesar_pedido(
+                p_cliente_id INTEGER,
+                p_producto_id INTEGER,
+                p_cantidad INTEGER
+                )
+                LANGUAGE plpgsql AS $$
+                DECLARE
+                v_precio NUMERIC(10,2);
+                v_stock INTEGER;
+                BEGIN
+                -- Verificar stock disponible
+                SELECT precio, stock INTO v_precio, v_stock
+                FROM productos WHERE id = p_producto_id;
+
+                IF v_stock < p_cantidad THEN RAISE EXCEPTION 'Stock insuficiente: disponible %, solicitado %' , v_stock,
+                    p_cantidad; END IF; -- Restar stock UPDATE productos SET stock=stock - p_cantidad WHERE
+                    id=p_producto_id; -- Crear pedido INSERT INTO pedidos (cliente_id, total, estado) VALUES
+                    (p_cliente_id, v_precio * p_cantidad, 'completado' ); RAISE
+                    NOTICE 'Pedido procesado: % unidades de producto % para cliente %' , p_cantidad, p_producto_id,
+                    p_cliente_id; END; $$; -- Usar el procedimiento CALL sp_procesar_pedido(1, 1, 3); ``` --- ## 13.
+                    Normalización — Diseñar bases de datos sin dolor ### El problema Diseñas una tabla con toda la
+                    información junta y al principio parece funcionar. Pero pronto descubres que al cambiar el nombre de
+                    un proveedor tienes que actualizarlo en 500 filas, y si olvidas una, tu base de datos tiene datos
+                    contradictorios. Esto se llama **anomalía de actualización** y es el síntoma de un diseño no
+                    normalizado. ### ¿Qué es normalizar? Normalizar es el proceso de **organizar las tablas para
+                    eliminar redundancia y dependencias problemáticas**. Piensa en ello como ordenar tu armario: separar
+                    camisetas, pantalones y zapatos en cajones diferentes, en vez de tenerlo todo revuelto.>
+                    [!IMPORTANT]
+                    > **La Regla de Oro:** Si tienes que cambiar un mismo dato en más de un sitio (ej: el email de un
+                    cliente en cada pedido), tu base de datos **no está bien diseñada**. Un dato real debe existir en un
+                    único lugar.
+
+                    ### Las 3 formas normales esenciales
+
+                    **1NF (Primera Forma Normal):** Cada celda contiene UN solo valor atómico.
+
+                    ```sql
+                    -- MAL: múltiples teléfonos en una celda
+                    CREATE TABLE clientes_mal (
+                    id SERIAL PRIMARY KEY,
+                    nombre VARCHAR(100),
+                    telefonos VARCHAR(200) -- "666111222, 677333444" — NO atómico
+                    );
+
+                    -- BIEN: tabla separada para teléfonos
+                    CREATE TABLE telefonos (
+                    id SERIAL PRIMARY KEY,
+                    cliente_id INTEGER REFERENCES clientes(id),
+                    numero VARCHAR(20) NOT NULL,
+                    tipo VARCHAR(20) DEFAULT 'móvil' -- móvil, fijo, trabajo
+                    );
+
+                    -- Ejemplo de migración: pasar datos de la tabla "MAL" a la "BIEN"
+                    -- INSERT INTO telefonos (cliente_id, numero)
+                    -- SELECT id, telefonos FROM clientes_mal;
+                    ```
+
+                    **2NF (Segunda Forma Normal):** Cumple 1NF + cada columna no-clave depende de TODA la clave primaria
+                    (relevante en claves compuestas).
+
+                    ```sql
+                    -- MAL: nombre_producto depende solo de producto_id, no de pedido_id
+                    CREATE TABLE pedido_detalle_mal (
+                    pedido_id INTEGER,
+                    producto_id INTEGER,
+                    nombre_producto VARCHAR(200), -- Depende SOLO de producto_id
+                    cantidad INTEGER,
+                    PRIMARY KEY (pedido_id, producto_id)
+                    );
+
+                    -- BIEN: nombre_producto vive en la tabla productos
+                    -- La tabla intermedia solo tiene datos que dependen de AMBAS claves
+                    CREATE TABLE pedido_detalle_bien (
+                    pedido_id INTEGER REFERENCES pedidos(id),
+                    producto_id INTEGER REFERENCES productos(id),
+                    cantidad INTEGER NOT NULL,
+                    precio_unit NUMERIC(10,2) NOT NULL,
+                    PRIMARY KEY (pedido_id, producto_id)
+                    );
+                    ```
+
+                    **3NF (Tercera Forma Normal):** Cumple 2NF + ninguna columna no-clave depende de otra columna
+                    no-clave.
+
+                    ```sql
+                    -- MAL: codigo_postal determina la ciudad (dependencia transitiva)
+                    CREATE TABLE clientes_mal_3nf (
+                    id SERIAL PRIMARY KEY,
+                    nombre VARCHAR(100),
+                    codigo_postal VARCHAR(10),
+                    ciudad VARCHAR(100) -- Se puede deducir del código postal
+                    );
+
+                    -- BIEN: separar en tabla de códigos postales
+                    CREATE TABLE codigos_postales (
+                    codigo VARCHAR(10) PRIMARY KEY,
+                    ciudad VARCHAR(100) NOT NULL,
+                    provincia VARCHAR(100)
+                    );
+
+                    CREATE TABLE clientes_3nf (
+                    id SERIAL PRIMARY KEY,
+                    nombre VARCHAR(100),
+                    codigo_postal VARCHAR(10) REFERENCES codigos_postales(codigo)
+                    );
+                    ```
+
+                    > [!TIP]
+                    > En la práctica profesional, **3NF es suficiente** para el 95% de los proyectos. No te obsesiones
+                    con BCNF o 4NF a menos que trabajes en sistemas de alta criticidad (banca, salud). A veces, una
+                    **desnormalización controlada** (duplicar algún dato a propósito) es aceptable si ganas rendimiento
+                    significativo.
+
+                    > [!TIP]
+                    > Antes de tocar el código, **dibuja tu base de datos**. Usa diagramas **Entidad-Relación (ER)**.
+                    Herramientas gratuitas como `dbdiagram.io` o `draw.io` te ahorrarán horas de refactorización
+                    posterior.
+
+                    ---
+
+                    ## 14. Constraints avanzadas e integridad
+
+                    ### El problema
+
+                    Tu aplicación valida los datos antes de guardarlos. Pero un día, alguien ejecuta un script de
+                    migración directamente en la base de datos, saltándose tu aplicación. Sin constraints a nivel de
+                    base de datos, entran datos inválidos: precios negativos, stocks imposibles, reservas que se
+                    solapan. Necesitas que **la propia base de datos sea la última línea de defensa**.
+
+                    ### Más allá de PRIMARY KEY y NOT NULL
+
+                    ```sql
+                    -- CHECK: validar que un valor cumple una condición
+                    ALTER TABLE productos
+                    ADD CONSTRAINT chk_precio_positivo CHECK (precio > 0);
+
+                    ALTER TABLE productos
+                    ADD CONSTRAINT chk_stock_no_negativo CHECK (stock >= 0);
+
+                    -- UNIQUE en múltiples columnas: combinación única
+                    ALTER TABLE pedido_productos
+                    ADD CONSTRAINT uq_pedido_producto UNIQUE (pedido_id, producto_id);
+
+                    -- EXCLUDE: restricciones de exclusión (ej: no solapar rangos de fechas)
+                    -- Útil para reservas de hotel, citas médicas, etc.
+
+                    > [!TIP]
+                    > Piensa en la restricción `EXCLUDE` como un **Google Calendar automático**: si alguien intenta
+                    reservar una sala en una hora que ya está ocupada, la base de datos simplemente "rebota" la
+                    transacción. Es la defensa perfecta para sistemas de citas o reservas.
+                    CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+                    CREATE TABLE reservas (
+                    id SERIAL PRIMARY KEY,
+                    sala VARCHAR(50),
+                    durante TSRANGE, -- Rango de timestamps (inicio, fin)
+                    EXCLUDE USING GIST (sala WITH =, durante WITH &&)
+                    -- No permitir que dos reservas de la misma sala se solapen
+                    );
+
+                    -- ON DELETE CASCADE: borrar registros hijos automáticamente
+                    ALTER TABLE pedidos
+                    DROP CONSTRAINT IF EXISTS pedidos_cliente_id_fkey,
+                    ADD CONSTRAINT pedidos_cliente_id_fkey
+                    FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+                    ON DELETE CASCADE -- Si borras un cliente, se borran sus pedidos
+                    ON UPDATE CASCADE; -- Si cambias el id del cliente, se actualiza en pedidos
+                    ```
+
+                    > [!WARNING]
+                    > Usa `ON DELETE CASCADE` con mucho cuidado. Un `DELETE FROM clientes WHERE id = 1` borraría
+                    automáticamente todos los pedidos de ese cliente. En muchos sistemas, es preferible usar `ON DELETE
+                    RESTRICT` (impedir el borrado si hay datos relacionados) o un borrado lógico (`activo = false`).
+
+                    ---
+
+                    ## 15. Receta completa: esquema profesional de e-commerce
+
+                    Juntando todo lo aprendido, así se ve un esquema real de base de datos para producción:
+
+                    ```sql
+                    -- ============================================================
+                    -- ESQUEMA PROFESIONAL: Tienda Online (e-commerce)
+                    -- De 0 a Producción — Juntando todo lo aprendido
+                    -- ============================================================
+
+                    -- Extensiones necesarias
+                    CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; -- Para generar UUIDs
+                    CREATE EXTENSION IF NOT EXISTS "pg_trgm"; -- Para búsqueda por similitud
+
+                    -- ---- TABLA: categorias ----
+                    CREATE TABLE categorias (
+                    id SERIAL PRIMARY KEY,
+                    nombre VARCHAR(100) NOT NULL UNIQUE,
+                    slug VARCHAR(100) NOT NULL UNIQUE, -- URL amigable: "teclados-mecanicos"
+                    descripcion TEXT,
+                    padre_id INTEGER REFERENCES categorias(id), -- Subcategorías (autorreferencia)
+                    activo BOOLEAN DEFAULT true,
+                    created_at TIMESTAMP DEFAULT NOW()
+                    );
+
+                    -- ---- TABLA: productos (profesional) ----
+                    CREATE TABLE productos_pro (
+                    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY, -- UUID en vez de SERIAL
+                    sku VARCHAR(50) UNIQUE NOT NULL, -- Código único del producto
+                    nombre VARCHAR(200) NOT NULL,
+                    slug VARCHAR(200) NOT NULL UNIQUE,
+                    descripcion TEXT,
+                    precio NUMERIC(10,2) NOT NULL CHECK (precio > 0),
+                    stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
+                    categoria_id INTEGER REFERENCES categorias(id),
+                    metadata JSONB DEFAULT '{}', -- Datos flexibles: color, talla, peso...
+                    activo BOOLEAN DEFAULT true,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                    );
+
+                    -- Índices para rendimiento
+                    CREATE INDEX idx_productos_categoria ON productos_pro(categoria_id);
+                    CREATE INDEX idx_productos_activo ON productos_pro(activo) WHERE activo = true;
+                    CREATE INDEX idx_productos_nombre_trgm ON productos_pro USING GIN (nombre gin_trgm_ops);
+
+                    -- ---- TABLA: usuarios ----
+                    CREATE TABLE usuarios (
+                    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+                    email VARCHAR(150) UNIQUE NOT NULL,
+                    password VARCHAR(255) NOT NULL, -- Siempre hasheada (usar Argon2 o BCrypt)
+                    nombre VARCHAR(100),
+                    metadata JSONB DEFAULT '{}',
+                    created_at TIMESTAMP DEFAULT NOW()
+                    );
+
+                    -- ---- TABLA: direcciones ----
+                    CREATE TABLE direcciones (
+                    id SERIAL PRIMARY KEY,
+                    usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+                    calle VARCHAR(255) NOT NULL,
+                    ciudad VARCHAR(100) NOT NULL,
+                    cp VARCHAR(10) NOT NULL,
+                    principal BOOLEAN DEFAULT false
+                    );
+
+                    -- ---- TABLA: pedidos ----
+                    CREATE TABLE pedidos_pro (
+                    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+                    usuario_id UUID REFERENCES usuarios(id),
+                    direccion_id INTEGER REFERENCES direcciones(id),
+                    total NUMERIC(12,2) NOT NULL DEFAULT 0,
+                    estado VARCHAR(20) DEFAULT 'pendiente', -- pendiente, pagado, enviado, cancelado
+                    created_at TIMESTAMP DEFAULT NOW()
+                    );
+
+                    -- ---- TABLA: pedido_items ----
+                    CREATE TABLE pedido_items (
+                    pedido_id UUID REFERENCES pedidos_pro(id) ON DELETE CASCADE,
+                    producto_id UUID REFERENCES productos_pro(id),
+                    cantidad INTEGER NOT NULL CHECK (cantidad > 0),
+                    precio_unit NUMERIC(10,2) NOT NULL,
+                    PRIMARY KEY (pedido_id, producto_id)
+                    );
+                    ```
+
+                    > [!NOTE]
+                    > Observa el uso de **UUID** en vez de SERIAL para el id de productos. En APIs públicas, los IDs
+                    secuenciales (1, 2, 3...) permiten a un atacante adivinar cuántos registros tienes y enumerar
+                    recursos. UUID elimina ese riesgo.
+
+                    ---
+
+                    ## 16. Los 10 Pitfalls que te tumban en producción
+
+                    | # | Pitfall | Consecuencia | Solución |
+                    |---|---------|-------------|----------|
+                    | 1 | UPDATE/DELETE sin WHERE | Modificas/borras TODA la tabla | Escribe WHERE primero, luego
+                    SET/DELETE |
+                    | 2 | No usar transacciones | Datos inconsistentes tras error | BEGIN/COMMIT en operaciones
+                    múltiples |
+                    | 3 | SQL Injection | Atacante controla tu BD | Consultas parametrizadas SIEMPRE |
+                    | 4 | Usar FLOAT para dinero | Errores de redondeo | NUMERIC(10,2) |
+                    | 5 | No hacer backups | Pérdida total de datos | pg_dump diario + restauración probada |
+                    | 6 | Superusuario en producción | Ataque = acceso total | Usuarios con mínimos privilegios |
+                    | 7 | No poner índices | Consultas lentas en producción | Indexar columnas de WHERE y JOIN |
+                    | 8 | Contraseñas en el código | Filtración de credenciales | Variables de entorno |
+                    | 9 | No validar con CHECK | Datos basura en la BD | Constraints a nivel de tabla |
+                    | 10 | Transacciones abiertas | Bloqueo de filas (deadlocks) | COMMIT/ROLLBACK inmediato |
+
+                    ---
+
+                    ## 🚀 17. El Gran Reto Final: E-commerce desde cero
+
+                    **Objetivo:** Construye desde cero el esquema completo de una tienda online funcional. Este reto
+                    integra TODO lo aprendido en la guía.
+
+                    **Requisitos:**
+
+                    - Crea las tablas: `usuarios`, `categorias`, `productos`, `pedidos`, `pedido_items`, `direcciones`
+                    - Implementa todas las relaciones (1:N, N:M)
+                    - Añade constraints: CHECK para precios y stock, UNIQUE para emails y SKUs
+                    - Crea al menos 2 índices estratégicos
+                    - Implementa un trigger de auditoría para cambios de precio
+                    - Escribe un procedimiento almacenado para procesar un pedido (verificar stock, calcular total,
+                    crear pedido)
+                    - Crea una vista con el resumen de ventas por categoría
+                    - Haz una consulta con Window Functions que muestre el ranking de productos más vendidos
+
+                    ```
+                    Flujo sugerido:
+
+                    1. Diseña el esquema (normalizado a 3NF)
+                    └─ categorias, productos, usuarios, direcciones, pedidos, pedido_items
+
+                    2. Crea las tablas con constraints
+                    └─ CHECK, UNIQUE, REFERENCES, DEFAULT
+
+                    3. Inserta datos de prueba (al menos 10 productos, 5 usuarios, 10 pedidos)
+
+                    4. Escribe las consultas de negocio
+                    └─ JOINs, GROUP BY, Window Functions
+
+                    5. Añade seguridad
+                    └─ Usuarios con permisos limitados
+                    └─ Trigger de auditoría
+
+                    6. Crea el procedimiento sp_procesar_pedido
+                    └─ BEGIN, verificar stock, INSERT, UPDATE, COMMIT
+
+                    7. Haz un backup y restáuralo (sección 10)
+                    └─ pg_dump + pg_restore
+                    ```
+
+                    > [!TIP]
+                    > Si completas este reto, tienes el conocimiento SQL equivalente al que se pide en una entrevista
+                    técnica para un puesto de backend junior/mid. La sección 15 contiene una solución profesional
+                    completa que puedes usar como referencia.
+
+                    ---
+
+                    ## Resumen: tu hoja de ruta SQL
+
+                    | Nivel | Temas | Secciones |
+                    |-------|-------|-----------|
+                    | 🟢 Principiante | Instalación, CRUD, tipos de datos | 1 — 3 + Mini-Lab 1 |
+                    | 🟡 Intermedio | Filtros, JOINs, agregaciones, GROUP BY | 4 — 5 + Mini-Lab 2 |
+                    | 🔵 Avanzado | Índices, CTEs, Vistas, Transacciones | 6 — 8 + Mini-Lab 3 |
+                    | 🟣 Producción | Seguridad, backups, migraciones, deploy | 9 — 10 |
+                    | ⚫ Profesional | Window Functions, Triggers, Normalización, Diseño | 11 — 15 |
+                    | 🔴 Consolidación | Pitfalls, Gran Reto Final | 16 — 17 |
+
+                    > [!NOTE]
+                    > **¿Quieres ir más allá?** Explora: **Replicación** (read replicas para alta disponibilidad),
+                    **Particionamiento** (dividir tablas enormes por fecha/rango), **Full-Text Search** nativo de
+                    PostgreSQL, y **PgBouncer** para connection pooling en aplicaciones de alta concurrencia.
+
+                    ---
+
+                    ## 18. Solución Maestra: E-commerce Pro
+
+                    Este script unifica **todo lo aprendido en la guía**. Es un esquema profesional, seguro y analítico
+                    que puedes ejecutar en tu base de datos para ver cómo interactúan todas las piezas.
+
+                    ```sql
+                    -- ============================================================
+                    -- SOLUCIÓN AL GRAN RETO FINAL: E-commerce Completo
+                    -- ============================================================
+
+                    -- 1. Extensiones y Limpieza de entorno
+                    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+                    DROP TABLE IF EXISTS pedido_items, pedidos_pro, direcciones, productos_pro, categorias, usuarios,
+                    auditoria_precios CASCADE;
+
+                    -- 2. Tablas Maestras
+                    CREATE TABLE usuarios (
+                    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+                    email VARCHAR(150) UNIQUE NOT NULL,
+                    password VARCHAR(255) NOT NULL,
+                    nombre VARCHAR(100),
+                    created_at TIMESTAMP DEFAULT NOW()
+                    );
+
+                    CREATE TABLE categorias (
+                    id SERIAL PRIMARY KEY,
+                    nombre VARCHAR(100) UNIQUE NOT NULL
+                    );
+
+                    CREATE TABLE productos_pro (
+                    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+                    sku VARCHAR(50) UNIQUE NOT NULL,
+                    nombre VARCHAR(200) NOT NULL,
+                    precio NUMERIC(10,2) NOT NULL CHECK (precio > 0),
+                    stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
+                    categoria_id INTEGER REFERENCES categorias(id)
+                    );
+
+                    -- 3. Auditoría Automática (Trigger)
+                    CREATE TABLE auditoria_precios (
+                    id SERIAL PRIMARY KEY,
+                    producto_id UUID,
+                    precio_viejo NUMERIC(10,2),
+                    precio_nuevo NUMERIC(10,2),
+                    usuario VARCHAR(50) DEFAULT current_user,
+                    fecha TIMESTAMP DEFAULT NOW()
+                    );
+
+                    CREATE OR REPLACE FUNCTION fn_log_cambio_precio()
+                    RETURNS TRIGGER AS $$
+                    BEGIN
+                    IF OLD.precio <> NEW.precio THEN
+                        INSERT INTO auditoria_precios (producto_id, precio_viejo, precio_nuevo)
+                        VALUES (OLD.id, OLD.precio, NEW.precio);
+                        END IF;
+                        RETURN NEW;
+                        END;
+                        $$ LANGUAGE plpgsql;
+
+                        CREATE TRIGGER trg_cambio_precio
+                        AFTER UPDATE ON productos_pro
+                        FOR EACH ROW EXECUTE FUNCTION fn_log_cambio_precio();
+
+                        -- 4. Pedidos y Relaciones N:M
+                        CREATE TABLE pedidos_pro (
+                        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+                        usuario_id UUID REFERENCES usuarios(id),
+                        total NUMERIC(12,2) DEFAULT 0,
+                        estado VARCHAR(20) DEFAULT 'pendiente',
+                        created_at TIMESTAMP DEFAULT NOW()
+                        );
+
+                        CREATE TABLE pedido_items (
+                        pedido_id UUID REFERENCES pedidos_pro(id) ON DELETE CASCADE,
+                        producto_id UUID REFERENCES productos_pro(id),
+                        cantidad INTEGER NOT NULL CHECK (cantidad > 0),
+                        precio_unit NUMERIC(10,2) NOT NULL,
+                        PRIMARY KEY (pedido_id, producto_id)
+                        );
+
+                        -- 5. Lógica de Negocio (Procedimiento Almacenado)
+                        -- Procesa un pedido validando stock y calculando totales
+                        CREATE OR REPLACE PROCEDURE sp_registrar_compra(
+                        p_usuario_id UUID,
+                        p_producto_id UUID,
+                        p_cantidad INTEGER
+                        )
+                        LANGUAGE plpgsql AS $$
+                        DECLARE
+                        v_precio NUMERIC(10,2);
+                        v_pedido_id UUID;
+                        BEGIN
+                        -- FLUJO LÓGICO: Validar -> Actuar -> Confirmar
+
+                        -- 1. FASE DE VALIDACIÓN: Obtener precio y validar stock
+                        -- Si el stock es insuficiente, la consulta no devolverá nada
+                        SELECT precio INTO v_precio FROM productos_pro
+                        WHERE id = p_producto_id AND stock >= p_cantidad;
+
+                        IF NOT FOUND THEN
+                        -- Si no hay stock, lanzamos error y se aborta todo automáticamente
+                        RAISE EXCEPTION 'Producto no encontrado o stock insuficiente';
+                        END IF;
+
+                        -- 2. FASE DE ACCIÓN: Descontar stock del inventario
+                        UPDATE productos_pro SET stock = stock - p_cantidad WHERE id = p_producto_id;
+
+                        -- 3. FASE DE REGISTRO: Crear cabecera del pedido
+                        INSERT INTO pedidos_pro (usuario_id, total, estado)
+                        VALUES (p_usuario_id, v_precio * p_cantidad, 'pagado')
+                        RETURNING id INTO v_pedido_id;
+
+                        -- 4. FASE DE DETALLE: Insertar los items del pedido
+                        INSERT INTO pedido_items (pedido_id, producto_id, cantidad, precio_unit)
+                        VALUES (v_pedido_id, p_producto_id, p_cantidad, v_precio);
+
+                        -- 5. FINALIZACIÓN: El COMMIT se hace al terminar el bloque si no hubo errores
+                        RAISE NOTICE 'Venta registrada con éxito. Pedido ID: %', v_pedido_id;
+                        END;
+                        $$;
+
+                        -- 6. Análisis de Datos (Vistas y Window Functions)
+                        CREATE OR REPLACE VIEW v_ranking_ventas AS
+                        SELECT
+                        c.nombre AS categoria,
+                        p.nombre AS producto,
+                        SUM(i.cantidad) AS unidades,
+                        SUM(i.cantidad * i.precio_unit) AS ingresos,
+                        RANK() OVER (PARTITION BY c.id ORDER BY SUM(i.cantidad * i.precio_unit) DESC) AS
+                        ranking_en_categoria
+                        FROM pedido_items i
+                        JOIN productos_pro p ON i.producto_id = p.id
+                        JOIN categorias c ON p.categoria_id = c.id
+                        GROUP BY c.id, c.nombre, p.id, p.nombre;
+
+                        -- ¿Cómo usarlo?
+                        -- SELECT * FROM v_ranking_ventas WHERE ranking_en_categoria <= 3; ``` </div>
+                            <div id="content"></div>
+    </main>
+    <script>
+        const ICONS = { "1": "🗄️", "2": "⚙️", "3": "📊", "4": "🔍", "5": "🔗", "6": "⚡", "7": "📦", "8": "🔒", "9": "🛡️", "10": "🚀", "11": "📈", "12": "🔔", "13": "🏗️", "14": "🧱", "15": "🛒", "16": "⚠️", "17": "🏆", "18": "💡" };
+        const md = document.getElementById('raw-md').textContent;
+        const lines = md.split('\n');
+        let html = '', inCode = false, codeBuf = [], codeLang = '', liBuf = [];
+        function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function inlineMd(s) { s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>'); s = s.replace(/`([^`]+)`/g, '<code>$1</code>'); return s; }
+        function flushLi() { if (liBuf.length) { html += '<ul>' + liBuf.join('') + '</ul>\n'; liBuf = []; } }
+        function hlSQL(c) {
+            c = esc(c); const cm = [];
+            c = c.replace(/--.*$/gm, m => { cm.push(m); return `__CM${cm.length - 1}__`; });
+            c = c.replace(/(?<![a-zA-Z_"'])(\d+\.?\d*)(?![a-zA-Z_])/g, '<span style="color:var(--orange)">$1</span>');
+            c = c.replace(/'[^']*'/g, '<span style="color:var(--green)">$&</span>');
+            c = c.replace(/\b(SELECT|FROM|WHERE|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|ALTER|DROP|ADD|COLUMN|INDEX|VIEW|TRIGGER|FUNCTION|PROCEDURE|BEGIN|COMMIT|ROLLBACK|GRANT|REVOKE|ON|TO|AS|JOIN|INNER|LEFT|RIGHT|FULL|OUTER|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|AND|OR|NOT|IN|BETWEEN|LIKE|ILIKE|IS|NULL|EXISTS|DISTINCT|UNION|ALL|CASE|WHEN|THEN|ELSE|END|IF|ELSIF|RETURN|RETURNS|DECLARE|RAISE|EXCEPTION|NOTICE|CALL|WITH|RECURSIVE|PRIMARY|KEY|FOREIGN|REFERENCES|UNIQUE|CHECK|DEFAULT|CONSTRAINT|CASCADE|RESTRICT|AFTER|BEFORE|FOR|EACH|ROW|EXECUTE|LANGUAGE|REPLACE|USING|GENERATED|ALWAYS|EXTENSION|EXCLUDE|GIST|GIN|DESC|ASC|SERIAL|BIGINT|INTEGER|VARCHAR|TEXT|BOOLEAN|DATE|TIMESTAMP|NUMERIC|JSON|JSONB|UUID|TSRANGE|PARTITION|OVER|EXPLAIN|ANALYZE|SCHEMA|SEQUENCES|USAGE)\b/gi, '<span style="color:var(--purple);font-weight:600">$&</span>');
+            c = c.replace(/\b(COUNT|SUM|AVG|MAX|MIN|COALESCE|NOW|DATE_TRUNC|ROW_NUMBER|RANK|DENSE_RANK|LAG|LEAD|NTILE|uuid_generate_v4|to_jsonb|current_user)\b/gi, '<span style="color:var(--blue)">$&</span>');
+            cm.forEach((v, i) => { c = c.replace(`__CM${i}__`, `<span style="color:#5c6370;font-style:italic">${v}</span>`); });
+            return c;
+        }
+        function hlBash(c) {
+            c = esc(c); const cm = [];
+            c = c.replace(/#.*$/gm, m => { cm.push(m); return `__CM${cm.length - 1}__`; });
+            c = c.replace(/(?<![a-zA-Z_"'])(\d+\.?\d*)(?![a-zA-Z_])/g, '<span style="color:var(--orange)">$1</span>');
+            c = c.replace(/\b(sudo|apt|install|zypper|brew|systemctl|start|enable|status|pip|npx|find|nano|crontab|pg_dump|pg_restore|alembic|knex)\b/gi, '<span style="color:var(--purple);font-weight:600">$&</span>');
+            cm.forEach((v, i) => { c = c.replace(`__CM${i}__`, `<span style="color:#5c6370;font-style:italic">${v}</span>`); });
+            return c;
+        }
+        function hlPy(c) {
+            c = esc(c); const cm = [];
+            c = c.replace(/#.*$/gm, m => { cm.push(m); return `__CM${cm.length - 1}__`; });
+            c = c.replace(/(?<![a-zA-Z_"'])(\d+\.?\d*)(?![a-zA-Z_])/g, '<span style="color:var(--orange)">$1</span>');
+            c = c.replace(/'[^']*'|"[^"]*"/g, '<span style="color:var(--green)">$&</span>');
+            c = c.replace(/\b(import|from|as|def|class|return|if|else|elif|with|try|except|finally|raise|True|False|None|not|and|or|in|is)\b/g, '<span style="color:var(--purple);font-weight:600">$&</span>');
+            c = c.replace(/\b(connect|cursor|execute|fetchall|close|print|environ|get)\b/g, '<span style="color:var(--blue)">$&</span>');
+            cm.forEach((v, i) => { c = c.replace(`__CM${i}__`, `<span style="color:#5c6370;font-style:italic">${v}</span>`); });
+            return c;
+        }
+        function hl(code, lang) {
+            if (lang === 'sql') return hlSQL(code);
+            if (lang === 'bash' || lang === 'sh') return hlBash(code);
+            if (lang === 'python' || lang === 'py') return hlPy(code);
+            return esc(code);
+        }
+        let secNum = 0;
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            if (line.trim().startsWith('```')) {
+                if (!inCode) { flushLi(); inCode = true; codeLang = line.trim().slice(3).trim(); codeBuf = []; }
+                else {
+                    inCode = false; const code = codeBuf.join('\n'); const label = ({ 'sql': 'SQL', 'bash': 'BASH', 'python': 'PYTHON', 'py': 'PYTHON', 'sh': 'BASH', 'markdown': 'CHECKLIST', '': 'TEXT' }[codeLang.toLowerCase()] || codeLang.toUpperCase());
+                    html += `<div class="code-wrap"><div class="code-header"><span class="code-lang">${label}</span><button class="copy-btn" onclick="copyCode(this)">Copiar</button></div><pre>${hl(code, codeLang.toLowerCase())}</pre></div>\n`;
+                }
+                continue;
+            }
+            if (inCode) { codeBuf.push(line); continue; }
+            if (line.startsWith('---')) { flushLi(); continue; }
+            let m = line.match(/^## (.+)/);
+            if (m) {
+                flushLi(); secNum++; const t = m[1].trim(); const nm = t.match(/(\d+)/); const n = nm ? nm[1] : '0'; const icon = ICONS[n] || '📄'; const id = n !== '0' ? 's' + n : 'resumen';
+                html += `</section><section class="section" id="${id}"><div class="sec-header"><span class="sec-icon">${icon}</span><div><div class="sec-title">${esc(t)}</div></div></div>\n`; continue;
+            }
+            m = line.match(/^### (.+)/);
+            if (m) { flushLi(); html += `<h2>${inlineMd(esc(m[1].trim()))}</h2>\n`; continue; }
+            if (line.trim().startsWith('> [!')) {
+                flushLi(); let type = 'info'; if (line.includes('[!WARNING]')) type = 'pit'; else if (line.includes('[!TIP]')) type = 'tip';
+                const titles = { pit: '⚠️ CUIDADO', tip: '💡 TIP', info: 'ℹ️ NOTA' };
+                let content = []; i++; while (i < lines.length && lines[i].startsWith('>')) { content.push(lines[i].replace(/^>\s?/, '')); i++; } i--;
+                html += `<div class="box box-${type}"><div class="box-title">${titles[type]}</div><p>${inlineMd(esc(content.join(' ')))}</p></div>\n`; continue;
+            }
+            if (line.includes('|') && i + 1 < lines.length && /^[\|\s\-:]+$/.test(lines[i + 1].trim())) {
+                flushLi(); const hdr = line.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+                i += 2; const rows = []; while (i < lines.length && lines[i].includes('|') && lines[i].trim()) { rows.push(lines[i].trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim())); i++; } i--;
+                html += '<div class="table-container"><table><thead><tr>' + hdr.map(h => `<th>${esc(h)}</th>`).join('') + '</tr></thead><tbody>';
+                rows.forEach(r => { html += '<tr>' + r.map(c => `<td>${inlineMd(esc(c))}</td>`).join('') + '</tr>'; });
+                html += '</tbody></table></div>\n'; continue;
+            }
+            if (line.trim().startsWith('- ')) { liBuf.push(`<li>${inlineMd(esc(line.trim().slice(2)))}</li>`); continue; }
+            if (/^\d+\.\s/.test(line.trim())) { liBuf.push(`<li>${inlineMd(esc(line.trim().replace(/^\d+\.\s/, '')))}</li>`); continue; }
+            if (line.trim()) { flushLi(); html += `<p>${inlineMd(esc(line.trim()))}</p>\n`; }
+        }
+        flushLi(); html += '</section>';
+        // Remove first empty </section>
+        html = html.replace(/^<\/section>/, '');
+        document.getElementById('content').innerHTML = html;
+        // Nav observer
+        const navLinks = document.querySelectorAll('.nav-link');
+        const secs = document.querySelectorAll('.section');
+        const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) { navLinks.forEach(l => l.classList.remove('active')); const a = document.querySelector(`nav a[href="#${e.target.id}"]`); if (a) a.classList.add('active'); } }); }, { threshold: 0.15 });
+        secs.forEach(s => { if (s.id) obs.observe(s); });
+        function filterNav(q) {
+            q = q.toLowerCase().trim();
+            let visibleCount = 0;
+            navLinks.forEach(l => {
+                const match = q.length === 0 || l.textContent.toLowerCase().includes(q);
+                l.classList.toggle('hidden', !match);
+                if (match) visibleCount++;
+            });
+            const noRes = document.getElementById('nav-no-results');
+            if (noRes) noRes.classList.toggle('show', visibleCount === 0 && q.length > 0);
+        }
+        function copyCode(btn) { const pre = btn.closest('.code-wrap').querySelector('pre'); navigator.clipboard.writeText(pre.innerText).then(() => { btn.textContent = '✓ Copiado'; setTimeout(() => btn.textContent = 'Copiar', 2000); }); }
+    </script>
 </body>
+
 </html>

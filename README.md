@@ -17,6 +17,7 @@ Cada guía es un documento **auto-contenido, interactivo y con diseño profesion
 | **SQL: De 0 a Producción** | 🟢 🟡 🔴 | PostgreSQL, JOINS, Triggers, Window Functions | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/guia_sql.html) |
 | **Git & GitHub Interactiva** | 🟢 🟡 | Ciclo de vida, Ramas, Pull Requests, SSH | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/Guia_Git_GitHub_Fran_Fosas.html) |
 | **Caminos y Complejidad** | 🟡 🔴 | Grafos de flujo, McCabe, Cobertura de tests | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/Camino_basico.html) |
+| **Docker: De 0 a Producción** | 🟢 🟡 🔴 | Contenedores, Volúmenes, Compose, Producción | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/docker-guia.html) |
 
 **Leyenda de niveles:**
 - 🟢 **Principiante:** Conceptos base y fundamentos esenciales.
@@ -45,6 +46,13 @@ Teoría de grafos aplicada al testing de software y calidad de código.
 - **Métricas:** Cálculo de complejidad ciclomática de McCabe.
 - **Diseño de Pruebas:** Identificación de caminos independientes.
 - **Lógica:** Decisiones booleanas y cortocircuitos de código.
+
+### 🐳 4. Guía Completa de Docker: De 0 a Producción
+Todo lo necesario para entender, construir y desplegar contenedores sin ser experto en sistemas.
+- **Fundamentos:** Diferencia entre Imágenes y Contenedores, comandos del día a día.
+- **Ecosistema:** Creación de `Dockerfile`, persistencia con Volúmenes y Redes internas.
+- **Composición:** Bases de datos y gestión multi-contenedor con `docker compose`.
+- **Producción:** Flujos CI/CD reales, Serverless Containers y el anexo de Podman.
 
 ---
 
