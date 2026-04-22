@@ -582,6 +582,76 @@
             <div class="callout-text">Una regla mnemotécnica muy usada para recordar las 7 capas de abajo hacia arriba (1 a 7) es el acrónimo <strong>F-E-R-T-S-P-A</strong>: <strong>F</strong>ísica, <strong>E</strong>nlace, <strong>R</strong>ed, <strong>T</strong>ransporte, <strong>S</strong>esión, <strong>P</strong>resentación, <strong>A</strong>plicación.</div>
           </div>
         </div>
+
+        <h3 style="margin-top: 3rem;">El Stack Visual (Diagrama OSI)</h3>
+        <p class="prose">El modelo se lee de arriba hacia abajo cuando <strong>envías</strong> datos, y de abajo hacia arriba cuando <strong>recibes</strong> datos. Aquí tienes la pila visual con sus protocolos:</p>
+        <div style="background: var(--surface-dark); padding: 2rem; border-radius: 8px; border: 1px solid var(--surface); display: flex; justify-content: center; margin-bottom: 2rem; overflow-x: auto;">
+          <svg width="100%" height="420" viewBox="0 0 600 420" xmlns="http://www.w3.org/2000/svg" style="max-width: 600px; min-width: 500px;">
+            <style>
+              .st-text { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: bold; fill: #f8f8f2; }
+              .st-sub { font-family: 'Inter', sans-serif; font-size: 11px; fill: #6272a4; font-weight: bold; text-transform: uppercase; }
+              .st-proto { font-family: 'JetBrains Mono', monospace; font-size: 12px; fill: #8be9fd; }
+              .st-proto-hard { font-family: 'JetBrains Mono', monospace; font-size: 12px; fill: #ffb86c; }
+              .soft { fill: rgba(255, 121, 198, 0.15); stroke: #ff79c6; stroke-width: 2; }
+              .hard { fill: rgba(255, 184, 108, 0.15); stroke: #ffb86c; stroke-width: 2; }
+              .arrow { stroke: #8be9fd; stroke-width: 2; stroke-dasharray: 4; fill: none; }
+              .divider-svg { stroke: rgba(248, 248, 242, 0.1); stroke-width: 1; }
+            </style>
+            
+            <!-- Capas Software -->
+            <rect x="50" y="20" width="480" height="40" rx="4" class="soft" />
+            <text x="140" y="45" class="st-text">7. APLICACIÓN</text>
+            <text x="60" y="44" class="st-sub">Datos</text>
+            <line x1="290" y1="25" x2="290" y2="55" class="divider-svg" />
+            <text x="305" y="45" class="st-proto">HTTP, DNS, SMTP, FTP</text>
+
+            <rect x="50" y="70" width="480" height="40" rx="4" class="soft" />
+            <text x="140" y="95" class="st-text">6. PRESENTACIÓN</text>
+            <text x="60" y="94" class="st-sub">Datos</text>
+            <line x1="290" y1="75" x2="290" y2="105" class="divider-svg" />
+            <text x="305" y="95" class="st-proto">SSL/TLS, JSON, JPEG</text>
+
+            <rect x="50" y="120" width="480" height="40" rx="4" class="soft" />
+            <text x="140" y="145" class="st-text">5. SESIÓN</text>
+            <text x="60" y="144" class="st-sub">Datos</text>
+            <line x1="290" y1="125" x2="290" y2="155" class="divider-svg" />
+            <text x="305" y="145" class="st-proto">Sockets, NetBIOS</text>
+
+            <rect x="50" y="170" width="480" height="40" rx="4" class="soft" />
+            <text x="140" y="195" class="st-text">4. TRANSPORTE</text>
+            <text x="60" y="194" class="st-sub">Segmen.</text>
+            <line x1="290" y1="175" x2="290" y2="205" class="divider-svg" />
+            <text x="305" y="195" class="st-proto">TCP, UDP, Puertos</text>
+
+            <!-- Capas Hardware -->
+            <rect x="50" y="240" width="480" height="40" rx="4" class="hard" />
+            <text x="140" y="265" class="st-text">3. RED (IP)</text>
+            <text x="60" y="264" class="st-sub">Paquete</text>
+            <line x1="290" y1="245" x2="290" y2="275" class="divider-svg" />
+            <text x="305" y="265" class="st-proto-hard">IPv4, IPv6, ICMP, IPSec</text>
+
+            <rect x="50" y="290" width="480" height="40" rx="4" class="hard" />
+            <text x="140" y="315" class="st-text">2. ENLACE (MAC)</text>
+            <text x="60" y="314" class="st-sub">Tramas</text>
+            <line x1="290" y1="295" x2="290" y2="325" class="divider-svg" />
+            <text x="305" y="315" class="st-proto-hard">Ethernet, Wi-Fi, ARP</text>
+
+            <rect x="50" y="340" width="480" height="40" rx="4" class="hard" />
+            <text x="140" y="365" class="st-text">1. FÍSICA</text>
+            <text x="60" y="364" class="st-sub">Bits</text>
+            <line x1="290" y1="345" x2="290" y2="375" class="divider-svg" />
+            <text x="305" y="365" class="st-proto-hard">Cables, Fibra, Ondas</text>
+
+            <!-- Flechas -->
+            <path d="M 20 40 L 20 360" class="arrow"/>
+            <polygon points="15,355 25,355 20,365" fill="#8be9fd" />
+            <text x="-15" y="200" transform="rotate(-90 -15,200)" fill="#8be9fd" font-size="12" font-family="Inter" font-weight="bold">ENVÍA (Baja)</text>
+
+            <path d="M 560 360 L 560 40" class="arrow"/>
+            <polygon points="555,45 565,45 560,35" fill="#8be9fd" />
+            <text x="575" y="200" transform="rotate(90 575,200)" fill="#8be9fd" font-size="12" font-family="Inter" font-weight="bold">RECIBE (Sube)</text>
+          </svg>
+        </div>
       </section>
 
       <!-- SECCIÓN 2 -->

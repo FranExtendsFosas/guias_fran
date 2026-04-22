@@ -14,10 +14,11 @@ Cada guía es un documento **auto-contenido, interactivo y con diseño profesion
 
 | Guía | Nivel | Temas Clave | Acceso Directo |
 | :--- | :--- | :--- | :--- |
-| **SQL: De 0 a Producción** | 🟢 🟡 🔴 | PostgreSQL, JOINS, Triggers, Window Functions | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/guia_sql.html) |
+| **SQL: De 0 a Producción** | 🟢 🔴 | PostgreSQL, JOINS, Triggers, Window Functions | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/guia_sql.html) |
 | **Git & GitHub Interactiva** | 🟢 🟡 | Ciclo de vida, Ramas, Pull Requests, SSH | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/Guia_Git_GitHub_Fran_Fosas.html) |
 | **Caminos y Complejidad** | 🟡 🔴 | Grafos de flujo, McCabe, Cobertura de tests | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/Camino_basico.html) |
-| **Docker: De 0 a Producción** | 🟢 🟡 🔴 | Contenedores, Volúmenes, Compose, Producción | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/docker-guia.html) |
+| **Docker: De 0 a Producción** | 🟢 🔴 | Contenedores, Volúmenes, Compose, Producción | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/docker-guia.html) |
+| **Modelo OSI: Entendiendo Redes** | 🟢 🟡 | 7 Capas, Encapsulación, TCP/IP, Troubleshooting | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/guia_osi.html) |
 
 **Leyenda de niveles:**
 - 🟢 **Principiante:** Conceptos base y fundamentos esenciales.
@@ -53,6 +54,12 @@ Todo lo necesario para entender, construir y desplegar contenedores sin ser expe
 - **Ecosistema:** Creación de `Dockerfile`, persistencia con Volúmenes y Redes internas.
 - **Composición:** Bases de datos y gestión multi-contenedor con `docker compose`.
 - **Producción:** Flujos CI/CD reales, Serverless Containers y el anexo de Podman.
+
+### 🌐 5. Modelo OSI: Entendiendo las Redes
+Desde el cable de red hasta tu navegador web. Descubre cómo se comunican las computadoras paso a paso.
+- **Conceptos:** Las 7 capas, la analogía postal y la encapsulación (Matrioskas).
+- **Capas Host y Media:** Protocolos (HTTP, TCP, IP) y hardware (Routers, Switches) mapeados por capa.
+- **Práctica:** La diferencia real entre OSI y TCP/IP, junto con comandos de troubleshooting estructurados de abajo hacia arriba.
 
 ---
 
