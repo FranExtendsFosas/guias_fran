@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Definitiva: Bases de Datos Relacionales — De Cero a Producción</title>
+    <style>
+        /* ============================================
+           THEME: ONE DARK VIVID (Atom One Dark)
+           ============================================ */
+        :root {
+            --bg-primary: #282c34;
+            --bg-secondary: #21252b;
+            --bg-tertiary: #2c313a;
+            --bg-code: #2c313a;
+            --bg-accent: #3e4451;
+            
+            --text-primary: #abb2bf;
+            --text-bright: #ffffff;
+            --text-muted: #5c6370;
+            --text-comment: #7f848e;
+            
+            --red: #e06c75;
+            --dark-red: #be5046;
+            --green: #98c379;
+            --yellow: #e5c07b;
+            --dark-yellow: #d19a66;
+            --blue: #61afef;
+            --magenta: #c678dd;
+            --cyan: #56b6c2;
+            --gutter: #4b5263;
+            
+            --border: #3e4451;
+            --shadow: rgba(0,0,0,0.4);
+            
+            --font-mono: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gutter);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Selection */
+        ::selection {
+            background: var(--blue);
+            color: var(--bg-primary);
+        }
+
+        /* ============================================
+           LAYOUT & NAVIGATION
+           ============================================ */
+        .nav-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 2rem 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        nav .nav-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        nav .nav-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--blue);
+            margin-bottom: 0.5rem;
+        }
+
+        nav .nav-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav li {
+            margin: 0;
+        }
+
+        nav a {
+            display: block;
+            padding: 0.6rem 1.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        nav a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-bright);
+            border-left-color: var(--cyan);
+        }
+
+        nav a.active {
+            background: var(--bg-tertiary);
+            color: var(--blue);
+            border-left-color: var(--blue);
+            font-weight: 600;
+        }
+
+        nav .nav-section {
+            padding: 1rem 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        /* ============================================
+           MAIN CONTENT
+           ============================================ */
+        main {
+            margin-left: 300px;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 4rem 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 .accent {
+            color: var(--blue);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-comment);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .hero-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 2rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--yellow);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: var(--green);
+            margin: 2rem 0 1rem;
+        }
+
+        h4 {
+            font-size: 1.15rem;
+            color: var(--cyan);
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0 1.5rem 1.5rem;
+            color: var(--text-primary);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        li::marker {
+            color: var(--magenta);
+        }
+
+        /* Links */
+        a {
+            color: var(--blue);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--blue);
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            color: var(--cyan);
+            border-bottom-style: solid;
+        }
+
+        /* Strong & Emphasis */
+        strong {
+            color: var(--text-bright);
+            font-weight: 600;
+        }
+
+        em {
+            color: var(--dark-yellow);
+            font-style: italic;
+        }
+
+        /* Code */
+        code {
+            font-family: var(--font-mono);
+            background: var(--bg-code);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: var(--red);
+            border: 1px solid var(--border);
+        }
+
+        pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: var(--bg-tertiary);
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            display: block;
+            margin-top: 20px;
+        }
+
+        /* Syntax Highlighting Colors */
+        .code-keyword { color: var(--magenta); }
+        .code-string { color: var(--green); }
+        .code-number { color: var(--dark-yellow); }
+        .code-comment { color: var(--text-muted); font-style: italic; }
+        .code-function { color: var(--blue); }
+        .code-type { color: var(--yellow); }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            color: var(--yellow);
+            font-weight: 600;
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: var(--bg-tertiary);
+        }
+
+        /* Info Boxes */
+        .box {
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+            position: relative;
+        }
+
+        .box-icon {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            opacity: 0.3;
+        }
+
+        .box-info {
+            background: rgba(97, 175, 239, 0.1);
+            border-left-color: var(--blue);
+        }
+        .box-info .box-title { color: var(--blue); }
+
+        .box-warning {
+            background: rgba(229, 192, 123, 0.1);
+            border-left-color: var(--yellow);
+        }
+        .box-warning .box-title { color: var(--yellow); }
+
+        .box-danger {
+            background: rgba(224, 108, 117, 0.1);
+            border-left-color: var(--red);
+        }
+        .box-danger .box-title { color: var(--red); }
+
+        .box-success {
+            background: rgba(152, 195, 121, 0.1);
+            border-left-color: var(--green);
+        }
+        .box-success .box-title { color: var(--green); }
+
+        .box-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        .box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Diagrams (ASCII Art) */
+        .diagram {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            color: var(--text-bright);
+            white-space: pre;
+        }
+
+        .diagram .d-table { color: var(--yellow); }
+        .diagram .d-key { color: var(--red); }
+        .diagram .d-fk { color: var(--cyan); }
+        .diagram .d-rel { color: var(--green); }
+        .diagram .d-arrow { color: var(--magenta); }
+        .diagram .d-comment { color: var(--text-muted); font-style: italic; }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .checklist li {
+            padding-left: 2rem;
+            position: relative;
+            margin-bottom: 0.75rem;
+        }
+
+        .checklist li::before {
+            content: '☐';
+            position: absolute;
+            left: 0;
+            color: var(--gutter);
+            font-size: 1.2rem;
+        }
+
+        /* Production Badge */
+        .prod-badge {
+            display: inline-block;
+            background: var(--green);
+            color: var(--bg-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            nav {
+                transform: translateX(-100%);
+            }
+            nav.open {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0;
+            }
+            .nav-toggle {
+                display: block;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+            .hero {
+                padding: 3rem 1rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Print */
+        @media print {
+            nav { display: none; }
+            main { margin-left: 0; }
+            .hero { background: #fff; color: #000; }
+        }
+
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 999;
+            font-size: 1.2rem;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            background: var(--blue);
+            color: var(--bg-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <button class="nav-toggle" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+
+    <nav id="sidebar">
+        <div class="nav-header">
+            <div class="nav-title">📚 RDBMS Guide</div>
+            <div class="nav-subtitle">De Cero a Producción</div>
+        </div>
+        <div class="nav-section">Fundamentos</div>
+        <ul>
+            <li><a href="#intro" class="active">¿Qué es una BD Relacional?</a></li>
+            <li><a href="#modelo">El Modelo Relacional</a></li>
+            <li><a href="#tablas">Tablas, Filas y Columnas</a></li>
+            <li><a href="#claves">Claves: PK, FK, UK</a></li>
+            <li><a href="#relaciones">Tipos de Relaciones</a></li>
+        </ul>
+        <div class="nav-section">Diseño</div>
+        <ul>
+            <li><a href="#normalizacion">Normalización</a></li>
+            <li><a href="#integridad">Integridad Referencial</a></li>
+            <li><a href="#transacciones">Transacciones ACID</a></li>
+            <li><a href="#indices">Índices y B-Trees</a></li>
+        </ul>
+        <div class="nav-section">Arquitectura</div>
+        <ul>
+            <li><a href="#rdbms">Motores RDBMS</a></li>
+            <li><a href="#almacenamiento">Almacenamiento Físico</a></li>
+            <li><a href="#concurrencia">Concurrencia y Locking</a></li>
+            <li><a href="#replicacion">Replicación</a></li>
+        </ul>
+        <div class="nav-section">Producción</div>
+        <ul>
+            <li><a href="#backup">Backups y DR</a></li>
+            <li><a href="#seguridad">Seguridad</a></li>
+            <li><a href="#monitoring">Monitoreo</a></li>
+            <li><a href="#checklist">Checklist Producción</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="hero">
+            <h1>Bases de Datos <span class="accent">Relacionales</span></h1>
+            <p>La guía definitiva para entender, diseñar y desplegar bases de datos relacionales en entornos reales. Desde los fundamentos matemáticos hasta la operación en producción.</p>
+            <div class="hero-meta">
+                <span>🎯 De Cero a Producción</span>
+                <span>📄 Documento Único</span>
+                <span>🎨 One Dark Vivid</span>
+            </div>
+        </div>
+
+        <div class="container">
+
+            <!-- ==================== SECCIÓN 1 ==================== -->
+            <section id="intro">
+                <h2><span class="section-number">01</span>¿Qué es una Base de Datos Relacional?</h2>
+                
+                <p>Una <strong>base de datos relacional</strong> es un sistema de almacenamiento de información que organiza los datos en estructuras tabulares (filas y columnas) y, lo más importante, <em>establece relaciones formales entre esas tablas</em>. No es simplemente "hojas de cálculo conectadas": es una implementación práctica de la <strong>teoría matemática de conjuntos</strong> y la <strong>lógica de predicados de primer orden</strong>.</p>
+
+                <div class="box box-info">
+                    <div class="box-icon">💡</div>
+                    <div class="box-title">Idea Central</div>
+                    <p>La revolución de Edgar F. Codd (1970) fue proponer que los datos deben organizarse según <strong>relaciones matemáticas</strong>, no según estructuras físicas (como los archivos jerárquicos de la época). Esto separó la <em>representación lógica</em> de los datos de su <em>almacenamiento físico</em>.</p>
+                </div>
+
+                <p>El corazón del modelo relacional es el concepto de <strong>relación</strong>. En matemáticas, una relación es un subconjunto del producto cartesiano de dominios. En términos prácticos: una tabla donde cada fila es única y el orden de las filas no importa.</p>
+
+                <h3>¿Por qué "Relacional"?</h3>
+                <p>El nombre proviene de <em>relation</em> (relación), no de "relacionar tablas". Aunque las relaciones entre tablas son cruciales, el término original describe la estructura matemática subyacente. Cada tabla es una relación; cada fila es una <strong>tupla</strong>; cada columna es un <strong>atributo</strong>.</p>
+
+                <h3>El RDBMS</h3>
+                <p>Un <strong>Sistema Gestor de Bases de Datos Relacionales (RDBMS)</strong> es el software que implementa el modelo relacional. No solo almacena datos: <em>garantiza</em> reglas, optimiza consultas, gestiona concurrencia y recuperación. Es un sistema operativo especializado para datos estructurados.</p>
+
+                <table>
+                    <tr>
+                        <th>Componente</th>
+                        <th>Función</th>
+                        <th>Ejemplo en Producción</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Motor de Almacenamiento</strong></td>
+                        <td>Gestiona cómo se escriben y leen los datos en disco</td>
+                        <td>InnoDB (MySQL), Heap (PostgreSQL)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Optimizador de Consultas</strong></td>
+                        <td>Decide el plan de ejecución más eficiente</td>
+                        <td>Cost-based optimizer (PostgreSQL)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gestor de Transacciones</strong></td>
+                        <td>Garantiza ACID y control de concurrencia</td>
+                        <td>MVCC (Multi-Version Concurrency Control)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Catálogo de Sistema</strong></td>
+                        <td>Metadatos: tablas, columnas, índices, permisos</td>
+                        <td><code>information_schema</code>, <code>pg_catalog</code></td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- ==================== SECCIÓN 2 ==================== -->
+            <section id="modelo">
+                <h2><span class="section-number">02</span>El Modelo Relacional: Fundamentos Matemáticos</h2>
+
+                <p>Entender las bases matemáticas te permite tomar decisiones de diseño informadas, no solo seguir recetas. El modelo relacional descansa sobre tres pilares:</p>
+
+                <h3>1. Estructura: Relaciones y Tuplas</h3>
+                <p>Una <strong>relación</strong> <code>R</code> sobre dominios <code>D1, D2, ..., Dn</code> es un subconjunto del producto cartesiano <code>D1 × D2 × ... × Dn</code>. Cada elemento de este subconjunto es una <strong>tupla</strong> <code>(d1, d2, ..., dn)</code> donde <code>di ∈ Di</code>.</p>
+
+                <p>En la práctica: una tabla donde cada columna tiene un dominio (tipo de dato) y cada fila es una combinación válida de valores de esos dominios.</p>
+
+                <div class="box box-warning">
+                    <div class="box-icon">⚠️</div>
+                    <div class="box-title">Restricción Fundamental</div>
+                    <p>En una relación matemática pura, <strong>no hay tuplas duplicadas</strong>. El RDBMS impone esto mediante claves primarias. Sin una PK, técnicamente no es una relación válida.</p>
+                </div>
+
+                <h3>2. Integridad: Reglas del Mundo Real</h3>
+                <p>La <strong>integridad de entidad</strong> dice que toda tupla debe ser identificable (PK no nula y única). La <strong>integridad referencial</strong> dice que las referencias entre relaciones deben ser válidas (las FK deben apuntar a PK existentes o ser nulas).</p>
+
+                <h3>3. Manipulación: Álgebra Relacional</h3>
+                <p>Codd definió un conjunto de operaciones formales para manipular relaciones: <strong>selección (σ)</strong>, <strong>proyección (π)</strong>, <strong>unión (∪)</strong>, <strong>diferencia (−)</strong>, <strong>producto cartesiano (×)</strong> y <strong>join (⋈)</strong>. SQL es una implementación práctica (y superconjunto) de este álgebra.</p>
+
+                <div class="diagram">
+<span class="d-comment">-- Representación de una relación USUARIOS</span>
+<span class="d-table">RELACIÓN: Usuarios</span>
+┌──────────┬──────────┬──────────────┬──────────┐
+│ <span class="d-key">user_id</span>  │ nombre   │ email        │ creado   │
+├──────────┼──────────┼──────────────┼──────────┤
+│ 1        │ Ana      │ ana@mail.com │ 2024-01  │
+│ 2        │ Luis     │ luis@mail.com│ 2024-02  │
+│ 3        │ Marta    │ marta@mail   │ 2024-02  │
+└──────────┴──────────┴──────────────┴──────────┘
+
+<span class="d-comment">-- Dominios: user_id ∈ ℤ⁺, nombre ∈ VARCHAR(100), etc.</span>
+<span class="d-comment">-- Cada fila es una tupla única en el producto cartesiano de los dominios</span>
+                </div>
+            </section>
+
+            <!-- ==================== SECCIÓN 3 ==================== -->
+            <section id="tablas">
+                <h2><span class="section-number">03</span>Tablas, Filas y Columnas: El Lenguaje del RDBMS</h2>
+
+                <p>Aunque usamos "tabla" coloquialmente, en un RDBMS existen distinciones importantes:</p>
+
+                <h3>Tabla (Table / Relation)</h3>
+                <p>Estructura con nombre que define un conjunto de tuplas del mismo tipo. En SQL: <code>CREATE TABLE</code>. Una tabla tiene:</p>
+                <ul>
+                    <li><strong>Nombre único</strong> en el esquema</li>
+                    <li><strong>Columnas</strong> con tipos de datos y restricciones</li>
+                    <li><strong>Filas</strong> (tuplas) que cumplen el esquema</li>
+                    <li><strong>Restricciones</strong> (constraints) que limitan los valores posibles</li>
+                </ul>
+
+                <h3>Columna (Column / Attribute)</h3>
+                <p>Define un dominio. El tipo de dato no es decorativo: <em>determina el almacenamiento físico, las operaciones válidas y las optimizaciones posibles</em>.</p>
+
+                <table>
+                    <tr>
+                        <th>Tipo Conceptual</th>
+                        <th>Tipos Comunes</th>
+                        <th>Consideraciones de Producción</th>
+                    </tr>
+                    <tr>
+                        <td>Numéricos exactos</td>
+                        <td><code>INTEGER</code>, <code>BIGINT</code>, <code>NUMERIC</code></td>
+                        <td>NUMERIC es preciso pero más lento que INTEGER. Usa BIGINT para IDs (agotar INTEGER es un incidente real).</td>
+                    </tr>
+                    <tr>
+                        <td>Numéricos aprox.</td>
+                        <td><code>REAL</code>, <code>DOUBLE PRECISION</code>, <code>FLOAT</code></td>
+                        <td>Nunca para dinero. Redondeo impredecible. Prohibido en contabilidad.</td>
+                    </tr>
+                    <tr>
+                        <td>Texto</td>
+                        <td><code>VARCHAR(n)</code>, <code>TEXT</code>, <code>CHAR(n)</code></td>
+                        <td>TEXT sin límite es preferible en PostgreSQL. VARCHAR solo si hay restricción de negocio real.</td>
+                    </tr>
+                    <tr>
+                        <td>Temporal</td>
+                        <td><code>TIMESTAMP</code>, <code>DATE</code>, <code>TIMESTAMPTZ</code></td>
+                        <td><strong>Siempre</strong> TIMESTAMPTZ (con zona horaria). Almacenar en UTC, mostrar en local.</td>
+                    </tr>
+                    <tr>
+                        <td>Booleano</td>
+                        <td><code>BOOLEAN</code></td>
+                        <td>Algunos motores usan BIT o TINYINT(1). PostgreSQL tiene booleano nativo.</td>
+                    </tr>
+                    <tr>
+                        <td>Binarios</td>
+                        <td><code>BYTEA</code>, <code>BLOB</code></td>
+                        <td>Para archivos pequeños. Para grandes, usa almacenamiento de objetos (S3) y guarda la referencia.</td>
+                    </tr>
+                </table>
+
+                <h3>Fila (Row / Tuple)</h3>
+                <p>Una instancia concreta de la relación. Las filas no tienen orden intrínseco. Si necesitas orden, usa <code>ORDER BY</code>. El RDBMS puede devolverlas en cualquier secuencia física.</p>
+
+                <div class="box box-danger">
+                    <div class="box-icon">🛑</div>
+                    <div class="box-title">Anti-patrón Común</div>
+                    <p>Confiar en el "orden natural" de las filas. <strong>No existe</strong>. El orden físico depende del plan de acceso, índices, vacuums, reordenamientos. Siempre explicita el orden lógico que necesitas.</p>
+                </div>
+            </section>
+
+            <!-- ==================== SECCIÓN 4 ==================== -->
+            <section id="claves">
+                <h2><span class="section-number">04</span>Claves: Identidad y Referencia</h2>
+
+                <p>Las claves son el mecanismo que transforma una tabla en una relación matemática válida y que permite navegar entre relaciones.</p>
+
+                <h3>Clave Primaria (Primary Key - PK)</h3>
+                <p>Identifica unívocamente cada fila. Propiedades:</p>
+                <ul>
+                    <li><strong>Unicidad:</strong> No puede repetirse en toda la tabla</li>
+                    <li><strong>Irreductibilidad:</strong> No debe contener atributos superfluos (si es compuesta)</li>
+                    <li><strong>No nulidad:</strong> Ninguna parte de la PK puede ser NULL</li>
+                    <li><strong>Inmutabilidad ideal:</strong> No debe cambiar (cambiar una PK es costoso y arriesgado)</li>
+                </ul>
+
+                <div class="box box-info">
+                    <div class="box-icon">🎯</div>
+                    <div class="box-title">Estrategia de Producción: Surrogate Keys</div>
+                    <p>Usa <strong>claves surrogadas</strong> (artificiales) como autoincrementales o UUIDs como PK, en lugar de datos de negocio (DNI, email). Los datos de negocio cambian, las surrogadas no. Esto desacopla la identidad física de la identidad de negocio.</p>
+                </div>
+
+                <h3>Clave Foránea (Foreign Key - FK)</h3>
+                <p>Establece una <strong>relación de integridad referencial</strong> entre dos tablas. Una FK en la tabla hija referencia la PK de la tabla padre. El RDBMS <em>impide</em> que existan "huérfanos".</p>
+
+                <div class="diagram">
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│  <span class="d-table">Tabla: CLIENTES</span>                              <span class="d-table">Tabla: PEDIDOS</span>                      │
+│                                                                                     │
+│  ┌─────────────┬──────────┐                    ┌─────────────┬─────────────┬──────────┐
+│  │ <span class="d-key">cliente_id</span>  │ nombre   │                    │ <span class="d-key">pedido_id</span>   │ <span class="d-fk">cliente_id</span>  │ total    │
+│  ├─────────────┼──────────┤                    ├─────────────┼─────────────┼──────────┤
+│  │ 101         │ Acme Corp│◄───────────────────│ 5001        │ 101         │ 1200.00  │
+│  │ 102         │ Globex   │   <span class="d-rel">FK constraint</span>   │ 5002        │ 101         │ 850.00   │
+│  │ 103         │ Initech  │                    │ 5003        │ 102         │ 2300.00  │
+│  └─────────────┴──────────┘                    └─────────────┴─────────────┴──────────┘
+│         <span class="d-arrow">↑</span>                                             <span class="d-arrow">↑</span>
+│    <span class="d-rel">PK (única, no nula)</span>                          <span class="d-rel">FK (referencia PK)</span>
+│
+│  <span class="d-comment">-- Si intentas borrar el cliente 101, el RDBMS bloquea la operación</span>
+│  <span class="d-comment">-- porque existen pedidos dependientes (a menos que configures ON DELETE CASCADE)</span>
+└─────────────────────────────────────────────────────────────────────────────────────┘
+                </div>
+
+                <h3>Clave Única (Unique Key - UK)</h3>
+                <p>Garantiza unicidad sin ser identificador primario. Útil para datos de negocio que deben ser únicos (email, SKU, ISBN) pero que no usas como referencia en otras tablas.</p>
+
+                <h3>Clave Compuesta</h3>
+                <p>PK formada por múltiples columnas. Útil en tablas de unión (junction tables) para relaciones N:M. Ejemplo: PK compuesta por <code>(pedido_id, producto_id)</code> en una tabla de líneas de pedido.</p>
+
+                <div class="box box-warning">
+                    <div class="box-icon">⚡</div>
+                    <div class="box-title">Impacto en Índices</div>
+                    <p>Toda PK y UK crea automáticamente un <strong>índice único</strong> en el RDBMS. Esto acelera las búsquedas por esa columna, pero ralentiza las inserciones/actualizaciones porque el índice debe mantenerse. Diseña tus claves pensando en el balance lectura/escritura.</p>
+                </div>
+            </section>
+
+            <!-- ==================== SECCIÓN 5 ==================== -->
+            <section id="relaciones">
+                <h2><span class="section-number">05</span>Tipos de Relaciones entre Tablas</h2>
+
+                <p>La cardinalidad define cuántas instancias de una entidad se asocian con instancias de otra. Es fundamental para modelar correctamente el dominio.</p>
+
+                <h3>1:1 (Uno a Uno)</h3>
+                <p>Una fila en A corresponde a exactamente una fila en B. Se implementa colocando la PK de A como PK y FK en B (o viceversa). Útil para:</p>
+                <ul>
+                    <li>Separar datos sensibles (tabla de contraseñas/hash separada)</li>
+                    <li>Datos opcionales y voluminosos (perfil extendido de usuario)</li>
+                    <li>Particionamiento lógico por acceso (datos frecuentes vs. raros)</li>
+                </ul>
+
+                <h3>1:N (Uno a Muchos)</h3>
+                <p>La relación más común. Una fila en A tiene muchas filas en B. Se implementa con una FK en B que referencia A. Ejemplo: un cliente tiene muchos pedidos.</p>
+
+                <h3>N:M (Muchos a Muchos)</h3>
+                <p>No se implementa directamente. Se descompone en dos relaciones 1:N mediante una <strong>tabla de unión</strong> (junction/associative table). Esta tabla contiene FKs a ambas entidades; a menudo su PK es la composición de ambas FKs.</p>
+
+                <div class="diagram">
+┌────────────────────────────────────────────────────────────────────────────────────────────┐
+│  <span class="d-table">ESTUDIANTES</span>              <span class="d-table">INSCRIPCIONES (Junction)</span>              <span class="d-table">CURSOS</span>                    │
+│                                                                                            │
+│  ┌─────────┬────────┐         ┌─────────────┬───────────┬──────────┐         ┌─────────┬──────────┐
+│  │ <span class="d-key">est_id</span>  │ nombre │         │ <span class="d-key">est_id</span>      │ <span class="d-key">curso_id</span>    │ fecha    │         │ <span class="d-key">curso_id</span>│ nombre   │
+│  ├─────────┼────────┤         ├─────────────┼───────────┼──────────┤         ├─────────┼──────────┤
+│  │ 1       │ Juan   │◄────────│ 1           │ 101       │ 2024-09  │────────►│ 101     │ Álgebra  │
+│  │ 2       │ María  │◄────────│ 1           │ 102       │ 2024-09  │────────►│ 102     │ Física   │
+│  │ 3       │ Pedro  │◄────────│ 2           │ 101       │ 2024-09  │         │ 103     │ Química  │
+│  └─────────┴────────┘         │ 3           │ 103       │ 2024-09  │         └─────────┴──────────┘
+│                               └─────────────┴───────────┴──────────┘
+│
+│  <span class="d-comment">-- La PK de INSCRIPCIONES es (est_id, curso_id) -- clave compuesta</span>
+│  <span class="d-comment">-- Un estudiante puede tener muchos cursos; un curso puede tener muchos estudiantes</span>
+└────────────────────────────────────────────────────────────────────────────────────────────┘
+                </div>
+
+                <div class="box box-success">
+                    <div class="box-icon">✅</div>
+                    <div class="box-title">Regla de Oro del Modelado</div>
+                    <p>Siempre pregunta: <em>"¿Esta entidad tiene vida propia independiente?"</em> Si una "categoría" solo existe dentro de un "producto", quizás sea un atributo enum, no una tabla. Si puede existir sin el producto (y otros productos la usan), es una entidad con tabla propia y relación FK.</p>
+                </div>
+            </section>
+
+            <!-- ==================== SECCIÓN 6 ==================== -->
+            <section id="normalizacion">
+                <h2><span class="section-number">06</span>Normalización: Eliminando Anomalías</h2>
+
+                <p>La <strong>normalización</strong> es el proceso sistemático de organizar columnas y tablas para minimizar la redundancia y eliminar anomalías de inserción, actualización y borrado. Codd definió las <strong>Formas Normales (FN)</strong> como objetivos sucesivos.</p>
+
+                <h3>Primera Forma Normal (1FN)</h3>
+                <p><strong>Regla:</strong> Todos los atributos contienen valores atómicos (indivisibles) y no hay grupos repetitivos.</p>
+                <p><strong>Anomalía que corrige:</strong> Listas dentro de una celda (emails múltiples en un campo, tags separados por comas).</p>
+                <p><strong>Solución:</strong> Crear tabla separada para el grupo repetitivo con FK a la tabla principal.</p>
+
+                <h3>Segunda Forma Normal (2FN)</h3>
+                <p><strong>Regla:</strong> Está en 1FN y todos los atributos no-clave dependen <em>funcionalmente</em> de toda la PK (no de parte de ella).</p>
+                <p><strong>Aplicable a:</strong> Tablas con PK compuesta.</p>
+                <p><strong>Anomalía:</strong> Si <code>(pedido_id, producto_id)</code> es PK, y guardas el <code>nombre_cliente</code> en esa tabla, depende solo de <code>pedido_id</code>, no de toda la PK. Mueve <code>nombre_cliente</code> a la tabla de pedidos.</p>
+
+                <h3>Tercera Forma Normal (3FN)</h3>
+                <p><strong>Regla:</strong> Está en 2FN y no existen dependencias transitivas (atributos no-clave que dependen de otros atributos no-clave).</p>
+                <p><strong>Ejemplo clásico:</strong> Tabla de empleados con <code>(id, nombre, departamento_id, nombre_departamento, ubicacion_departamento)</code>. El nombre y ubicación del departamento dependen de <code>departamento_id</code>, no directamente del <code>id</code> del empleado. Solución: tabla separada <code>DEPARTAMENTOS</code>.</p>
+
+                <h3>Forma Normal de Boyce-Codd (BCNF)</h3>
+                <p>Variante más estricta de 3FN. Para cada dependencia funcional <code>X → Y</code>, <code>X</code> debe ser una superclave. Más exigente que 3FN pero a veces requiere descomposiciones que pierden dependencias funcionales.</p>
+
+                <div class="box box-info">
+                    <div class="box-icon">🎓</div>
+                    <div class="box-title">Perspectiva Práctica</div>
+                    <p>En producción, la mayoría de los diseños saludables alcanzan <strong>3FN o BCNF</strong>. Las formas superiores (4FN, 5FN) tratan dependencias multivaluadas y join, pero son raramente necesarias en aplicaciones comerciales. <em>Normaliza hasta eliminar la redundancia obvia, luego desnormaliza selectivamente si hay problemas de rendimiento medidos.</em></p>
+                </div>
+
+                <h3>Desnormalización Controlada</h3>
+                <p>En sistemas de lectura intensiva (reporting, analytics), a veces se introducen redundancias calculadas (campos derivados, tablas agregadas) para evitar joins costosos. Esto es una <strong>desnormalización</strong> deliberada, no un error de diseño. La clave:</p>
+                <ul>
+                    <li>Documentar que es intencional</li>
+                    <li>Mantener la fuente de verdad normalizada</li>
+                    <li>Actualizar los datos derivados de forma transaccional o eventualmente consistente</li>
+                    <li>Medir antes: no optimices prematuramente</li>
+                </ul>
+            </section>
+
+            <!-- ==================== SECCIÓN 7 ==================== -->
+            <section id="integridad">
+                <h2><span class="section-number">07</span>Integridad Referencial y Constraints</h2>
+
+                <p>La integridad no es opcional en producción. Los <strong>constraints</strong> (restricciones) son reglas declarativas que el RDBMS garantiza, independientemente de qué aplicación acceda a los datos.</p>
+
+                <h3>Tipos de Constraints</h3>
+                <table>
+                    <tr>
+                        <th>Constraint</th>
+                        <th>Propósito</th>
+                        <th>Ejemplo de Producción</th>
+                    </tr>
+                    <tr>
+                        <td><code>PRIMARY KEY</code></td>
+                        <td>Unicidad + No NULL</td>
+                        <td>Toda tabla debe tener una. Es el ancla de tu modelo.</td>
+                    </tr>
+                    <tr>
+                        <td><code>FOREIGN KEY</code></td>
+                        <td>Integridad referencial</td>
+                        <td>Siempre que haya relación lógica. Sin FK, los datos se corrompen.</td>
+                    </tr>
+                    <tr>
+                        <td><code>UNIQUE</code></td>
+                        <td>Unicidad sin ser PK</td>
+                        <td>Emails de usuario, números de factura, slugs de URL.</td>
+                    </tr>
+                    <tr>
+                        <td><code>NOT NULL</code></td>
+                        <td>Obligatoriedad</td>
+                        <td>Campos críticos: fecha de creación, estado, monto.</td>
+                    </tr>
+                    <tr>
+                        <td><code>CHECK</code></td>
+                        <td>Validación de dominio</td>
+                        <td><code>CHECK (precio > 0)</code>, <code>CHECK (estado IN ('activo', 'inactivo'))</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>DEFAULT</code></td>
+                        <td>Valor por omisión</td>
+                        <td><code>created_at DEFAULT NOW()</code>, <code>estado DEFAULT 'pendiente'</code></td>
+                    </tr>
+                </table>
+
+                <h3>Acciones Referenciales (ON DELETE / ON UPDATE)</h3>
+                <p>Cuando la fila padre cambia, ¿qué pasa con las hijas?</p>
+                <ul>
+                    <li><strong>NO ACTION / RESTRICT:</strong> Bloquea la operación si hay hijas (por defecto, el más seguro)</li>
+                    <li><strong>CASCADE:</strong> Propaga el cambio (borra/actualiza hijas automáticamente). <em>Úsalo con precaución: un borrado accidental puede eliminar cascadas masivas.</em></li>
+                    <li><strong>SET NULL:</strong> Pone la FK a NULL (solo si la columna lo permite)</li>
+                    <li><strong>SET DEFAULT:</strong> Asigna un valor por defecto</li>
+                </ul>
+
+                <div class="box box-danger">
+                    <div class="box-icon">🔥</div>
+                    <div class="box-title">Error Crítico en Producción</div>
+                    <p>Deshabilitar las claves foráneas "por rendimiento". Esto destruye la integridad de datos. Si una aplicación escribe datos inconsistentes (por bugs, race conditions, o escrituras manuales), recuperar la consistencia es extremadamente difícil. Las FK son <em>la última línea de defensa</em> de tu modelo de datos.</p>
+                </div>
+            </section>
+
+            <!-- ==================== SECCIÓN 8 ==================== -->
+            <section id="transacciones">
+                <h2><span class="section-number">08</span>Transacciones ACID: Garantías de Consistencia</h2>
+
+                <p>Una <strong>transacción</strong> es una unidad lógica de trabajo que agrupa múltiples operaciones. El RDBMS garantiza que, independientemente de fallos, concurrencia o cortes de energía, las transacciones cumplen <strong>ACID</strong>:</p>
+
+                <h3>A - Atomicidad (Atomicity)</h3>
+                <p><em>Todo o nada.</em> Las operaciones de la transacción se completan íntegramente, o ninguna tiene efecto. Si falla la mitad, el RDBMS hace <strong>rollback</strong> automático al estado previo usando el <strong>Write-Ahead Log (WAL)</strong>.</p>
+
+                <h3>C - Consistencia (Consistency)</h3>
+                <p>Cada transacción lleva la base de datos de un estado válido a otro estado válido. Todas las reglas (constraints, triggers, cascadas) se cumplen al finalizar.</p>
+
+                <h3>I - Aislamiento (Isolation)</h3>
+                <p>Las transacciones concurrentes no se interfieren entre sí. El resultado es el mismo que si se ejecutaran secuencialmente. Se implementa mediante <strong>locking</strong> y <strong>MVCC</strong> (Multi-Version Concurrency Control).</p>
+
+                <h3>D - Durabilidad (Durability)</h3>
+                <p>Una vez confirmada (<code>COMMIT</code>), la transacción sobrevive a cualquier fallo. Los datos se escriben en almacenamiento persistente (disco) antes de reportar éxito al cliente.</p>
+
+                <h3>Niveles de Aislamiento</h3>
+                <p>El estándar SQL define 4 niveles. Cuanto más alto, más consistencia pero menos concurrencia:</p>
+
+                <table>
+                    <tr>
+                        <th>Nivel</th>
+                        <th>Fenómenos Permitidos</th>
+                        <th>Uso Típico</th>
+                    </tr>
+                    <tr>
+                        <td><strong>READ UNCOMMITTED</strong></td>
+                        <td>Dirty reads, non-repeatable, phantom</td>
+                        <td>Casi nunca. Solo reporting donde la exactitud no importa.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>READ COMMITTED</strong></td>
+                        <td>Non-repeatable reads, phantom</td>
+                        <td>Default en muchos motores. Buen balance para OLTP.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>REPEATABLE READ</strong></td>
+                        <td>Phantom reads (en algunos motores)</td>
+                        <td>Default en MySQL (InnoDB). Consistente para la transacción.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SERIALIZABLE</strong></td>
+                        <td>Ninguno</td>
+                        <td>Operaciones críticas (transferencias bancarias). Máximo overhead.</td>
+                    </tr>
+                </table>
+
+                <div class="box box-warning">
+                    <div class="box-icon">🔄</div>
+                    <div class="box-title">MVCC: La Magia Moderna</div>
+                    <p>PostgreSQL y Oracle usan MVCC en lugar de locks pesados. Cada transacción ve una <strong>"fotografía" consistente</strong> de la base de datos al momento de iniciar. Las escrituras crean nuevas versiones sin bloquear lecturas. Esto permite alta concurrencia sin deadlocks constantes.</p>
+                </div>
+            </section>
+
+            <!-- ==================== SECCIÓN 9 ==================== -->
+            <section id="indices">
+                <h2><span class="section-number">09</span>Índices y Estructuras de Acceso</h2>
+
+                <p>Un <strong>índice</strong> es una estructura de datos auxiliar que acelera la recuperación de filas a costa de espacio adicional y lentitud en escrituras. Sin índices, el RDBMS debe hacer <strong>Sequential Scan</strong> (leer toda la tabla).</p>
+
+                <h3>B-Tree: El Estándar Universal</h3>
+                <p>La estructura dominante. Un <strong>B-Tree (Balanced Tree)</strong> mantiene los datos ordenados en una estructura de árbol auto-balanceada. Cada nodo tiene múltiples hijos. Garantiza:</p>
+                <ul>
+                    <li>Búsqueda, inserción y borrado en <code>O(log n)</code></li>
+                    <li>Ordenación implícita (útil para <code>ORDER BY</code> y rangos)</li>
+                    <li>Balanceo automático: todas las hojas están a la misma profundidad</li>
+                </ul>
+
+                <div class="diagram">
+<span class="d-comment">-- Representación conceptual de un B-Tree para índice en "email"</span>
+                        [m@mail.com]
+                       /            \
+            [a@mail.com]          [r@mail.com]
+               /    \                /        \
+        [a@..][j@..] [l@..][m@..]  [r@..][s@..] [z@..]
+        
+<span class="d-comment">-- Las hojas contienen punteros a las filas físicas (TIDs/ROWIDs)
+-- La profundidad es ~logarítmica respecto al número de filas</span>
+                </div>
+
+                <h3>Tipos de Índices</h3>
+                <table>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Mejor Para</th>
+                        <th>Notas de Producción</th>
+                    </tr>
+                    <tr>
+                        <td><strong>B-Tree</strong></td>
+                        <td>Igualdad, rangos, ordenación</td>
+                        <td>Default en la mayoría de motores. Útil para &gt;, &lt;, =, BETWEEN, LIKE 'abc%'.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hash</strong></td>
+                        <td>Igualdad exacta (=)</td>
+                        <td>PostgreSQL los crea internamente para joins hash. No soporta rangos.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>GiST / GIN</strong></td>
+                        <td>Datos complejos, arrays, full-text</td>
+                        <td>PostgreSQL. GIN es excelente para arrays y búsqueda de texto.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Partial</strong></td>
+                        <td>Subconjuntos frecuentes</td>
+                        <td><code>WHERE activo = true</code>. Índice más pequeño y rápido.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Composite</strong></td>
+                        <td>Consultas multi-columna</td>
+                        <td>Orden importa: <code>(apellido, nombre)</code> acelera <code>WHERE apellido = X</code> pero no <code>WHERE nombre = X</code> solo.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Covering</strong></td>
+                        <td>Index-only scans</td>
+                        <td>Incluye columnas adicionales para evitar acceso a la tabla heap.</td>
+                    </tr>
+                </table>
+
+                <div class="box box-danger">
+                    <div class="box-icon">⚠️</div>
+                    <div class="box-title">Anti-patrón: Índice en Todo</div>
+                    <p>Cada índice ralentiza <code>INSERT</code>, <code>UPDATE</code> y <code>DELETE</code> porque debe mantenerse actualizado. Además, consume espacio en disco y memoria (shared buffers). <strong>Regla:</strong> indexa las columnas en <code>WHERE</code>, <code>JOIN</code> y <code>ORDER BY</code> de consultas frecuentes. Usa <code>EXPLAIN ANALYZE</code> para verificar que el índice se usa realmente.</p>
+                </div>
+            </section>
+
+            <!-- ==================== SECCIÓN 10 ==================== -->
+            <section id="rdbms">
+                <h2><span class="section-number">10</span>Motores RDBMS: Elegir tu Arma</h2>
+
+                <p>No todos los RDBMS son iguales. La elección afecta arquitectura, operación y coste a largo plazo.</p>
+
+                <table>
+                    <tr>
+                        <th>Motor</th>
+                        <th>Filosofía</th>
+                        <th>Fortalezas</th>
+                        <th>Casos de Uso</th>
+                    </tr>
+                    <tr>
+                        <td><strong>PostgreSQL</strong></td>
+                        <td>Correctitud, extensibilidad, estándares</td>
+                        <td>Tipos avanzados, JSONB, extensiones (PostGIS), MVCC robusto, comunidad activa</td>
+                        <td>Aplicaciones complejas, GIS, data warehousing ligero, startups a enterprise</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MySQL (InnoDB)</strong></td>
+                        <td>Simplicidad, velocidad, amplia adopción</td>
+                        <td>Fácil de operar, replicación madura, ecosistema LAMP masivo</td>
+                        <td>Web apps, CMS, e-commerce, cuando la operación simple prima</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SQL Server</strong></td>
+                        <td>Integración Microsoft, herramientas</td>
+                        <td>SSIS, SSAS, T-SQL potente, soporte enterprise</td>
+                        <td>Entornos .NET, BI, corporaciones con licenciamiento Microsoft</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Oracle</strong></td>
+                        <td>Escalabilidad extrema, features enterprise</td>
+                        <td>RAC (clustering), particionamiento avanzado, soporte 24/7 global</td>
+                        <td>Banca, telecom, grandes corporaciones con presupuesto significativo</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SQLite</strong></td>
+                        <td>Zero-config, serverless</td>
+                        <td>Embebido, portátil, sin proceso servidor</td>
+                        <td>Apps móviles, IoT, testing, single-user apps, cache local</td>
+                    </tr>
+                </table>
+
+                <h3>Criterios de Selección para Producción</h3>
+                <ol>
+                    <li><strong>Equipo:</strong> ¿Qué conocen bien? La curva de aprendizaje opera 24/7.</li>
+                    <li><strong>Ecosistema:</strong> Drivers, ORMs, herramientas de backup/monitoring.</li>
+                    <li><strong>Escalabilidad vertical vs. horizontal:</strong> ¿Necesitarás sharding? PostgreSQL y MySQL manejan TBs sin sharding; más allá, requiere arquitectura.</li>
+                    <li><strong>Coste total:</strong> Licencias vs. tiempo de operación vs. hardware.</li>
+                    <li><strong>Features específicas:</strong> Full-text search, geoespacial, JSON nativo, particionamiento.</li>
+                </ol>
+            </section>
+
+            <!-- ==================== SECCIÓN 11 ==================== -->
+            <section id="almacenamiento">
+                <h2><span class="section-number">11</span>Almacenamiento Físico y Arquitectura Interna</h2>
+
+                <p>Comprender cómo se almacenan los datos físicamente te ayuda a diagnosticar problemas de rendimiento y a dimensionar infraestructura.</p>
+
+                <h3>Páginas (Pages / Blocks)</h3>
+                <p>El RDBMS lee y escribe en unidades de <strong>páginas</strong> (típicamente 8KB en PostgreSQL, 16KB en InnoDB). Una fila nunca se divide entre páginas. Las páginas se almacenan en:</p>
+                <ul>
+                    <li><strong>Shared Buffers:</strong> Cache en memoria RAM de páginas recientes</li>
+                    <li><strong>Tablespace files:</strong> Archivos en disco donde residen permanentemente</li>
+                </ul>
+
+                <h3>Heap vs. Índice</h3>
+                <p>La <strong>tabla heap</strong> es el almacenamiento principal desordenado de filas. Los <strong>índices</strong> contienen valores ordenados + punteros (TID/ROWID) a la ubicación en el heap. Una consulta por índice hace:</p>
+                <ol>
+                    <li>Recorre el B-Tree del índice para encontrar las entradas coincidentes</li>
+                    <li>Obtiene los punteros a las páginas del heap</li>
+                    <li>Accede al heap para recuperar las columnas no presentes en el índice (excepto en Index-Only Scan)</li>
+                </ol>
+
+                <h3>TOAST (The Oversized-Attribute Storage Technique)</h3>
+                <p>En PostgreSQL, las filas no pueden exceder ~8KB. Los valores grandes (TEXT largo, JSONB grande) se comprimen y almacenan en tablas TOAST separadas, con un puntero en la fila principal. Esto es transparente pero afecta el rendimiento de lectura de campos grandes.</p>
+
+                <h3>WAL (Write-Ahead Logging)</h3>
+                <p>Toda modificación se escribe primero en un <strong>log secuencial</strong> (WAL/redo log) antes de tocar los datos. Esto permite:</p>
+                <ul>
+                    <li><strong>Recuperación tras crash:</strong> Reproduce el WAL para restaurar consistencia</li>
+                    <li><strong>Replicación:</strong> El standby aplica el WAL del primario</li>
+                    <li><strong>Point-in-Time Recovery:</strong> Restaurar a cualquier momento usando backups base + WAL archivado</li>
+                </ul>
+            </section>
+
+            <!-- ==================== SECCIÓN 12 ==================== -->
+            <section id="concurrencia">
+                <h2><span class="section-number">12</span>Concurrencia, Locking y Deadlocks</h2>
+
+                <p>En producción, múltiples usuarios y procesos acceden simultáneamente. El RDBMS debe coordinar esto sin corrupción ni bloqueos eternos.</p>
+
+                <h3>Niveles de Locking</h3>
+                <table>
+                    <tr>
+                        <th>Nivel</th>
+                        <th>Qué Bloquea</th>
+                        <th>Ejemplo</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Row-level</strong></td>
+                        <td>Solo la fila afectada</td>
+                        <td>InnoDB, PostgreSQL. Máxima concurrencia.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Page-level</strong></td>
+                        <td>Página de 8KB (múltiples filas)</td>
+                        <td>SQL Server en ciertos casos. Menos concurrente.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Table-level</strong></td>
+                        <td>Toda la tabla</td>
+                        <td>MyISAM, DDL statements (<code>ALTER TABLE</code>). Bloquea todo.</td>
+                    </tr>
+                </table>
+
+                <h3>Tipos de Locks</h3>
+                <ul>
+                    <li><strong>Shared Lock (S):</strong> Para lecturas. Múltiples transacciones pueden tener S locks simultáneos.</li>
+                    <li><strong>Exclusive Lock (X):</strong> Para escrituras. Bloquea a otros S y X.</li>
+                    <li><strong>Intent Locks:</strong> Indican la intención de bloquear a nivel inferior (evita conflictos entre niveles)</li>
+                    <li><strong>Serializable:</strong> Bloqueos de predicado para evitar phantoms</li>
+                </ul>
+
+                <h3>Deadlocks</h3>
+                <p>Ocurren cuando la transacción A espera un recurso de B, y B espera uno de A. El RDBMS detecta ciclos y <strong>mata una transacción</strong> (rollback) para desbloquear. En producción:</p>
+                <ul>
+                    <li>Accede a los recursos <strong>siempre en el mismo orden</strong> en toda la aplicación</li>
+                    <li>Mantén las transacciones <strong>cortas</strong></li>
+                    <li>Usa <strong>timeouts</strong> de lock wait</li>
+                    <li>Captura los errores de deadlock en la aplicación y reintenta</li>
+                </ul>
+
+                <div class="diagram">
+┌────────────────────────────────────────────────────────────────────────────────────────────┐
+│  <span class="d-comment">-- Escenario de Deadlock</span>                                                                 │
+│                                                                                            │
+│  <span class="d-table">Transacción A</span>                          <span class="d-table">Transacción B</span>                                     │
+│  ─────────────                          ─────────────                                     │
+│  UPDATE cuenta SET saldo = 100          UPDATE cuenta SET saldo = 200                      │
+│  WHERE id = 1;                          WHERE id = 2;                                     │
+│  <span class="d-comment">-- (obtiene lock X en cuenta 1)         (obtiene lock X en cuenta 2)</span>                      │
+│                                                                                            │
+│  UPDATE cuenta SET saldo = saldo + 10   UPDATE cuenta SET saldo = saldo + 20              │
+│  WHERE id = 2;                          WHERE id = 1;                                     │
+│  <span class="d-comment">-- ESPERA: cuenta 2 bloqueada por B    ESPERA: cuenta 1 bloqueada por A</span>                   │
+│                                                                                            │
+│  <span class="d-arrow">💥 DEADLOCK: RDBMS mata una transacción y hace rollback</span>                                  │
+└────────────────────────────────────────────────────────────────────────────────────────────┘
+                </div>
+            </section>
+
+            <!-- ==================== SECCIÓN 13 ==================== -->
+            <section id="replicacion">
+                <h2><span class="section-number">13</span>Replicación y Alta Disponibilidad</h2>
+
+                <p>En producción, un solo servidor es un <strong>single point of failure</strong>. La replicación distribuye datos y carga.</p>
+
+                <h3>Replicación Física (Streaming Replication)</h3>
+                <p>El standby recibe el <strong>WAL binario</strong> del primario y lo aplica byte por byte. Es idéntico al primario. PostgreSQL y MySQL lo soportan nativamente.</p>
+                <ul>
+                    <li><strong>Síncrona:</strong> El primario espera confirmación del standby antes de reportar COMMIT. Cero pérdida de datos, pero latencia.</li>
+                    <li><strong>Asíncrona:</strong> El primario no espera. Mínima latencia, pero posible lag (retraso) y pérdida de datos si el primario falla antes de que el standby reciba el WAL.</li>
+                </ul>
+
+                <h3>Replicación Lógica</h3>
+                <p>Replica a nivel de fila/columna, no de bytes. Permite:</p>
+                <ul>
+                    <li>Replicar solo tablas específicas</li>
+                    <li>Replicar entre versiones diferentes del motor</li>
+                    <li>Replicar a bases de datos con esquemas diferentes</li>
+                </ul>
+
+                <h3>Topologías</h3>
+                <table>
+                    <tr>
+                        <th>Topología</th>
+                        <th>Descripción</th>
+                        <th>Cuándo Usarla</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Primario-Standby</strong></td>
+                        <td>Uno activo, uno o más pasivos</td>
+                        <td>Alta disponibilidad básica, failover manual o automático</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cascada</strong></td>
+                        <td>Standby alimenta otro standby</td>
+                        <td>Reducir carga del primario, geografía distribuida</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Multi-primario</strong></td>
+                        <td>Múltiples nodos aceptan escrituras</td>
+                        <td>MySQL Group Replication, Galera. Conflictos complejos; úsalo si entiendes las limitaciones.</td>
+                    </tr>
+                </table>
+
+                <div class="box box-success">
+                    <div class="box-icon">🏗️</div>
+                    <div class="box-title">Arquitectura Típica de Producción</div>
+                    <p><strong>Primario</strong> (escrituras) + <strong>2+ Réplicas de Lectura</strong> (reporting, análisis) + <strong>Failover Automático</strong> (Patroni, repmgr, Orchestrator). Las réplicas alivian el primario de consultas pesadas y sirven como respaldo inmediato.</p>
+                </div>
+            </section>
+
+            <!-- ==================== SECCIÓN 14 ==================== -->
+            <section id="backup">
+                <h2><span class="section-number">14</span>Backups y Recuperación ante Desastres</h2>
+
+                <p>Los backups no son opcionales. Un sistema sin backups verificados es un sistema que eventualmente perderá datos.</p>
+
+                <h3>Tipos de Backup</h3>
+                <ul>
+                    <li><strong>Físico (Base Backup):</strong> Copia de los archivos de datos del disco. Rápido de restaurar. Requiere consistencia (snapshot o modo backup).</li>
+                    <li><strong>Lógico (SQL Dump):</strong> <code>pg_dump</code>, <code>mysqldump</code>. Archivo SQL con comandos de recreación. Portable entre versiones, pero lento para bases grandes.</li>
+                    <li><strong>Incremental (WAL Archiving):</strong> Archiva los WAL continuamente. Permite Point-in-Time Recovery (PITR) a cualquier momento entre backups base.</li>
+                </ul>
+
+                <h3>Estrategia 3-2-1</h3>
+                <p>Estándar de la industria para backups:</p>
+                <ul>
+                    <li><strong>3</strong> copias de los datos</li>
+                    <li>En <strong>2</strong> tipos de medio diferentes (disco local, nube)</li>
+                    <li><strong>1</strong> copia fuera del sitio (offsite/cloud)</li>
+                </ul>
+
+                <h3>Verificación de Backups</h3>
+                <p>Un backup no verificado no existe. Debes:</p>
+                <ol>
+                    <li>Restaurar periódicamente en un entorno aislado</li>
+                    <li>Ejecutar <code>CHECKSUM</code> o validación de integridad</li>
+                    <li>Medir el tiempo de restauración (RTO - Recovery Time Objective)</li>
+                    <li>Definir cuánta pérdida de datos es aceptable (RPO - Recovery Point Objective)</li>
+                </ol>
+
+                <div class="box box-danger">
+                    <div class="box-icon">🚨</div>
+                    <div class="box-title">Incidente Clásico</div>
+                    <p>"Hacíamos backups diarios, pero nunca los probamos. Cuando el disco falló, descubrimos que los dumps estaban corruptos desde hacía 3 meses." <strong>Restaura tus backups. Automatiza la verificación. Documenta el procedimiento de recuperación.</strong></p>
+                </div>
+            </section>
+
+            <!-- ==================== SECCIÓN 15 ==================== -->
+            <section id="seguridad">
+                <h2><span class="section-number">15</span>Seguridad en Bases de Datos</h2>
+
+                <p>La base de datos es el tesoro. Su protección es multicapa.</p>
+
+                <h3>1. Autenticación y Autorización</h3>
+                <ul>
+                    <li><strong>Usuarios con privilegios mínimos:</strong> La app no necesita ser <code>SUPERUSER</code>. Crea roles específicos: <code>app_read</code>, <code>app_write</code>, <code>app_admin</code>.</li>
+                    <li><strong>Contraseñas fuertes + SSL:</strong> Siempre conexiones cifradas en producción. Nunca passwords en texto plano en logs o repos.</li>
+                    <li><strong>Autenticación externa:</strong> LDAP, Kerberos, o certificados de cliente cuando sea posible.</li>
+                </ul>
+
+                <h3>2. Cifrado</h3>
+                <ul>
+                    <li><strong>En tránsito (TLS/SSL):</strong> Obligatorio. Configura <code>sslmode=require</code> o equivalente.</li>
+                    <li><strong>En reposo (TDE):</strong> Transparent Data Encryption cifra los archivos de datos. Protege contra robo físico de discos.</li>
+                    <li><strong>A nivel de columna:</strong> Cifra datos sensibles (tarjetas, documentos) antes de insertar, o usa funciones de cifrado del motor (pgcrypto).</li>
+                </ul>
+
+                <h3>3. Auditoría</h3>
+                <p>Habilita logging de:</p>
+                <ul>
+                    <li>Conexiones y desconexiones</li>
+                    <li>Consultas DDL (<code>CREATE</code>, <code>ALTER</code>, <code>DROP</code>)</li>
+                    <li>Intentos de acceso fallidos</li>
+                    <li>Cambios en tablas sensibles (triggers de auditoría o extensiones como <code>pgaudit</code>)</li>
+                </ul>
+
+                <h3>4. Protección contra Inyección SQL</h3>
+                <p>No es solo "escapar strings". Es arquitectura:</p>
+                <ul>
+                    <li>Usa <strong>parametrización</strong> (prepared statements) SIEMPRE</li>
+                    <li>Nunca concatenes input de usuario en queries</li>
+                    <li>Usa ORMs correctamente (evita <code>raw()</code> o <code>query()</code> con strings dinámicos)</li>
+                    <li>Principio de mínimo privilegio: la cuenta de la app no puede ejecutar <code>DROP TABLE</code></li>
+                </ul>
+            </section>
+
+            <!-- ==================== SECCIÓN 16 ==================== -->
+            <section id="monitoring">
+                <h2><span class="section-number">16</span>Monitoreo y Observabilidad</h2>
+
+                <p>No puedes operar lo que no puedes ver. El monitoreo debe ser proactivo, no reactivo.</p>
+
+                <h3>Métricas Críticas (The Four Golden Signals)</h3>
+                <table>
+                    <tr>
+                        <th>Señal</th>
+                        <th>Métrica de BD</th>
+                        <th>Umbral de Alerta</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Latencia</strong></td>
+                        <td>Tiempo promedio de consulta (avg query time)</td>
+                        <td>&gt; 100ms para OLTP, &gt; 5s para reporting</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tráfico</strong></td>
+                        <td>Conexiones activas, transacciones por segundo (TPS)</td>
+                        <td>&gt; 80% del <code>max_connections</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Errores</strong></td>
+                        <td>Deadlocks, check constraint failures, connection errors</td>
+                        <td>Cualquier deadlock en producción merece investigación</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Saturación</strong></td>
+                        <td>CPU, IOPS de disco, uso de memoria (shared buffers), WAL lag</td>
+                        <td>CPU &gt; 70% sostenido, disco &gt; 80% capacidad</td>
+                    </tr>
+                </table>
+
+                <h3>Herramientas Esenciales</h3>
+                <ul>
+                    <li><strong>pg_stat_statements / Performance Schema:</strong> Identifica las queries más lentas y frecuentes</li>
+                    <li><strong>EXPLAIN (ANALYZE, BUFFERS):</strong> El plan de ejecución. Tu herramienta #1 para optimización</li>
+                    <li><strong>Logs lentos:</strong> Configura <code>log_min_duration_statement</code> para capturar queries &gt; N ms</li>
+                    <li><strong>Dashboards:</strong> Grafana + Prometheus/InfluxDB para visualización histórica</li>
+                    <li><strong>Alerting:</strong> PagerDuty/Opsgenie para incidentes críticos</li>
+                </ul>
+
+                <div class="box box-info">
+                    <div class="box-icon">📊</div>
+                    <div class="box-title">Query de Diagnóstico Rápido (PostgreSQL)</div>
+                    <pre><code><span class="code-keyword">SELECT</span> query, calls, mean_exec_time, rows
+<span class="code-keyword">FROM</span> pg_stat_statements
+<span class="code-keyword">ORDER BY</span> mean_exec_time * calls <span class="code-keyword">DESC</span>
+<span class="code-keyword">LIMIT</span> <span class="code-number">10</span>;
+<span class="code-comment">-- Muestra las queries que más tiempo consumen en total
+-- Prioriza optimizar las que aparecen primero</span></code></pre>
+                </div>
+            </section>
+
+            <!-- ==================== SECCIÓN 17 ==================== -->
+            <section id="checklist">
+                <h2><span class="section-number">17</span>Checklist: De Cero a Producción</h2>
+
+                <p>Esta lista condensa todo lo anterior en acciones verificables. Imprímela, táchala, no despliegues sin ella.</p>
+
+                <h3>Fase 1: Diseño y Modelado</h3>
+                <ul class="checklist">
+                    <li>Todas las tablas tienen PK (preferiblemente surrogate: BIGSERIAL/UUID)</li>
+                    <li>Las relaciones 1:N usan FK con acciones referenciales definidas</li>
+                    <li>Las relaciones N:M usan tabla de unión con PK compuesta</li>
+                    <li>El modelo está al menos en 3FN (salvo desnormalización documentada)</li>
+                    <li>Los tipos de datos son apropiados (TIMESTAMPTZ, no FLOAT para dinero)</li>
+                    <li>Todos los campos de negocio tienen constraints (CHECK, NOT NULL, UNIQUE)</li>
+                </ul>
+
+                <h3>Fase 2: Índices y Rendimiento</h3>
+                <ul class="checklist">
+                    <li>Índices en todas las FK (el RDBMS no los crea automáticamente)</li>
+                    <li>Índices en columnas de búsqueda frecuente (WHERE, JOIN, ORDER BY)</li>
+                    <li>Se verificó con EXPLAIN ANALYZE que los índices se usan</li>
+                    <li>Se eliminaron índices redundantes o no utilizados</li>
+                    <li>Se consideraron índices parciales para subconjuntos frecuentes</li>
+                </ul>
+
+                <h3>Fase 3: Seguridad</h3>
+                <ul class="checklist">
+                    <li>La cuenta de la aplicación tiene privilegios mínimos</li>
+                    <li>Las conexiones usan SSL/TLS obligatorio</li>
+                    <li>Las contraseñas no están en repositorios (usa secret management)</li>
+                    <li>Datos sensibles están cifrados (column-level o TDE)</li>
+                    <li>Logging de auditoría habilitado para DDL y accesos fallidos</li>
+                </ul>
+
+                <h3>Fase 4: Operación</h3>
+                <ul class="checklist">
+                    <li>Backups físicos + lógicos configurados y <strong>verificados</strong></li>
+                    <li>WAL archiving habilitado para PITR</li>
+                    <li>Replicación configurada (al menos 1 standby)</li>
+                    <li>Monitoreo de las 4 golden signals implementado</li>
+                    <li>Alertas configuradas para: lag de réplica, deadlocks, espacio en disco, conexiones</li>
+                    <li>Procedimiento de failover documentado y probado</li>
+                    <li>Runbook de recuperación ante desastres actualizado</li>
+                </ul>
+
+                <h3>Fase 5: Mantenimiento Continuo</h3>
+                <ul class="checklist">
+                    <li>Vacuum/Analyze programados (autovacuum en PostgreSQL)</li>
+                    <li>Reindexación periódica de índices fragmentados</li>
+                    <li>Revisión mensual de queries lentas en pg_stat_statements</li>
+                    <li>Actualizaciones de seguridad del motor planificadas</li>
+                    <li>Test de restauración de backups trimestral</li>
+                </ul>
+
+                <div class="box box-success">
+                    <div class="box-icon">🚀</div>
+                    <div class="box-title">Listo para Producción</div>
+                    <p>Si has completado esta checklist, tienes una base de datos relacional sólida, segura y operable. Recuerda: <strong>la base de datos es un sistema vivo</strong>. El diseño inicial es el 20%; el 80% es operación continua, monitoreo y evolución controlada.</p>
+                </div>
+            </section>
+
+            <footer style="margin-top: 4rem; padding-top: 2rem; border-top: 2px solid var(--border); color: var(--text-muted); text-align: center; font-size: 0.9rem;">
+                <p>Guía generada con tema <strong style="color: var(--blue);">One Dark Vivid</strong> · Documento portable HTML · 2026</p>
+                <p style="margin-top: 0.5rem;">De Cero a Producción — Bases de Datos Relacionales</p>
+            </footer>
+
+        </div>
+    </main>
+
+    <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+
+    <script>
+        // Smooth scroll and active nav highlighting
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('nav a');
+        const backToTop = document.querySelector('.back-to-top');
+
+        function onScroll() {
+            const scrollY = window.scrollY;
+            
+            // Back to top button
+            backToTop.classList.toggle('visible', scrollY > 500);
+
+            // Active nav link
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', onScroll);
+        
+        // Close mobile nav on link click
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('nav').classList.remove('open');
+            });
+        });
+    </script>
+</body>
+</html>
