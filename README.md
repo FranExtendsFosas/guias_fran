@@ -6,7 +6,7 @@
 
 ¡Bienvenido/a! Este repositorio centraliza una colección de guías técnicas interactivas diseñadas para facilitar el aprendizaje de tecnologías clave en el desarrollo de software.
 
-Cada guía es un documento **auto-contenido, interactivo y con diseño profesional (OneDark)**, optimizado para ser consultado directamente desde el navegador.
+Cada guía es un documento **auto-contenido, interactivo y con diseño profesional (Dracula)**, optimizado para ser consultado directamente desde el navegador.
 
 ---
 
