@@ -1,4 +1,4 @@
-# 📚 Biblioteca de Guías Técnicas — Francesc Fosas
+# 📚 Guías Técnicas — Francesc Fosas
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Active-success?style=flat-square&logo=github)](https://FranExtendsFosas.github.io/guias_fran/guia_sql.html)
 [![Language](https://img.shields.io/badge/Language-Español-blue?style=flat-square)](https://github.com/FranExtendsFosas/guias_fran)
