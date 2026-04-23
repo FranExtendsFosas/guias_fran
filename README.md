@@ -19,6 +19,7 @@ Cada guía es un documento **auto-contenido, interactivo y con diseño profesion
 | **Caminos y Complejidad** | 🟡🔴 | Grafos de flujo, McCabe, Cobertura de tests | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/Camino_basico.html) |
 | **Docker: De 0 a Producción** | 🟢🔴 | Contenedores, Volúmenes, Compose, Producción | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/docker-guia.html) |
 | **Modelo OSI: Entendiendo Redes** | 🟢🟡 | 7 Capas, Encapsulación, TCP/IP, Troubleshooting | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/guia_osi.html) |
+| **Estructuras de Datos & Big O** | 🟢🔴 | Arrays, Listas, Hash Tables, Árboles, Grafos, Big O | [**Abrir Guía**](https://FranExtendsFosas.github.io/guias_fran/guia_estructuras_datos.html) |
 
 **Leyenda de niveles:**
 - 🟢 **Principiante:** Conceptos base y fundamentos esenciales.
@@ -60,6 +61,13 @@ Desde el cable de red hasta tu navegador web. Descubre cómo se comunican las co
 - **Conceptos:** Las 7 capas, la analogía postal y la encapsulación (Matrioskas).
 - **Capas Host y Media:** Protocolos (HTTP, TCP, IP) y hardware (Routers, Switches) mapeados por capa.
 - **Práctica:** La diferencia real entre OSI y TCP/IP, junto con comandos de troubleshooting estructurados de abajo hacia arriba.
+
+### 🧠 6. Estructuras de Datos y Complejidad (Big O)
+El viaje desde el byte de RAM hasta los Algoritmos de Búsqueda usados en la industria, explicado sin jerga aburrida.
+- **Fundamentos:** La Memoria RAM física, Arrays y Listas Enlazadas.
+- **Rendimiento:** Notación Big O, curvas de complejidad matemática y *Pitfalls* clásicos.
+- **Avanzado:** Pilas/Colas, Hash Tables (Diccionarios), Árboles Binarios (BST) y Grafos (Redes).
+- **Producción:** Casos de uso de la vida real (Redis, PostgreSQL, RabbitMQ) y Algoritmos (BFS/DFS).
 
 ---
 
