@@ -626,6 +626,11 @@
       }
       .tab-content.active {
         display: block;
+        animation: fadeInTab 0.3s ease-in-out;
+      }
+      @keyframes fadeInTab {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
 
       /* ── TWO COL ─────────────────────────────────────────────── */
@@ -839,6 +844,22 @@
         border: 1px solid rgba(189, 147, 249, 0.25);
       }
 
+      .tag-yellow {
+        background: rgba(var(--yellow-rgb), 0.1);
+        color: var(--yellow);
+        border: 1px solid rgba(var(--yellow-rgb), 0.25);
+      }
+      .tag-red {
+        background: rgba(var(--red-rgb), 0.1);
+        color: var(--red);
+        border: 1px solid rgba(var(--red-rgb), 0.25);
+      }
+      .tag-dim {
+        background: rgba(204, 205, 212, 0.05);
+        color: var(--text-dim);
+        border: 1px solid rgba(204, 205, 212, 0.15);
+      }
+
       .divider {
         border: none;
         border-top: 1px solid var(--border-s);
@@ -954,7 +975,7 @@
         </p>
         <div class="hero-stats">
           <div class="stat">
-            <span class="stat-num">9</span><span class="stat-label">Secciones</span>
+            <span class="stat-num">11</span><span class="stat-label">Secciones</span>
           </div>
           <div class="stat">
             <span class="stat-num">O(1)</span><span class="stat-label">Eficiencia</span>
@@ -1515,8 +1536,6 @@ usuarios.set(<span class="str">"Bob"</span>, <span class="str">"Diseñador"</spa
 <span class="arg">usuarios</span> = {}
 
 <span class="cmt"># O(1) Inserción</span>
-usuarios[<span class="str">"u_123"</span>] = <span class="str">"Fran"</span>
-usuarios[<span class="str">"u_999"</span>] = <span class="str">"Ana"</span></code></pre>
 usuarios[<span class="str">"Ana"</span>] = <span class="str">"Programadora"</span>
 usuarios[<span class="str">"Bob"</span>] = <span class="str">"Diseñador"</span>
 
@@ -1830,45 +1849,45 @@ redSocial.put(<span class="str">"Mía"</span>, Arrays.asList(<span class="str">"
           <tbody>
             <tr>
               <td><strong>Array</strong></td>
-              <td style="color:var(--green)">O(1)</td>
-              <td style="color:var(--orange)">O(n)</td>
-              <td style="color:var(--orange)">O(n)</td>
-              <td style="color:var(--orange)">O(n)</td>
+              <td><span class="tag tag-green">O(1)</span></td>
+              <td><span class="tag tag-orange">O(n)</span></td>
+              <td><span class="tag tag-orange">O(n)</span></td>
+              <td><span class="tag tag-orange">O(n)</span></td>
             </tr>
             <tr>
               <td><strong>Lista Enlazada</strong></td>
-              <td style="color:var(--orange)">O(n)</td>
-              <td style="color:var(--orange)">O(n)</td>
-              <td style="color:var(--green)">O(1)</td>
-              <td style="color:var(--green)">O(1)</td>
+              <td><span class="tag tag-orange">O(n)</span></td>
+              <td><span class="tag tag-orange">O(n)</span></td>
+              <td><span class="tag tag-green">O(1)</span></td>
+              <td><span class="tag tag-green">O(1)</span></td>
             </tr>
             <tr>
               <td><strong>Hash Table</strong></td>
-              <td style="color:var(--text-dim)">N/A</td>
-              <td style="color:var(--green)">O(1)</td>
-              <td style="color:var(--green)">O(1)</td>
-              <td style="color:var(--green)">O(1)</td>
+              <td><span class="tag tag-dim">N/A</span></td>
+              <td><span class="tag tag-green">O(1)</span></td>
+              <td><span class="tag tag-green">O(1)</span></td>
+              <td><span class="tag tag-green">O(1)</span></td>
             </tr>
             <tr>
               <td><strong>BST (Árbol Binario)*</strong></td>
-              <td style="color:var(--text-dim)">N/A</td>
-              <td style="color:var(--yellow)">O(log n)</td>
-              <td style="color:var(--yellow)">O(log n)</td>
-              <td style="color:var(--yellow)">O(log n)</td>
+              <td><span class="tag tag-dim">N/A</span></td>
+              <td><span class="tag tag-yellow">O(log n)</span></td>
+              <td><span class="tag tag-yellow">O(log n)</span></td>
+              <td><span class="tag tag-yellow">O(log n)</span></td>
             </tr>
             <tr>
               <td><strong>Pila (Stack)</strong></td>
-              <td style="color:var(--text-dim)">N/A</td>
-              <td style="color:var(--orange)">O(n)</td>
-              <td style="color:var(--green)">O(1)</td>
-              <td style="color:var(--green)">O(1)</td>
+              <td><span class="tag tag-dim">N/A</span></td>
+              <td><span class="tag tag-orange">O(n)</span></td>
+              <td><span class="tag tag-green">O(1)</span></td>
+              <td><span class="tag tag-green">O(1)</span></td>
             </tr>
             <tr>
               <td><strong>Cola (Queue)</strong></td>
-              <td style="color:var(--text-dim)">N/A</td>
-              <td style="color:var(--orange)">O(n)</td>
-              <td style="color:var(--green)">O(1)</td>
-              <td style="color:var(--green)">O(1)</td>
+              <td><span class="tag tag-dim">N/A</span></td>
+              <td><span class="tag tag-orange">O(n)</span></td>
+              <td><span class="tag tag-green">O(1)</span></td>
+              <td><span class="tag tag-green">O(1)</span></td>
             </tr>
           </tbody>
         </table>
