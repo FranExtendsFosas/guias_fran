@@ -26,12 +26,19 @@
         --border-s: #373849;
 
         --cyan: #8be9fd;
+        --cyan-rgb: 139, 233, 253;
         --green: #50fa7b;
+        --green-rgb: 80, 250, 123;
         --orange: #ffb86c;
+        --orange-rgb: 255, 184, 108;
         --pink: #ff79c6;
+        --pink-rgb: 255, 121, 198;
         --purple: #bd93f9;
+        --purple-rgb: 189, 147, 249;
         --red: #ff5555;
+        --red-rgb: 255, 85, 85;
         --yellow: #f1fa8c;
+        --yellow-rgb: 241, 250, 140;
         --comment: #6272a4;
 
         --text: #f8f8f2;
@@ -115,7 +122,7 @@
       }
       .nav-links a:hover {
         color: var(--cyan);
-        background: rgba(139, 233, 253, 0.07);
+        background: rgba(var(--cyan-rgb), 0.07);
       }
 
       /* ── HERO ─────────────────────────────────────────────────── */
@@ -132,8 +139,8 @@
         position: absolute;
         inset: 0;
         background-image:
-          linear-gradient(rgba(189, 147, 249, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(189, 147, 249, 0.05) 1px, transparent 1px);
+          linear-gradient(rgba(var(--purple-rgb), 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(var(--purple-rgb), 0.05) 1px, transparent 1px);
         background-size: 50px 50px;
         mask-image: radial-gradient(
           ellipse at center,
@@ -147,7 +154,7 @@
         height: 500px;
         background: radial-gradient(
           ellipse,
-          rgba(189, 147, 249, 0.1) 0%,
+          rgba(var(--purple-rgb), 0.1) 0%,
           transparent 65%
         );
         top: 50%;
@@ -164,8 +171,8 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: rgba(189, 147, 249, 0.1);
-        border: 1px solid rgba(189, 147, 249, 0.3);
+        background: rgba(var(--purple-rgb), 0.1);
+        border: 1px solid rgba(var(--purple-rgb), 0.3);
         color: var(--purple);
         padding: 0.4rem 1.1rem;
         border-radius: 100px;
@@ -249,8 +256,8 @@
         font-family: "JetBrains Mono", monospace;
         font-size: 0.72rem;
         color: var(--pink);
-        background: rgba(255, 121, 198, 0.1);
-        border: 1px solid rgba(255, 121, 198, 0.25);
+        background: rgba(var(--pink-rgb), 0.1);
+        border: 1px solid rgba(var(--pink-rgb), 0.25);
         padding: 0.2rem 0.65rem;
         border-radius: 5px;
         letter-spacing: 0.05em;
@@ -339,7 +346,7 @@
         transition: opacity 0.2s;
       }
       .card:hover {
-        border-color: rgba(189, 147, 249, 0.4);
+        border-color: rgba(var(--purple-rgb), 0.4);
         transform: translateY(-2px);
       }
       .card:hover::before {
@@ -387,13 +394,13 @@
         border-radius: 50%;
       }
       .dot-r {
-        background: #ff5555;
+        background: var(--red);
       }
       .dot-y {
-        background: #f1fa8c;
+        background: var(--yellow);
       }
       .dot-g {
-        background: #50fa7b;
+        background: var(--green);
       }
       .code-label {
         font-family: "JetBrains Mono", monospace;
@@ -484,28 +491,28 @@
         line-height: 1.65;
       }
       .callout.info {
-        background: rgba(139, 233, 253, 0.05);
+        background: rgba(var(--cyan-rgb), 0.05);
         border-color: var(--cyan);
       }
       .callout.info .callout-title {
         color: var(--cyan);
       }
       .callout.warning {
-        background: rgba(241, 250, 140, 0.05);
+        background: rgba(var(--yellow-rgb), 0.05);
         border-color: var(--yellow);
       }
       .callout.warning .callout-title {
         color: var(--yellow);
       }
       .callout.success {
-        background: rgba(80, 250, 123, 0.05);
+        background: rgba(var(--green-rgb), 0.05);
         border-color: var(--green);
       }
       .callout.success .callout-title {
         color: var(--green);
       }
       .callout.danger {
-        background: rgba(255, 85, 85, 0.05);
+        background: rgba(var(--red-rgb), 0.05);
         border-color: var(--red);
       }
       .callout.danger .callout-title {
@@ -528,14 +535,14 @@
         transition: border-color 0.2s;
       }
       .step:hover {
-        border-color: rgba(189, 147, 249, 0.35);
+        border-color: rgba(var(--purple-rgb), 0.35);
       }
       .step-num {
         width: 34px;
         height: 34px;
         flex-shrink: 0;
-        background: rgba(189, 147, 249, 0.12);
-        border: 1px solid rgba(189, 147, 249, 0.35);
+        background: rgba(var(--purple-rgb), 0.12);
+        border: 1px solid rgba(var(--purple-rgb), 0.35);
         border-radius: 7px;
         display: flex;
         align-items: center;
@@ -699,28 +706,32 @@
         white-space: nowrap;
       }
       .arch-box.cyan {
-        border-color: rgba(139, 233, 253, 0.4);
+        border-color: rgba(var(--cyan-rgb), 0.4);
         color: var(--cyan);
-        background: rgba(139, 233, 253, 0.05);
+        background: rgba(var(--cyan-rgb), 0.05);
       }
       .arch-box.green {
-        border-color: rgba(80, 250, 123, 0.4);
+        border-color: rgba(var(--green-rgb), 0.4);
         color: var(--green);
-        background: rgba(80, 250, 123, 0.05);
+        background: rgba(var(--green-rgb), 0.05);
       }
       .arch-box.orange {
-        border-color: rgba(255, 184, 108, 0.4);
+        border-color: rgba(var(--orange-rgb), 0.4);
         color: var(--orange);
-        background: rgba(255, 184, 108, 0.05);
+        background: rgba(var(--orange-rgb), 0.05);
       }
       .arch-box.purple {
-        border-color: rgba(189, 147, 249, 0.4);
+        border-color: rgba(var(--purple-rgb), 0.4);
         color: var(--purple);
-        background: rgba(189, 147, 249, 0.05);
+        background: rgba(var(--purple-rgb), 0.05);
       }
       .arch-arrow {
         color: var(--comment);
-        font-size: 1.1rem;
+        font-size: 1.8rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .arch-label {
         font-size: 0.7rem;
@@ -729,6 +740,40 @@
         text-transform: uppercase;
         margin: 0.8rem 0 0.3rem;
       }
+      
+      /* ── NUEVOS ESTILOS DE DIAGRAMAS ── */
+      .mem-ribbon {
+        display: inline-flex;
+        overflow-x: auto;
+        border: 2px solid var(--border-s);
+        border-radius: 8px;
+        background: var(--bg-dark);
+        max-width: 100%;
+      }
+      .mem-slot {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.8rem 1.2rem;
+        border-right: 1px solid var(--border-s);
+        min-width: 70px;
+      }
+      .mem-slot:last-child { border-right: none; }
+      .mem-addr { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--comment); margin-bottom: 0.4rem; }
+      .mem-val { font-weight: bold; font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; }
+
+      .ll-node {
+        display: flex;
+        border: 2px solid;
+        border-radius: 6px;
+        background: var(--bg-dark);
+        overflow: hidden;
+      }
+      .ll-val { padding: 0.5rem 0.8rem; font-weight: bold; font-family: 'JetBrains Mono', monospace; }
+      .ll-next { padding: 0.5rem 0.6rem; border-left: 2px solid; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; display: flex; align-items: center; background: rgba(255, 255, 255, 0.05); }
+
+      .stack-container { display: flex; flex-direction: column; border: 3px solid var(--purple); border-top: none; border-radius: 0 0 12px 12px; padding: 0.5rem; width: 140px; gap: 0.5rem; background: rgba(var(--purple-rgb), 0.05); margin: 0 auto; }
+      .queue-container { display: flex; border: 3px solid var(--cyan); border-left: none; border-right: none; padding: 0.5rem; gap: 0.5rem; background: rgba(var(--cyan-rgb), 0.05); align-items: center; justify-content: center; }
 
       /* ── CHEAT ───────────────────────────────────────────────── */
       .cheat-grid {
@@ -969,13 +1014,13 @@
         <p class="prose">Antes de hablar de Arrays o Listas, necesitas entender dónde viven. La Memoria RAM es literalmente una <strong>cuadrícula inmensa de cajas</strong> (como una hoja de Excel gigante).</p>
         
         <div class="arch-diagram">
-          <div class="arch-row" style="gap:0.2rem; justify-content: flex-start; overflow-x: auto; padding-bottom: 0.5rem;">
-            <div class="arch-box purple">0x00<br><small style="color:var(--text)">Libre</small></div>
-            <div class="arch-box purple">0x01<br><small style="color:var(--text)">Libre</small></div>
-            <div class="arch-box purple">0x02<br><small style="color:var(--text)">Libre</small></div>
-            <div class="arch-box purple">0x03<br><small style="color:var(--text)">Libre</small></div>
-            <div class="arch-box purple">0x04<br><small style="color:var(--text)">Libre</small></div>
-            <div class="arch-box purple">...</div>
+          <div class="mem-ribbon">
+            <div class="mem-slot"><span class="mem-addr">0x00</span><span class="mem-val" style="color:var(--comment)">Libre</span></div>
+            <div class="mem-slot"><span class="mem-addr">0x01</span><span class="mem-val" style="color:var(--comment)">Libre</span></div>
+            <div class="mem-slot"><span class="mem-addr">0x02</span><span class="mem-val" style="color:var(--comment)">Libre</span></div>
+            <div class="mem-slot"><span class="mem-addr">0x03</span><span class="mem-val" style="color:var(--comment)">Libre</span></div>
+            <div class="mem-slot"><span class="mem-addr">0x04</span><span class="mem-val" style="color:var(--comment)">Libre</span></div>
+            <div class="mem-slot"><span class="mem-addr">...</span><span class="mem-val" style="color:var(--comment)"></span></div>
           </div>
         </div>
         
@@ -991,13 +1036,14 @@
         <p class="prose">Un Array almacena elementos en cajas de memoria <strong>estrictamente contiguas</strong> (una justo al lado de la otra).</p>
         
         <div class="arch-diagram">
-          <div class="arch-row" style="gap:0.2rem; justify-content: flex-start; overflow-x: auto; padding-bottom: 0.5rem;">
-            <div class="arch-box cyan">0x00<br><small style="color:var(--bg)">[</small></div>
-            <div class="arch-box cyan" style="background:var(--cyan); color:var(--bg); border:none;">0x01<br>"A"</div>
-            <div class="arch-box cyan" style="background:var(--cyan); color:var(--bg); border:none;">0x02<br>"B"</div>
-            <div class="arch-box cyan" style="background:var(--cyan); color:var(--bg); border:none;">0x03<br>"C"</div>
-            <div class="arch-box cyan">0x04<br><small style="color:var(--bg)">]</small></div>
+          <div class="mem-ribbon">
+            <div class="mem-slot"><span class="mem-addr">0x00</span><span class="mem-val" style="color:var(--comment)">Libre</span></div>
+            <div class="mem-slot" style="background: rgba(var(--cyan-rgb), 0.15)"><span class="mem-addr">0x01</span><span class="mem-val" style="color:var(--cyan)">"A"</span></div>
+            <div class="mem-slot" style="background: rgba(var(--cyan-rgb), 0.15)"><span class="mem-addr">0x02</span><span class="mem-val" style="color:var(--cyan)">"B"</span></div>
+            <div class="mem-slot" style="background: rgba(var(--cyan-rgb), 0.15)"><span class="mem-addr">0x03</span><span class="mem-val" style="color:var(--cyan)">"C"</span></div>
+            <div class="mem-slot"><span class="mem-addr">0x04</span><span class="mem-val" style="color:var(--comment)">Libre</span></div>
           </div>
+          <p style="font-size: 0.8rem; color: var(--cyan); margin-top: 0.8rem; font-weight: bold;">Bloque de memoria reservado y contiguo</p>
         </div>
 
         <div class="steps">
@@ -1064,12 +1110,30 @@ letras.add(<span class="cmd">0</span>, <span class="str">"Z"</span>);</code></pr
         <p class="prose">Para solucionar el problema de mover elementos del Array, nacen las Listas Enlazadas. La memoria ya no está junta. Cada elemento (Nodo) guarda su valor y una <strong>flecha (puntero)</strong> indicando la caja de memoria donde vive el siguiente.</p>
         
         <div class="arch-diagram">
-          <div class="arch-row" style="gap:2rem; justify-content: center; flex-wrap: wrap;">
-            <div class="arch-box green">0x15<br>"A" → 0x88</div>
+          <div class="arch-row" style="gap:1.5rem; justify-content: center; flex-wrap: wrap;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.5rem">
+                <span class="mem-addr">0x15</span>
+                <div class="ll-node" style="border-color: var(--green); color: var(--green);">
+                    <div class="ll-val">"A"</div>
+                    <div class="ll-next" style="border-color: var(--green);">0x88</div>
+                </div>
+            </div>
             <div class="arch-arrow">→</div>
-            <div class="arch-box green">0x88<br>"B" → 0x02</div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.5rem">
+                <span class="mem-addr">0x88</span>
+                <div class="ll-node" style="border-color: var(--green); color: var(--green);">
+                    <div class="ll-val">"B"</div>
+                    <div class="ll-next" style="border-color: var(--green);">0x02</div>
+                </div>
+            </div>
             <div class="arch-arrow">→</div>
-            <div class="arch-box green">0x02<br>"C" → null</div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.5rem">
+                <span class="mem-addr">0x02</span>
+                <div class="ll-node" style="border-color: var(--green); color: var(--green);">
+                    <div class="ll-val">"C"</div>
+                    <div class="ll-next" style="border-color: var(--green);">null</div>
+                </div>
+            </div>
           </div>
         </div>
 
@@ -1352,6 +1416,56 @@ miPila.pop(); <span class="cmt">// Saca "Plato 3"</span></code></pre>
         </div>
         <p class="prose">La estructura de datos más importante de la programación moderna. Permite acceso ultra-rápido `O(1)`. ¿Cómo es posible si no usamos índices numéricos como en los Arrays?</p>
         
+        <div class="arch-diagram">
+          <div class="arch-label" style="margin-bottom: 1rem; text-transform: uppercase;">Funcionamiento de una Hash Table</div>
+          <div class="arch-row" style="gap: 1.5rem; align-items: center; padding-bottom: 1rem;">
+            
+            <!-- Entradas -->
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+              <div class="arch-box cyan" style="font-weight: bold; font-size: 1rem;">"Ana"</div>
+              <div class="arch-box cyan" style="font-weight: bold; font-size: 1rem;">"Bob"</div>
+            </div>
+
+            <div class="arch-arrow">→</div>
+
+            <!-- Función Hash -->
+            <div class="arch-box purple" style="display: flex; flex-direction: column; justify-content: center; padding: 1.2rem; border: 2px dashed var(--purple);">
+              <strong style="color:var(--purple); font-size:1.1rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Hash Fn</strong>
+              <small style="color:var(--text);">hash(x) % 5</small>
+              <strong style="color:var(--pink); font-size:1.4rem;">= 4</strong>
+            </div>
+
+            <div class="arch-arrow">→</div>
+
+            <!-- Buckets (Array) -->
+            <div style="display: flex; flex-direction: column; gap: 0.2rem; background: var(--bg-dark); padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-s);">
+              <small style="color:var(--text-dim); text-align: center; font-weight: bold; letter-spacing: 0.05em; margin-bottom: 0.4rem;">BUCKETS</small>
+              <div style="border: 1px solid var(--border-s); padding: 0.2rem 1.2rem; border-radius: 4px; color: var(--text-dim); text-align: center;">0</div>
+              <div style="border: 1px solid var(--border-s); padding: 0.2rem 1.2rem; border-radius: 4px; color: var(--text-dim); text-align: center;">1</div>
+              <div style="border: 1px solid var(--border-s); padding: 0.2rem 1.2rem; border-radius: 4px; color: var(--text-dim); text-align: center;">2</div>
+              <div style="border: 1px solid var(--border-s); padding: 0.2rem 1.2rem; border-radius: 4px; color: var(--text-dim); text-align: center;">3</div>
+              <div style="border: 1px solid var(--purple); background: rgba(var(--purple-rgb), 0.15); padding: 0.2rem 1.2rem; border-radius: 4px; color: var(--purple); font-weight: bold; text-align: center;">4</div>
+            </div>
+
+            <div class="arch-arrow">→</div>
+
+            <!-- Linked List (Colisión) -->
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="ll-node" style="border-color: var(--green); color: var(--green);">
+                    <div class="ll-val">"Ana"</div>
+                    <div class="ll-next" style="border-color: var(--green);">*</div>
+                </div>
+                <div class="arch-arrow" style="color: var(--red);">→</div>
+                <div class="ll-node" style="border-color: var(--orange); color: var(--orange);">
+                    <div class="ll-val">"Bob"</div>
+                    <div class="ll-next" style="border-color: var(--orange);">null</div>
+                </div>
+            </div>
+            
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 1.5rem;">Resolución de colisión mediante <strong>Lista Enlazada</strong> en la posición 4.</p>
+        </div>
+
         <div class="steps">
           <div class="step">
             <div class="step-num">1</div>
@@ -1360,6 +1474,7 @@ miPila.pop(); <span class="cmt">// Saca "Plato 3"</span></code></pre>
               <p>Existe una función matemática que coge tu texto (ej. "Ana") y lo transforma irreversiblemente en un número (ej. `4`). Usamos ese número para guardar a Ana en la caja `4` de un Array gigante. Al buscar "Ana", la función vuelve a dar `4` y vas directo. ¡Instantáneo!</p>
             </div>
           </div>
+          
           <div class="step">
             <div class="step-num">2</div>
             <div class="step-content">
@@ -1386,14 +1501,14 @@ miPila.pop(); <span class="cmt">// Saca "Plato 3"</span></code></pre>
           <div id="t-hash-ts" class="tab-content active">
             <pre><code><span class="cmt">// En TypeScript/JS, los objetos literales y Maps son Hash Tables</span>
 <span class="kw">const</span> <span class="arg">usuarios</span> = <span class="kw">new</span> <span class="cmd">Map</span>&lt;<span class="kw">string</span>, <span class="kw">string</span>&gt;();
-
-<span class="cmt">// MÁGIA OCULTA: Al usar .set(), JS internamente calcula la función Hash</span>
-<span class="cmt">// y crea la Lista Enlazada si hay colisión. ¡El lenguaje hace el trabajo sucio!</span>
-usuarios.set(<span class="str">"u_123"</span>, <span class="str">"Fran"</span>);
-usuarios.set(<span class="str">"u_999"</span>, <span class="str">"Ana"</span>);
-
-<span class="cmt">// O(1) -> Búsqueda instantánea</span>
-<span class="kw">const</span> <span class="arg">miUsuario</span> = usuarios.get(<span class="str">"u_123"</span>); <span class="cmt">// "Fran"</span></code></pre>
+ 
+<span class="cmt">// MÁGIA OCULTA: Al usar .set(), JS internamente calcula la función Hash.</span>
+<span class="cmt">// Para replicar el diagrama, asumimos que "Ana" y "Bob" colisionan en el mismo bucket.</span>
+usuarios.set(<span class="str">"Ana"</span>, <span class="str">"Programadora"</span>);
+usuarios.set(<span class="str">"Bob"</span>, <span class="str">"Diseñador"</span>);
+ 
+<span class="cmt">// O(1) -> Búsqueda instantánea (en el mejor de los casos)</span>
+<span class="kw">const</span> <span class="arg">rolDeAna</span> = usuarios.get(<span class="str">"Ana"</span>); <span class="cmt">// "Programadora"</span></code></pre>
           </div>
           <div id="t-hash-py" class="tab-content">
             <pre><code><span class="cmt"># En Python, los diccionarios (dict) son Hash Tables altamente optimizados</span>
@@ -1401,10 +1516,12 @@ usuarios.set(<span class="str">"u_999"</span>, <span class="str">"Ana"</span>);
 
 <span class="cmt"># O(1) Inserción</span>
 usuarios[<span class="str">"u_123"</span>] = <span class="str">"Fran"</span>
-usuarios[<span class="str">"u_999"</span>] = <span class="str">"Ana"</span>
+usuarios[<span class="str">"u_999"</span>] = <span class="str">"Ana"</span></code></pre>
+usuarios[<span class="str">"Ana"</span>] = <span class="str">"Programadora"</span>
+usuarios[<span class="str">"Bob"</span>] = <span class="str">"Diseñador"</span>
 
 <span class="cmt"># O(1) Búsqueda inmediata sin iterar</span>
-<span class="arg">mi_usuario</span> = usuarios[<span class="str">"u_123"</span>] <span class="cmt"># "Fran"</span></code></pre>
+<span class="arg">rol_de_ana</span> = usuarios[<span class="str">"Ana"</span>] <span class="cmt"># "Programadora"</span></code></pre>
           </div>
           <div id="t-hash-java" class="tab-content">
             <pre><code><span class="cmt">// Java tiene HashMap, la implementación clásica de la estructura</span>
@@ -1412,11 +1529,11 @@ usuarios[<span class="str">"u_999"</span>] = <span class="str">"Ana"</span>
 
 <span class="cmt">// MÁGIA OCULTA: .put() ejecuta la batidora matemática (hashCode) por debajo.</span>
 <span class="cmt">// Si "u_123" y "u_999" chocan, Java crea la Lista Enlazada por ti automáticamente.</span>
-usuarios.put(<span class="str">"u_123"</span>, <span class="str">"Fran"</span>);
-usuarios.put(<span class="str">"u_999"</span>, <span class="str">"Ana"</span>);
+usuarios.put(<span class="str">"Ana"</span>, <span class="str">"Programadora"</span>);
+usuarios.put(<span class="str">"Bob"</span>, <span class="str">"Diseñador"</span>);
 
 <span class="cmt">// O(1) Búsqueda directa</span>
-<span class="kw">String</span> <span class="arg">miUsuario</span> = usuarios.get(<span class="str">"u_123"</span>); <span class="cmt">// "Fran"</span></code></pre>
+<span class="kw">String</span> <span class="arg">rolDeAna</span> = usuarios.get(<span class="str">"Ana"</span>); <span class="cmt">// "Programadora"</span></code></pre>
           </div>
         </div>
       </section>
@@ -1429,6 +1546,89 @@ usuarios.put(<span class="str">"u_999"</span>, <span class="str">"Ana"</span>);
         </div>
         <p class="prose">Los Árboles son simplemente <strong>Listas Enlazadas con múltiples flechas</strong>. Un <code>TreeNode</code> no tiene un `siguiente`, tiene un `izquierdo` y un `derecho`.</p>
         
+        <div class="arch-diagram">
+          <div class="arch-label" style="margin-bottom: 1.5rem; text-transform: uppercase;">Árbol Binario de Búsqueda (BST)</div>
+          
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <!-- Nivel 1: Raíz -->
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <small style="color: var(--text-dim); margin-bottom: 0.5rem; font-weight: bold; letter-spacing: 0.05em;">NODO RAÍZ</small>
+              <div class="arch-box purple" style="border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: bold; z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">10</div>
+            </div>
+            
+            <!-- Flechas Nivel 1 -> Nivel 2 -->
+            <div style="display: flex; width: 12.5rem; justify-content: space-between; color: var(--comment); font-size: 2.5rem; font-weight: bold; margin-top: -1.2rem; margin-bottom: -1rem; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+              <div style="transform: translateX(1.2rem);">↙</div>
+              <div style="transform: translateX(-1.2rem);">↘</div>
+            </div>
+            
+            <!-- Nivel 2 -->
+            <div style="display: flex; gap: 4.5rem;">
+              <!-- Subárbol Izquierdo (5) -->
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div class="arch-box cyan" style="border-radius: 50%; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; z-index: 2;">5</div>
+                <div style="text-align: center; margin-top: 0.4rem;">
+                  <span style="color: var(--cyan); font-weight: bold; font-size: 0.85rem;">&lt; 10</span>
+                </div>
+                
+                <!-- Flechas Nivel 2 -> Nivel 3 -->
+                <div style="display: flex; width: 6.5rem; justify-content: space-between; color: var(--comment); font-size: 2rem; font-weight: bold; margin-top: -0.8rem; margin-bottom: -0.6rem; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                  <div style="transform: translateX(0.8rem);">↙</div>
+                  <div style="transform: translateX(-0.8rem);">↘</div>
+                </div>
+                
+                <!-- Nivel 3 (bajo 5) -->
+                <div style="display: flex; gap: 2rem;">
+                  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                    <div class="arch-box orange" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: bold;">3</div>
+                    <small style="color: var(--orange); font-size: 0.75rem; font-weight: bold;">&lt; 5</small>
+                  </div>
+                  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                    <div class="arch-box" style="border-color: rgba(var(--pink-rgb), 0.4); color: var(--pink); background: rgba(var(--pink-rgb), 0.05); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: bold;">7</div>
+                    <small style="color: var(--pink); font-size: 0.75rem; font-weight: bold;">&gt; 5</small>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Subárbol Derecho (15) -->
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div class="arch-box green" style="border-radius: 50%; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; z-index: 2;">15</div>
+                <div style="text-align: center; margin-top: 0.4rem;">
+                  <span style="color: var(--green); font-weight: bold; font-size: 0.85rem;">&gt; 10</span>
+                </div>
+                
+                <!-- Flechas Nivel 2 -> Nivel 3 -->
+                <div style="display: flex; width: 6.5rem; justify-content: space-between; color: var(--comment); font-size: 2rem; font-weight: bold; margin-top: -0.8rem; margin-bottom: -0.6rem; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                  <div style="transform: translateX(0.8rem);">↙</div>
+                  <div style="transform: translateX(-0.8rem);">↘</div>
+                </div>
+                
+                <!-- Nivel 3 (bajo 15) -->
+                <div style="display: flex; gap: 2rem;">
+                  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                    <div class="arch-box" style="border-color: rgba(var(--yellow-rgb), 0.4); color: var(--yellow); background: rgba(var(--yellow-rgb), 0.05); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: bold;">12</div>
+                    <small style="color: var(--yellow); font-size: 0.75rem; font-weight: bold;">&lt; 15</small>
+                  </div>
+                  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+                    <div class="arch-box" style="border-color: rgba(var(--red-rgb), 0.4); color: var(--red); background: rgba(var(--red-rgb), 0.05); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: bold;">20</div>
+                    <small style="color: var(--red); font-size: 0.75rem; font-weight: bold;">&gt; 15</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Caja de explicación -->
+          <div style="margin-top: 2.5rem; background: var(--bg-dark); padding: 1.2rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--purple); text-align: left;">
+            <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 0.8rem;"><strong style="color: var(--purple); font-size: 1rem;">💡 Reglas del Árbol Binario de Búsqueda (BST):</strong></p>
+            <ul style="font-size: 0.85rem; color: var(--text-dim); margin-left: 1.2rem; margin-bottom: 0; line-height: 1.6;">
+              <li>Todo elemento a la <strong>izquierda</strong> es siempre <em>menor</em> que el nodo padre.</li>
+              <li>Todo elemento a la <strong>derecha</strong> es siempre <em>mayor</em> que el nodo padre.</li>
+              <li>Este patrón permite buscar datos en tiempo ultra rápido <strong style="color: var(--yellow);">O(log n)</strong>, ya que descartas la mitad entera del árbol en cada salto.</li>
+            </ul>
+          </div>
+        </div>
+
         <div class="tabs">
           <div class="tab-buttons">
             <button class="tab-btn active" onclick="showTab(this, 't-arbol-ts')">TypeScript</button>
@@ -1447,7 +1647,11 @@ usuarios.put(<span class="str">"u_999"</span>, <span class="str">"Ana"</span>);
 <span class="cmt">// Construyendo el diagrama: Raíz 10, Izq 5, Der 15</span>
 <span class="kw">const</span> <span class="arg">raiz</span> = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">10</span>);
 raiz.izquierdo = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">5</span>);
-raiz.derecho = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">15</span>);</code></pre>
+raiz.derecho = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">15</span>);
+raiz.izquierdo.izquierdo = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">3</span>);
+raiz.izquierdo.derecho = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">7</span>);
+raiz.derecho.izquierdo = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">12</span>);
+raiz.derecho.derecho = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">20</span>);</code></pre>
           </div>
           <div id="t-arbol-py" class="tab-content">
             <pre><code><span class="kw">class</span> <span class="cmd">TreeNode</span>:
@@ -1459,7 +1663,11 @@ raiz.derecho = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<sp
 <span class="cmt"># El diagrama en código Python</span>
 raiz = TreeNode(<span class="cmd">10</span>)
 raiz.izquierdo = TreeNode(<span class="cmd">5</span>)
-raiz.derecho = TreeNode(<span class="cmd">15</span>)</code></pre>
+raiz.derecho = TreeNode(<span class="cmd">15</span>)
+raiz.izquierdo.izquierdo = TreeNode(<span class="cmd">3</span>)
+raiz.izquierdo.derecho = TreeNode(<span class="cmd">7</span>)
+raiz.derecho.izquierdo = TreeNode(<span class="cmd">12</span>)
+raiz.derecho.derecho = TreeNode(<span class="cmd">20</span>)</code></pre>
           </div>
           <div id="t-arbol-java" class="tab-content">
             <pre><code><span class="kw">class</span> <span class="cmd">TreeNode</span> {
@@ -1474,7 +1682,11 @@ raiz.derecho = TreeNode(<span class="cmd">15</span>)</code></pre>
 
 <span class="kw">TreeNode</span> raiz = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">10</span>);
 raiz.izquierdo = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">5</span>);
-raiz.derecho = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">15</span>);</code></pre>
+raiz.derecho = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">15</span>);
+raiz.izquierdo.izquierdo = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">3</span>);
+raiz.izquierdo.derecho = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">7</span>);
+raiz.derecho.izquierdo = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">12</span>);
+raiz.derecho.derecho = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<span class="cmd">20</span>);</code></pre>
           </div>
         </div>
 
@@ -1498,6 +1710,44 @@ raiz.derecho = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<sp
         </div>
         <p class="prose">La red definitiva. Nodos conectados sin reglas estrictas arriba-abajo. Internet, rutas GPS, Facebook, todo es un Grafo. Pero un círculo dibujado en una pizarra no se puede programar, necesitamos almacenarlo en memoria.</p>
         
+        <div class="arch-diagram">
+          <div class="arch-label" style="margin-bottom: 1.5rem; text-transform: uppercase;">Red Social (Grafo No Dirigido)</div>
+          
+          <div style="display: flex; justify-content: center; overflow-x: auto; padding: 1rem 0;">
+            <div style="display: grid; grid-template-columns: 65px 40px 65px 40px 65px 40px 65px; align-items: center; justify-items: center; min-width: max-content;">
+              
+              <!-- Fila 1 (Nodos) -->
+              <div class="arch-box" style="border-color: rgba(var(--pink-rgb), 0.4); color: var(--pink); background: rgba(var(--pink-rgb), 0.05); border-radius: 50%; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 2;">Bob</div>
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: 0 -20px; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">─</div>
+              <div class="arch-box cyan" style="border-radius: 50%; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 2;">Ana</div>
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: 0 -20px; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">─</div>
+              <div class="arch-box" style="border-color: rgba(var(--yellow-rgb), 0.4); color: var(--yellow); background: rgba(var(--yellow-rgb), 0.05); border-radius: 50%; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 2;">Eva</div>
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: 0 -20px; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">─</div>
+              <div class="arch-box" style="border-color: rgba(var(--red-rgb), 0.4); color: var(--red); background: rgba(var(--red-rgb), 0.05); border-radius: 50%; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 2;">Luis</div>
+
+              <!-- Fila 2 (Aristas Verticales y Diagonales) -->
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: -10px 0; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">│</div>
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: -10px 0; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">╱</div>
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: -10px 0; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">│</div>
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: -10px 0; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">╲</div>
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: -10px 0; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">│</div>
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: -10px 0; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: -10px 0; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+
+              <!-- Fila 3 (Nodos) -->
+              <div class="arch-box purple" style="border-radius: 50%; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 2;">Fran</div>
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: 0 -20px; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">─</div>
+              <div class="arch-box green" style="border-radius: 50%; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 2;">Carlos</div>
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: 0 -20px; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">─</div>
+              <div class="arch-box orange" style="border-radius: 50%; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 2;">Zelda</div>
+              <div style="color: var(--comment); font-size: 2.2rem; font-weight: normal; margin: 0 -20px; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">─</div>
+              <div class="arch-box" style="border-color: var(--comment); color: var(--text); background: var(--bg-dark); border-radius: 50%; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 2;">Mía</div>
+
+            </div>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.5rem; font-style: italic;">Grafo no dirigido. Las aristas (líneas) mapean exactamente las conexiones de la lista de adyacencia del código inferior.</p>
+        </div>
+
         <h2 class="sub">Listas de Adyacencia: Cómo se programa un Grafo</h2>
         <p class="prose">La forma más común y eficiente de programar un Grafo es usando un <strong>Diccionario (Hash Table)</strong> donde cada Nodo es una clave, y su valor es un <strong>Array</strong> con los Nodos a los que está conectado. ¡Todas las estructuras trabajando juntas!</p>
         
@@ -1510,29 +1760,38 @@ raiz.derecho = <span class="kw">new</span> <span class="cmd">TreeNode</span>(<sp
           <div id="t-grafo-ts" class="tab-content active">
             <pre><code><span class="cmt">// 'Record' es jerga de TS para un Diccionario (Objeto) de Texto -> Array</span>
 <span class="kw">const</span> <span class="arg">redSocial</span>: Record&lt;<span class="kw">string</span>, <span class="kw">string</span>[]&gt; = {
-  <span class="str">"Fran"</span>: [<span class="str">"Ana"</span>, <span class="str">"Carlos"</span>], <span class="cmt">// Fran es amigo de Ana y Carlos</span>
-  <span class="str">"Ana"</span>:  [<span class="str">"Fran"</span>],          <span class="cmt">// Ana es amiga recíproca</span>
-  <span class="str">"Carlos"</span>: [<span class="str">"Fran"</span>, <span class="str">"Zelda"</span>],
-  <span class="str">"Zelda"</span>: [<span class="str">"Carlos"</span>]
+  <span class="str">"Ana"</span>: [<span class="str">"Bob"</span>, <span class="str">"Eva"</span>, <span class="str">"Fran"</span>, <span class="str">"Carlos"</span>, <span class="str">"Zelda"</span>], <span class="cmt">// Ana es un nodo súper-conector</span>
+  <span class="str">"Fran"</span>: [<span class="str">"Bob"</span>, <span class="str">"Ana"</span>, <span class="str">"Carlos"</span>], 
+  <span class="str">"Carlos"</span>: [<span class="str">"Fran"</span>, <span class="str">"Ana"</span>, <span class="str">"Zelda"</span>],
+  <span class="str">"Zelda"</span>: [<span class="str">"Carlos"</span>, <span class="str">"Ana"</span>, <span class="str">"Eva"</span>, <span class="str">"Mía"</span>],
+  <span class="cmt">// ... y así sucesivamente para todos los nodos del diagrama</span>
 };</code></pre>
           </div>
           <div id="t-grafo-py" class="tab-content">
             <pre><code><span class="cmt"># En Python usamos un simple Dictionary de Listas</span>
 <span class="arg">red_social</span> = {
-    <span class="str">"Fran"</span>: [<span class="str">"Ana"</span>, <span class="str">"Carlos"</span>],
-    <span class="str">"Ana"</span>:  [<span class="str">"Fran"</span>],
-    <span class="str">"Carlos"</span>: [<span class="str">"Fran"</span>, <span class="str">"Zelda"</span>],
-    <span class="str">"Zelda"</span>: [<span class="str">"Carlos"</span>]
+    <span class="str">"Ana"</span>: [<span class="str">"Bob"</span>, <span class="str">"Eva"</span>, <span class="str">"Fran"</span>, <span class="str">"Carlos"</span>, <span class="str">"Zelda"</span>],
+    <span class="str">"Fran"</span>: [<span class="str">"Bob"</span>, <span class="str">"Ana"</span>, <span class="str">"Carlos"</span>],
+    <span class="str">"Zelda"</span>: [<span class="str">"Carlos"</span>, <span class="str">"Ana"</span>, <span class="str">"Eva"</span>, <span class="str">"Mía"</span>],
+    <span class="str">"Bob"</span>: [<span class="str">"Ana"</span>, <span class="str">"Fran"</span>],
+    <span class="str">"Eva"</span>: [<span class="str">"Ana"</span>, <span class="str">"Zelda"</span>, <span class="str">"Luis"</span>],
+    <span class="str">"Luis"</span>: [<span class="str">"Eva"</span>],
+    <span class="str">"Carlos"</span>: [<span class="str">"Ana"</span>, <span class="str">"Fran"</span>, <span class="str">"Zelda"</span>],
+    <span class="str">"Mía"</span>: [<span class="str">"Zelda"</span>]
 }</code></pre>
           </div>
           <div id="t-grafo-java" class="tab-content">
             <pre><code><span class="cmt">// En Java usamos HashMap donde la llave es String y el valor un ArrayList</span>
 <span class="kw">HashMap</span>&lt;<span class="kw">String</span>, <span class="kw">List</span>&lt;<span class="kw">String</span>&gt;&gt; <span class="arg">redSocial</span> = <span class="kw">new</span> <span class="cmd">HashMap</span>&lt;&gt;();
 
-redSocial.put(<span class="str">"Fran"</span>, Arrays.asList(<span class="str">"Ana"</span>, <span class="str">"Carlos"</span>));
-redSocial.put(<span class="str">"Ana"</span>, Arrays.asList(<span class="str">"Fran"</span>));
-redSocial.put(<span class="str">"Carlos"</span>, Arrays.asList(<span class="str">"Fran"</span>, <span class="str">"Zelda"</span>));
-redSocial.put(<span class="str">"Zelda"</span>, Arrays.asList(<span class="str">"Carlos"</span>));</code></pre>
+redSocial.put(<span class="str">"Ana"</span>, Arrays.asList(<span class="str">"Bob"</span>, <span class="str">"Eva"</span>, <span class="str">"Fran"</span>, <span class="str">"Carlos"</span>, <span class="str">"Zelda"</span>));
+redSocial.put(<span class="str">"Fran"</span>, Arrays.asList(<span class="str">"Bob"</span>, <span class="str">"Ana"</span>, <span class="str">"Carlos"</span>));
+redSocial.put(<span class="str">"Zelda"</span>, Arrays.asList(<span class="str">"Carlos"</span>, <span class="str">"Ana"</span>, <span class="str">"Eva"</span>, <span class="str">"Mía"</span>));
+redSocial.put(<span class="str">"Bob"</span>, Arrays.asList(<span class="str">"Ana"</span>, <span class="str">"Fran"</span>));
+redSocial.put(<span class="str">"Eva"</span>, Arrays.asList(<span class="str">"Ana"</span>, <span class="str">"Zelda"</span>, <span class="str">"Luis"</span>));
+redSocial.put(<span class="str">"Luis"</span>, Arrays.asList(<span class="str">"Eva"</span>));
+redSocial.put(<span class="str">"Carlos"</span>, Arrays.asList(<span class="str">"Ana"</span>, <span class="str">"Fran"</span>, <span class="str">"Zelda"</span>));
+redSocial.put(<span class="str">"Mía"</span>, Arrays.asList(<span class="str">"Zelda"</span>));</code></pre>
           </div>
         </div>
         <div class="cards-grid" style="margin-top: 3rem;">
